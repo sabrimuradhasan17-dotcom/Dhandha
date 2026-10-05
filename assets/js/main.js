@@ -54,15 +54,25 @@
     });
   }
 
-  // contact form -> opens mail client / WhatsApp with prefilled message (no backend needed)
-  var form=d.getElementById('enquiry');
+  // contact form: emails the team via FormSubmit (first submission needs a one-time activation click in the inbox); WhatsApp button opens a prefilled chat
+  var form=d.getElementById('enquiry'),MAIL='vedanshienterprises2804@gmail.com';
   if(form){
+    var st=d.getElementById('formstatus');
     form.addEventListener('submit',function(e){
       e.preventDefault();
-      var f=new FormData(form),msg='Hello Vedanshi Enterprises,%0A%0AName: '+enc(f.get('name'))+'%0APhone: '+enc(f.get('phone'))+'%0AService: '+enc(f.get('service'))+'%0A%0A'+enc(f.get('message'));
+      var f=new FormData(form),data={name:f.get('name'),phone:f.get('phone'),service:f.get('service'),message:f.get('message')};
+      var text='Hello Vedanshi Enterprises,%0A%0AName: '+enc(data.name)+'%0APhone: '+enc(data.phone)+'%0AService: '+enc(data.service)+'%0A%0A'+enc(data.message);
       var how=e.submitter&&e.submitter.value;
-      if(how==='wa')window.open('https://wa.me/918058482609?text='+msg,'_blank','noopener');
-      else window.location.href='mailto:vedanshienterprises2804@gmail.com?subject='+encodeURIComponent('Enquiry: '+f.get('service'))+'&body='+msg;
+      if(how==='wa'){window.open('https://wa.me/918058482609?text='+text,'_blank','noopener');return;}
+      if(f.get('_honey'))return;
+      var btn=e.submitter;if(btn){btn.disabled=true;}
+      st.className='note';st.textContent='Sending…';
+      data._subject='New website enquiry: '+data.service;data._template='table';data._captcha='false';
+      fetch('https://formsubmit.co/ajax/'+MAIL,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data)})
+        .then(function(r){if(!r.ok)throw 0;return r.json();})
+        .then(function(){st.className='note ok';st.textContent='Thank you! Your enquiry has been sent. We will contact you shortly.';form.reset();})
+        .catch(function(){st.className='note err';st.innerHTML='Could not send right now. Please use the WhatsApp button or call '+'+91 80584 82609'+'.';})
+        .then(function(){if(btn)btn.disabled=false;});
     });
   }
   function enc(v){return encodeURIComponent(v||'');}

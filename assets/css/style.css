@@ -224,3 +224,14 @@ footer li{margin-bottom:10px}footer li a,footer p a{color:var(--mute);transition
 .s-rot{transform-origin:50% 50%;animation:spin 14s linear infinite}
 .s-pulse{animation:pulse 1.2s ease-in-out infinite alternate}
 .menu-open .hdr::before{opacity:1;background:#060a13}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{padding:10px 16px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 10%,transparent);font:500 14px var(--body);color:#e6ecf8;transition:transform .25s var(--ease),background .25s}
+.chip:hover{transform:translateY(-3px);background:color-mix(in srgb,var(--accent) 22%,transparent)}
+.cover{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(24px,5vw,56px);align-items:center;padding:clamp(26px,5vw,56px);border-radius:32px;border:1px solid var(--line);background:linear-gradient(150deg,rgba(255,255,255,.06),rgba(255,255,255,.01))}
+.routes{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.routes span{padding:11px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);font:600 14px var(--head);animation:bob 5s ease-in-out infinite}
+.routes span:nth-child(odd){animation-delay:-2.5s}.routes span:nth-child(3n){animation-delay:-1.2s}
+.routes span:first-child{background:linear-gradient(100deg,var(--accent),var(--accent2));color:#1a0d00;border:0}
+.note.ok{color:#34d399}.note.err{color:#fb7185}
+@media (max-width:980px){.cover{grid-template-columns:1fr}}

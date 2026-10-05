@@ -74,6 +74,15 @@ SERVICES = [
        ("Do you work with factories?","Yes, we handle regular and bulk industrial scrap.")]),
 ]
 
+
+CHIPS = {
+ "transport":(["Full Truck Load","Part Load","Container Movement","Heavy Machinery","Industrial Raw Material","FMCG & Retail Goods","Construction Material","Packaged Goods","Scrap Movement","Intra-city Delivery"],["Manufacturing","Construction","Retail & FMCG","Textile","Chemicals","Agriculture"]),
+ "real-estate":(["Flats & Apartments","Villas & Bungalows","Residential Plots","Shops & Showrooms","Office Spaces","Warehouses & Godowns","Industrial Land","Agricultural Land","Rental Properties","Resale Properties"],["First-time Buyers","Investors","Businesses","Landlords","NRIs","Builders & Developers"]),
+ "telecom":(["Tower Erection Support","Optical Fibre Laying","Site Survey","Equipment Installation","Preventive Maintenance","Network Troubleshooting","Cable & Duct Work","Power & Battery Backup","Site Acquisition Support","Field Manpower"],["Telecom Operators","Tower Companies","ISPs","Enterprises","Industrial Parks","Government Projects"]),
+ "packaging":(["3-Ply & 5-Ply Boxes","Corrugated Sheets","Bubble Wrap","Stretch Film","Packing Tape","Foam & EPE Sheets","Pallets & Crates","Printed Cartons","Mailer Boxes","Poly Bags"],["Manufacturers","E-commerce Sellers","Exporters","Textile Units","Food & Pharma","Electronics"]),
+ "scrape":(["Iron & Steel","Aluminium","Copper & Brass","Stainless Steel","Industrial Offcuts","Machinery Scrap","Paper & Cardboard","Plastic Scrap","E-waste (Metal Parts)","Demolition Scrap"],["Factories","Construction Sites","Workshops","Offices","Warehouses","Households"]),
+}
+
 SCENES = {
 "transport":'''<svg class="scene" viewBox="0 0 400 300" role="img" aria-label="Truck on road"><rect x="0" y="236" width="400" height="64" rx="8" fill="#141c30"/><line class="s-dash" x1="0" y1="268" x2="400" y2="268" stroke="#ffb703" stroke-width="4"/><g class="s-truck"><rect x="70" y="120" width="170" height="100" rx="10" fill="#ffb703"/><rect x="80" y="132" width="150" height="8" rx="4" fill="#fb5607" opacity=".6"/><rect x="80" y="150" width="110" height="8" rx="4" fill="#fb5607" opacity=".35"/><path d="M246 150h50l34 36v34h-84z" fill="#fb5607"/><path d="M256 158h34l22 24h-56z" fill="#0b1120" opacity=".75"/><g><circle cx="120" cy="226" r="20" fill="#0b1120"/><circle class="s-wheel" cx="120" cy="226" r="9" fill="none" stroke="#ffb703" stroke-width="4" stroke-dasharray="10 6"/><circle cx="290" cy="226" r="20" fill="#0b1120"/><circle class="s-wheel" cx="290" cy="226" r="9" fill="none" stroke="#ffb703" stroke-width="4" stroke-dasharray="10 6"/></g></g><g fill="#fff" opacity=".12"><circle cx="60" cy="60" r="26"/><circle cx="90" cy="52" r="20"/><circle cx="320" cy="80" r="22"/><circle cx="348" cy="72" r="16"/></g></svg>''',
 "real-estate":'''<svg class="scene" viewBox="0 0 400 300" role="img" aria-label="City buildings"><rect y="262" width="400" height="8" fill="#141c30"/><g><rect class="s-bld" x="30" y="140" width="64" height="122" rx="6" fill="#34d399"/><rect class="s-bld" style="animation-delay:.15s" x="106" y="70" width="70" height="192" rx="6" fill="#22d3ee"/><rect class="s-bld" style="animation-delay:.3s" x="188" y="110" width="60" height="152" rx="6" fill="#10b981"/><rect class="s-bld" style="animation-delay:.45s" x="260" y="40" width="74" height="222" rx="6" fill="#0ea5e9"/><rect class="s-bld" style="animation-delay:.6s" x="346" y="150" width="40" height="112" rx="6" fill="#34d399"/></g><g fill="#fff"><rect class="s-win" x="46" y="160" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:.6s" x="68" y="190" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:1.2s" x="124" y="96" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:.3s" x="148" y="130" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:1.8s" x="124" y="170" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:.9s" x="204" y="136" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:2.1s" x="224" y="176" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:1.4s" x="278" y="70" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:.2s" x="304" y="104" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:1s" x="278" y="150" width="12" height="12" rx="2"/><rect class="s-win" style="animation-delay:1.6s" x="304" y="200" width="12" height="12" rx="2"/></g></svg>''',
@@ -130,7 +139,7 @@ def footer():
 <p style="margin-top:18px;max-width:34ch">Transport · Real Estate · Telecom · Packaging · Scrape — five businesses, one trusted partner.</p></div>
 <div><h4>Company</h4><ul><li><a href="index.html">Home</a></li><li><a href="about.html">About Us</a></li><li><a href="contact.html">Contact</a></li></ul></div>
 <div><h4>Services</h4><ul>{links}</ul></div>
-<div><h4>Get in touch</h4><p><a href="mailto:{MAIL}">{MAIL}</a></p><p><a href="tel:+91{P1}">{P1T}</a><br><a href="tel:+{P2}">{P2T}</a></p></div>
+<div><h4>Get in touch</h4><p>Ahmedabad, Gujarat, India</p><p><a href="mailto:{MAIL}">{MAIL}</a></p><p><a href="tel:+91{P1}">{P1T}</a><br><a href="tel:+{P2}">{P2T}</a></p></div>
 </div>
 <div class="copy"><span>© <span id="yr">2026</span> Vedanshi Enterprises. All rights reserved.</span><span>Transport • Real Estate • Telecom • Packaging • Scrape</span></div>
 </div></footer>'''
@@ -154,7 +163,7 @@ def home():
     body = f'''
 <section class="hero"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div><div class="gridbg"></div>
 <div class="wrap hero-grid"><div>
-<div class="pill rv"><i></i> Five businesses. One trusted partner.</div>
+<div class="pill rv"><i></i> Ahmedabad · Five businesses. One trusted partner.</div>
 <h1 class="rv" style="--d:.1s">Powering India's growth in <span class="words">{words}</span></h1>
 <p class="lead rv" style="--d:.2s">Vedanshi Enterprises brings Transport, Real Estate, Telecom, Packaging and Scrape services together under one roof — reliable, transparent and built for businesses that move fast.</p>
 <div class="cta-row rv" style="--d:.3s"><a class="btn" href="contact.html">Get a Free Quote →</a><a class="btn ghost" href="#services">Explore Services</a></div>
@@ -177,12 +186,14 @@ def home():
 <ul class="checks"><li>Transparent pricing and honest communication</li><li>Quick response on call and WhatsApp</li><li>Services that connect — pack it, move it, recycle it</li><li>Flexible solutions for individuals and businesses</li></ul>
 <a class="btn" href="about.html">About Us →</a></div>
 <div class="panel rv" style="--d:.15s"><div class="stats">
-<div class="stat"><b data-count="5">5</b><span>Business verticals</span></div>
-<div class="stat"><b data-count="24" data-suffix="/7">24/7</b><span>Enquiry support</span></div>
-<div class="stat"><b data-count="100" data-suffix="%">100%</b><span>Commitment</span></div></div>
-<p style="margin:22px 0 0;text-align:center;font-size:14px">Replace with your real numbers — projects, clients, years in business.</p></div></div></section>
+<div class="stat"><b data-count="10" data-suffix="+">10+</b><span>Years of experience</span></div>
+<div class="stat"><b data-count="500" data-suffix="+">500+</b><span>Happy clients</span></div>
+<div class="stat"><b data-count="5">5</b><span>Business verticals</span></div></div>
+<ul class="checks" style="margin:26px 0 0"><li>Head office in Ahmedabad, Gujarat</li><li>Serving Gujarat and across India</li></ul></div></div></section>
 
-<section><div class="wrap"><div class="sec-head center rv"><span class="eyebrow">How we work</span><h2 class="title">Simple. Fast. <span class="grad">Reliable.</span></h2></div>
+<section><div class="wrap"><div class="cover rv"><div><span class="eyebrow">Where we work</span><h2 class="title">Rooted in <span class="grad">Ahmedabad</span>, moving across India</h2><p class="lead">Our team is based in Ahmedabad, Gujarat, and serves customers across Gujarat, Rajasthan, Maharashtra and beyond.</p><a class="btn ghost" href="contact.html">Visit or contact us →</a></div>
+<div class="routes" aria-hidden="true"><span>Ahmedabad</span><span>Surat</span><span>Vadodara</span><span>Rajkot</span><span>Mumbai</span><span>Jaipur</span><span>Delhi NCR</span><span>Pan-India</span></div></div></div></section>
+<section style="padding-top:0"><div class="wrap"><div class="sec-head center rv"><span class="eyebrow">How we work</span><h2 class="title">Simple. Fast. <span class="grad">Reliable.</span></h2></div>
 <div class="steps">
 <div class="step rv"><h3>Tell us</h3><p>Share your requirement by call, WhatsApp or the enquiry form.</p></div>
 <div class="step rv" style="--d:.1s"><h3>We plan</h3><p>We review the details and propose the best solution.</p></div>
@@ -222,20 +233,25 @@ def contact():
 <a href="tel:+{P2}"><span class="ic">📱</span><span><small>Call / WhatsApp</small><b>{P2T}</b></span></a>
 <a href="https://wa.me/{P2}" target="_blank" rel="noopener"><span class="ic">💬</span><span><small>WhatsApp</small><b>Chat with us now</b></span></a>
 <a href="mailto:{MAIL}"><span class="ic">✉️</span><span><small>Email</small><b>{MAIL}</b></span></a>
+<a href="https://www.google.com/maps/search/?api=1&query=Ahmedabad%2C+Gujarat" target="_blank" rel="noopener"><span class="ic">📍</span><span><small>Location</small><b>Ahmedabad, Gujarat, India</b></span></a>
 <div><span class="ic">🕘</span><span><small>Enquiries</small><b>Mon – Sat · Replies within a day</b></span></div></div>
 <div class="panel rv" style="--d:.1s"><h3>Send an enquiry</h3>
 <form id="enquiry"><div class="row"><div><label for="n">Your name</label><input id="n" name="name" required autocomplete="name"></div>
 <div><label for="p">Phone</label><input id="p" name="phone" type="tel" required autocomplete="tel"></div></div>
 <label for="s">Service</label><select id="s" name="service">{opts}</select>
 <label for="m">Your requirement</label><textarea id="m" name="message" required></textarea>
-<div class="cta-row"><button class="btn" type="submit" value="mail">Send by Email</button><button class="btn ghost" type="submit" value="wa">Send on WhatsApp</button></div>
-<p class="note">This opens your email app or WhatsApp with your message ready to send.</p></form></div></div></section>'''
+<input type="text" name="_honey" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+<div class="cta-row"><button class="btn" type="submit" value="send">Send Enquiry</button><button class="btn ghost" type="submit" value="wa">💬 Send on WhatsApp</button></div>
+<p class="note" id="formstatus" role="status" aria-live="polite">Your enquiry goes straight to our team, and we reply within a day.</p></form></div></div></section>'''
     page("contact.html","Contact — Vedanshi Enterprises","Contact Vedanshi Enterprises by phone, WhatsApp or email.","home",body)
 
 def service(s):
     offers = "".join(f'<div class="card rv w3" style="--c:{s["c"]};grid-column:span 2;--d:{i*.07}s"><div class="ic">{a}</div><h3>{b}</h3><p style="margin:0">{c}</p></div>' for i,(a,b,c) in enumerate(s["offers"]))
     faq = "".join(f'<details class="rv"><summary>{q}</summary><p>{a}</p></details>' for q,a in s["faq"])
     others = svc_cards(skip=s["slug"], half=True)
+    ch, wh = CHIPS[s["slug"]]
+    chips = "".join(f'<span class="chip">{c}</span>' for c in ch)
+    who = "".join(f'<li>{w}</li>' for w in wh)
     body = f'''
 <section class="hero sub"><div class="blob a"></div><div class="blob b"></div><div class="gridbg"></div>
 <div class="wrap hero-grid"><div><div class="pill rv"><i></i> {s["name"]} · Vedanshi Enterprises</div>
@@ -244,6 +260,7 @@ def service(s):
 <div class="cta-row rv" style="--d:.3s"><a class="btn" href="contact.html">Request a Quote →</a><a class="btn ghost" href="tel:+91{P1}">📞 {P1T}</a></div></div>
 <div class="rv" style="--d:.2s">{SCENES[s["slug"]]}</div></div></section>
 <section><div class="wrap"><div class="sec-head rv"><span class="eyebrow">Our {s["name"]} services</span><h2 class="title">What we <span class="grad">offer</span></h2></div><div class="cards">{offers}</div></div></section>
+<section><div class="wrap split"><div class="rv"><span class="eyebrow">Specialities</span><h2 class="title">What we <span class="grad">handle</span></h2><div class="chips">{chips}</div></div><div class="panel rv" style="--d:.12s"><span class="eyebrow">Who we serve</span><ul class="checks">{who}</ul><p style="margin:0;font-size:14px">Based in Ahmedabad, Gujarat. Serving customers across Gujarat and India.</p></div></div></section>
 <section style="background:var(--bg2)"><div class="wrap"><div class="sec-head center rv"><span class="eyebrow">Process</span><h2 class="title">From enquiry to <span class="grad">delivery</span></h2></div>
 <div class="steps"><div class="step rv"><h3>Enquire</h3><p>Call, WhatsApp or fill the form with your requirement.</p></div><div class="step rv" style="--d:.1s"><h3>Plan</h3><p>We assess details and recommend the right approach.</p></div><div class="step rv" style="--d:.2s"><h3>Quote</h3><p>You receive clear, transparent pricing.</p></div><div class="step rv" style="--d:.3s"><h3>Deliver</h3><p>We execute on time and keep you informed.</p></div></div></div></section>
 <section><div class="wrap split"><div class="rv"><span class="eyebrow">FAQ</span><h2 class="title">Common <span class="grad">questions</span></h2><p class="lead">Can't find your answer? Call us — we're happy to help.</p></div><div>{faq}</div></div></section>

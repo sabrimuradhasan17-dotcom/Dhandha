@@ -11,8 +11,9 @@
     const o = { method, headers: {}, credentials: 'same-origin' };
     if (raw) { o.body = raw; } else if (body !== undefined) { o.headers['content-type'] = 'application/json'; o.body = JSON.stringify(body); }
     const r = await fetch('/api/admin' + url, o);
-    if (r.status === 401) { showLogin(); throw new Error('Please sign in'); }
-    const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Request failed'); return j;
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401 && url !== '/login') { showLogin(); throw new Error('Please sign in'); } // expired session
+    if (!r.ok) throw new Error(j.error || 'Request failed'); return j;
   }
   function toast(msg, bad) { const t = document.createElement('div'); t.className = 'toast' + (bad ? ' bad' : ''); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2600); }
   const guard = fn => async (...a) => { try { await fn(...a); } catch (e) { toast(e.message, true); } };
@@ -22,7 +23,7 @@
     root.innerHTML = `<div class="login"><h2>Admin sign in</h2><p class="note">La Bhutanz Tours — manage departures, prices, packages and enquiries.</p>
       <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" autofocus><p class="err" id="err"></p>
       <button class="btn btn-primary btn-block" id="go">Sign in</button><p class="note" style="margin-top:14px"><a href="/">← Back to website</a></p></div>`;
-    const go = async () => { try { const j = await api('POST', '/login', { password: $('#pw').value }); state.mustChange = j.mustChange; boot(); } catch (e) { $('#err').textContent = e.message; } };
+    const go = async () => { try { const j = await api('POST', '/login', { password: $('#pw').value.trim() }); state.mustChange = j.mustChange; boot(); } catch (e) { $('#err').textContent = e.message; } };
     $('#go').onclick = go; $('#pw').onkeydown = e => e.key === 'Enter' && go();
   }
 

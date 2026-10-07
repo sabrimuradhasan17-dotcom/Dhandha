@@ -45,3 +45,4 @@ details{background:var(--card);border:1px solid var(--line);border-radius:10px;p
 .ok{color:#1d6b3a}.bad{color:#a02020}.cta{background:linear-gradient(135deg,var(--maroon),#4a1119);color:#fff;border-radius:18px;padding:36px;text-align:center}
 .pill{display:inline-block;padding:2px 10px;border:1px solid var(--line);border-radius:99px;font-size:12px;margin-right:6px}
 textarea{min-height:90px}.prose p{max-width:70ch}
+.hero .wrap{width:100%;min-width:0}.hero h1{overflow-wrap:anywhere}

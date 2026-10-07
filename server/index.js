@@ -162,7 +162,7 @@ admin.get('/stats', (req, res) => {
   res.json({
     enquiries: d.enquiries.length, byStatus, last7: d.enquiries.filter(e => new Date(e.createdAt) > week).length,
     upcoming: up.slice(0, 8), upcomingCount: up.length,
-    unconfirmedPrices: d.packages.filter(p => p.active && !p.priceConfirmed).length,
+    unpriced: d.packages.filter(p => p.active && !(p.price > 0)).length,
     mustChange: !!d.admin.mustChange, recent: d.enquiries.slice(0, 6)
   });
 });

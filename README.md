@@ -43,7 +43,9 @@ Everything below was taken from the live site and is editable in the admin panel
 - The old home page also advertised a **"Discover Bhutan 10N/11D"** tour that had no page. It is added as a hidden draft package with its poster: add its itinerary and price, then tick "Visible on website".
 - Left out on purpose: the old fixed-departure pages' 2024 departure dates and the "Covid vaccination certificate" entry requirement (both out of date).
 
-## Still needs your input — please review before launch
-- **Package prices are sample values** (the old site said "price on request"). The admin shows a warning until each price is confirmed.
-- Departures shown are sample dates and seats from Mumbai; flight numbers and times are blank.
-- Generic inclusions/exclusions for the land packages, the Terms & Privacy pages and the booking-advance wording are starter text.
+## Still needs your input (add as you get the details)
+- **Prices** — start empty, so the site shows "Price on request". Enter ₹ per person in Admin → Packages & prices; each price appears as soon as you set it.
+- **Departures** — none scheduled yet; the site invites visitors to ask for private dates. Add dates, seats and flight details in Admin → Departures & flights.
+- Generic inclusions/exclusions for the land packages, the Terms & Privacy pages and the booking-advance wording are starter text — review them.
+- Add the **Discover Bhutan** itinerary and price, then make it visible.
+- Optional: payment details (UPI/bank), testimonials, your website address (SEO), a real admin password.

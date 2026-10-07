@@ -7,19 +7,19 @@ const has = f => fs.existsSync(path.join(IMG, f));
 const clean = s => String(s || '').replace(/ /g, ' ').replace(/^[·\s]+/, '').replace(/\s+/g, ' ').trim();
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
-// Prices are SAMPLES (INR per person) until the owner confirms them in Admin → Packages.
+// Prices start at 0 = "Price on request" on the site. The owner enters real INR per-person prices in Admin → Packages.
 const META = [
-  ['fly-4n5d', 'fly', 'Fly In Fly Out', 4, 5, 32000, true],
-  ['fly-5n6d', 'fly', 'Fly In Fly Out', 5, 6, 39000, true],
-  ['fly-6n7d', 'fly', 'Fly In Fly Out', 6, 7, 46000, false],
-  ['fly-7n8d', 'fly', 'Fly In Fly Out', 7, 8, 53000, false],
-  ['drive-6n7d', 'drive', 'Drive In Drive Out', 6, 7, 29000, false],
-  ['drive-7n8d', 'drive', 'Drive In Drive Out', 7, 8, 34000, false],
-  ['meditation-7n8d', 'special', 'Meditation Tour', 7, 8, 58000, true],
-  ['explore-10n11d', 'special', 'Explore Bhutan', 10, 11, 72000, true],
-  ['photography-12n13d', 'special', 'Photography Tour', 12, 13, 105000, false],
-  ['last-shangri-la-9n10d', 'fixed', 'The Last Shangri-La', 9, 10, 89000, true],
-  ['thunder-dragon-6n7d', 'fixed', 'Land of the Thunder Dragon', 6, 7, 62000, true],
+  ['fly-4n5d', 'fly', 'Fly In Fly Out', 4, 5, 0, true],
+  ['fly-5n6d', 'fly', 'Fly In Fly Out', 5, 6, 0, true],
+  ['fly-6n7d', 'fly', 'Fly In Fly Out', 6, 7, 0, false],
+  ['fly-7n8d', 'fly', 'Fly In Fly Out', 7, 8, 0, false],
+  ['drive-6n7d', 'drive', 'Drive In Drive Out', 6, 7, 0, false],
+  ['drive-7n8d', 'drive', 'Drive In Drive Out', 7, 8, 0, false],
+  ['meditation-7n8d', 'special', 'Meditation Tour', 7, 8, 0, true],
+  ['explore-10n11d', 'special', 'Explore Bhutan', 10, 11, 0, true],
+  ['photography-12n13d', 'special', 'Photography Tour', 12, 13, 0, false],
+  ['last-shangri-la-9n10d', 'fixed', 'The Last Shangri-La', 9, 10, 0, true],
+  ['thunder-dragon-6n7d', 'fixed', 'Land of the Thunder Dragon', 6, 7, 0, true],
   ['discover-10n11d', 'special', 'Discover Bhutan', 10, 11, 0, false]
 ];
 const SUMMARY = {
@@ -88,19 +88,6 @@ function packages() {
   });
 }
 
-function departures() {
-  const out = []; let n = 0;
-  const add = (packageId, date, seats, booked, extra = {}) => out.push({
-    id: 'd' + (++n), packageId, date, fromCity: 'Mumbai', seats, booked, priceOverride: 0, status: 'open',
-    airline: '', flightNo: '', route: extra.route || '', depTime: '', arrTime: '', notes: extra.notes || ''
-  });
-  ['2026-11-10', '2026-11-24', '2026-12-08', '2027-02-23', '2027-03-09', '2027-03-23', '2027-04-06'].forEach((d, i) => add('last-shangri-la-9n10d', d, 20, [14, 6, 3, 0, 2, 0, 0][i], { route: 'Mumbai → Paro → Mumbai' }));
-  ['2026-11-03', '2026-11-17', '2026-12-01', '2027-03-02', '2027-03-16', '2027-04-13'].forEach((d, i) => add('thunder-dragon-6n7d', d, 20, [20, 9, 4, 0, 1, 0][i], { route: 'Mumbai → Paro → Mumbai' }));
-  ['2026-10-25', '2026-11-22', '2026-12-20'].forEach((d, i) => add('fly-5n6d', d, 12, [5, 2, 0][i], { notes: 'Private group departure — land package, join us at Paro.' }));
-  ['2026-11-15', '2027-03-14'].forEach(d => add('meditation-7n8d', d, 10, 0, { notes: 'Small group, land package.' }));
-  return out;
-}
-
 const posts = [
   {
     id: 'p1', slug: 'best-time-to-visit-bhutan', title: 'Best time to visit Bhutan', date: '2026-09-15', published: true, image: '',
@@ -141,11 +128,11 @@ module.exports = function seed() {
       documents: ['Passport (minimum 6 months validity) or voter ID card for adults', 'Passport (minimum 6 months validity) or birth certificate for children', 'Recent passport-size photograph', 'Valid travel insurance', 'Details of the number of times each guest has visited Bhutan', 'Please send these at the time of booking confirmation'],
       sdfINR: 1200, gstPct: 5, gstIncluded: false, showPrices: true, advanceInfo: 'A booking advance confirms your seats. The balance is due before departure.',
       payment: { upiId: '', accountName: '', bank: '', accountNo: '', ifsc: '', note: '' },
-      announcement: { enabled: true, text: 'Autumn & spring departures from Mumbai are filling fast — message us on WhatsApp for live availability.' },
+      announcement: { enabled: true, text: 'Planning Bhutan? Message us on WhatsApp for personalised itineraries, travel dates and availability.' },
       social: { instagram: 'https://www.instagram.com/labhutanz/', facebook: 'https://www.facebook.com/Bhutanztours/', youtube: 'https://www.youtube.com/@bhutanztours681', tripadvisor: 'https://www.tripadvisor.com/Attraction_Review-g304554-d34595555-Reviews-La_Bhutanz_Tours-Mumbai_Maharashtra.html', trustpilot: 'https://www.trustpilot.com/review/bhutanz.com', linkedin: 'https://www.linkedin.com/in/la-bhutanz-tours-001294420', pinterest: 'https://in.pinterest.com/labhutanztours/', blog: 'http://labhutanztours.blogspot.com/' },
       seo: { title: 'La Bhutanz Tours — Bhutan Tour Packages from Mumbai', description: 'Personalised Bhutan tour packages, fixed departures and private journeys from Mumbai. Permits, hotels, guides and SDF handled for you.' }
     },
-    packages: packages(), departures: departures(),
+    packages: packages(), departures: [], // add real departures in Admin → Departures & flights
     faqs: old.faqs.map((f, i) => ({ id: 'f' + i, q: clean(f.q), a: clean(f.a), order: i, active: true })),
     testimonials: [], posts, pages, enquiries: []
   };

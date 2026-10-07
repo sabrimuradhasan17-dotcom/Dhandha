@@ -38,3 +38,6 @@ Contact: +91 98203 89595 · WhatsApp +91 93244 55999 · tours@bhutanz.com · bhu
 - Package detail pages with itinerary timeline and **cost estimator** (package + SDF).
 - Visa/SDF/GST quick facts and FAQ accordion (content taken from the live site).
 - **Admin panel** (`admin.html`) to edit flights, departure dates, seats, statuses, package prices, bulk % price change, contact settings and banner; backup/import/export and a publish file.
+
+## Business model (for the rebuild)
+Inbound destination travel agency (B2C, Mumbai) selling **land packages** (hotels, transfers, guide, permits) for Bhutan to Indian travellers, plus group fixed departures with Mumbai–Paro return flights, pure-veg/Jain meals and a female guide. Revenue comes from per-person package pricing; leads arrive by phone/WhatsApp, so the new site is built around fast enquiry capture, WhatsApp hand-off, visible pricing, live departures/seats and an owner-run CRM.

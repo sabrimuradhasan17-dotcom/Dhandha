@@ -4,3 +4,4 @@ data/db.json.tmp
 data/uploads/
 data/backups/
 .env
+dist/

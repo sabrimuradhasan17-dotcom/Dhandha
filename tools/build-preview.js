@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Builds a static, self-contained preview of the PUBLIC site (no server needed):
-//   node tools/build-preview.js <out-dir>
+//   node tools/build-preview.js <out-dir> [admin-demo-url]
 // The real front end runs unchanged, but /api/* calls are answered from embedded seed data,
 // routing is in-memory, and enquiries are NOT stored. Admin runs only on the Node server.
 const fs = require('fs'), path = require('path');
-const root = path.join(__dirname, '..'), out = process.argv[2];
+const root = path.join(__dirname, '..'), out = process.argv[2], adminUrl = process.argv[3] || '';
 if (!out) { console.error('usage: build-preview.js <out-dir>'); process.exit(1); }
 const seed = require('../server/seed')();
 const rel = v => JSON.parse(JSON.stringify(v).replace(/"\/img\//g, '"img/'));
@@ -51,7 +51,7 @@ const html = `<title>La Bhutanz Tours</title>
 <style>${css}
 .pv{background:#1d1512;color:#f1e6d8;font:500 12px/1.4 Inter,system-ui,sans-serif;text-align:center;padding:7px 16px}
 body{font-size:16px}</style>
-<div class="pv">Preview of the new La Bhutanz Tours website. Enquiries are not saved here, and the admin panel runs on the live server.</div>
+<div class="pv">Preview of the new La Bhutanz Tours website. Enquiries are not saved in this preview.${adminUrl ? ` <a href="${adminUrl}" target="_blank" style="color:#e5bd4a">Try the admin panel demo ↗</a>` : ' The admin panel runs on the live server.'}</div>
 <div id="banner"></div>
 <header class="nav" id="hdr"></header>
 <main id="app" tabindex="-1"><div class="wrap" style="padding:80px 20px">Loading…</div></main>

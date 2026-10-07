@@ -23,6 +23,7 @@ Deploy anywhere that runs Node (Render, Railway, Fly.io, a VPS) or with the incl
 ## Deploy (put it live)
 **Render (simplest):** push this repo to GitHub → Render → *New → Blueprint* → select the repo and branch. `render.yaml` sets up the web service and a 1 GB persistent disk (a paid "Starter" plan is required for disks; on a free plan your data is wiped on every restart). Enter an `ADMIN_PASSWORD` when asked. Add your own domain under *Settings → Custom Domains*, then set the same address in Admin → Settings → Website address.
 **Docker / VPS / Railway / Fly.io:** use the included `Dockerfile`, mount a volume at `/data`, set `ADMIN_PASSWORD`, serve over HTTPS.
+**Single HTML files to send by WhatsApp/email:** `node tools/build-single-html.js dist` writes `la-bhutanz-website-preview.html` and `la-bhutanz-admin-demo.html` (images embedded; keep them in one folder so their links work).
 **Static client preview (no server):** `node tools/build-static-preview.js docs` builds the website preview plus an interactive admin demo as plain files (already built in `docs/`). Upload the folder to Netlify Drop, Cloudflare Pages or GitHub Pages (Settings → Pages → branch → `/docs`) and share that address. Enquiries aren't saved and admin edits stay in the visitor's browser; the real admin needs the Node server.
 
 ## Website

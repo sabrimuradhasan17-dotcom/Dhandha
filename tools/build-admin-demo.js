@@ -32,6 +32,10 @@ css = css.replace(/@media\(prefers-color-scheme:dark\)\{:root\{([^}]*)\}\}/, (m,
 let js = fs.readFileSync(path.join(root, 'public/admin/admin.js'), 'utf8');
 const must = (a, b) => { if (!js.includes(a)) throw new Error('patch target missing: ' + a.slice(0, 60)); js = js.split(a).join(b); };
 must(`<p class="note" style="margin-top:14px"><a href="/">← Back to website</a></p>`, `<p class="note" style="margin-top:14px"><b>Demo:</b> password is <code>bhutanz@2026</code>. Data is simulated and stays in this browser only.${pubUrl ? ` <a href="${pubUrl}" target="_blank">Open the website preview ↗</a>` : ''}</p>`);
+// the hosted viewer can block typing into password fields, so the demo needs no typing: prefilled value + one-click button
+must(`<input id="pw" type="password" autocomplete="current-password" autofocus>`, `<input id="pw" type="text" value="bhutanz@2026" autocomplete="off" spellcheck="false">`);
+must(`<button class="btn btn-primary btn-block" id="go">Sign in</button>`, `<button class="btn btn-primary btn-block" id="go">Enter demo admin</button>`);
+must(`$('#go').onclick = go;`, `$('#go').onclick = go; setTimeout(() => { const g = $('#go'); if (g) g.focus(); }, 0);`);
 must(`<a href="/" target="_blank">↗ View website</a>`, pubUrl ? `<a href="${pubUrl}" target="_blank">↗ View website preview</a>` : '<span></span>');
 must(`<a class="btn btn-ghost btn-sm" href="/api/admin/enquiries.csv">⬇ Export CSV</a>`, `<span class="note">CSV export works on the live server</span>`);
 must(`<a class="btn btn-ghost" href="/api/admin/backup">⬇ Download backup</a>`, `<span class="note">Backup download works on the live server.</span>`);

@@ -178,7 +178,7 @@
     { k: 'nights', l: 'Nights', t: 'number' }, { k: 'days', l: 'Days', t: 'number' }, { k: 'price', l: 'Price ₹ per person (0 = on request)', t: 'number' },
     { k: 'stay', l: 'Stay summary (e.g. Thimphu 2N | Punakha 1N | Paro 2N)', full: true },
     { k: 'summary', l: 'Short summary (shown on cards)', t: 'textarea', r: 2 }, { k: 'intro', l: 'Introduction (blank line = new paragraph)', t: 'textarea', r: 6 },
-    { k: 'image', l: 'Cover photo', t: 'image' },
+    { k: 'poster', l: 'Card poster (square image used on package cards)', t: 'image' }, { k: 'image', l: 'Banner (wide image at top of package page)', t: 'image' }, { k: 'imageHasTitle', l: 'Banner already contains the package title (hide the text overlay)', t: 'checkbox' },
     { k: 'highlights', l: 'Journey highlights', t: 'lines' },
     { k: 'itinerary', l: 'Day-by-day itinerary', t: 'repeater', s: [{ k: 'title', l: 'Day title' }, { k: 'meta', l: 'Travel info (distance · time)' }, { k: 'desc', l: 'Description', t: 'textarea', r: 4 }] },
     { k: 'inclusions', l: 'Inclusions', t: 'lines' }, { k: 'exclusions', l: 'Exclusions', t: 'lines' }, { k: 'ideal', l: 'Who is it ideal for?', t: 'lines' },
@@ -224,12 +224,13 @@
   /* ---------- settings ---------- */
   async function set(m) {
     const s = await api('GET', '/settings'), g = (path) => path.split('.').reduce((o, k) => (o || {})[k], s);
-    const F = [['Brand & home page', [['brand', 'Brand name'], ['tagline', 'Tagline'], ['heroTitle', 'Home headline'], ['heroSub', 'Home sub-headline', 'textarea'], ['logo', 'Logo', 'image'], ['siteUrl', 'Website address (https://…, for SEO)']]],
+    const F = [['Brand & home page', [['brand', 'Brand name'], ['tagline', 'Tagline'], ['heroTitle', 'Home headline'], ['heroSub', 'Home sub-headline', 'textarea'], ['logo', 'Logo', 'image'], ['favicon', 'Favicon', 'image'], ['ogImage', 'Social share image', 'image'], ['siteUrl', 'Website address (https://…, for SEO)']]],
       ['Contact', [['whatsapp', 'WhatsApp number (digits, with country code)'], ['phone', 'Phone'], ['emails', 'Emails (one per line)', 'lines'], ['address', 'Office address', 'textarea'], ['hours', 'Office hours']]],
       ['Pricing & fees', [['sdfINR', 'SDF ₹ per person per night', 'number'], ['gstPct', 'GST %', 'number'], ['gstIncluded', 'Package prices already include GST', 'checkbox'], ['showPrices', 'Show prices publicly', 'checkbox'], ['advanceInfo', 'Booking advance message', 'textarea']]],
       ['Payment details (shown on How to book)', [['payment.upiId', 'UPI ID'], ['payment.accountName', 'Account name'], ['payment.bank', 'Bank & branch'], ['payment.accountNo', 'Account number'], ['payment.ifsc', 'IFSC'], ['payment.note', 'Note', 'textarea']]],
+      ['Documents guests must provide', [['documents', 'One per line', 'lines']]],
       ['Announcement banner', [['announcement.enabled', 'Show banner', 'checkbox'], ['announcement.text', 'Banner text']]],
-      ['Social links', ['instagram', 'facebook', 'youtube', 'tripadvisor', 'trustpilot', 'linkedin'].map(k => ['social.' + k, k[0].toUpperCase() + k.slice(1) + ' URL'])],
+      ['Social links', ['instagram', 'facebook', 'youtube', 'tripadvisor', 'trustpilot', 'linkedin', 'pinterest', 'blog'].map(k => ['social.' + k, k[0].toUpperCase() + k.slice(1) + ' URL'])],
       ['SEO', [['seo.title', 'Home page title'], ['seo.description', 'Home page description', 'textarea']]]];
     const flat = F.flatMap(([, f]) => f);
     m.innerHTML = `<div class="row"><h1 style="margin:0">Settings</h1><button class="btn btn-primary" id="save">Save settings</button></div>${F.map(([t, fs]) => `<div class="panel"><h3>${t}</h3><div class="fgrid">${fs.map(([k, l, ty]) => fieldHtml({ k: k.replace(/\./g, '_'), l, t: ty || 'text', full: ty === 'textarea' || ty === 'image' }, g(k), 's_')).join('')}</div></div>`).join('')}`;

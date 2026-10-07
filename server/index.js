@@ -60,7 +60,7 @@ function clean(schema, input) {
   return o;
 }
 const SCHEMAS = {
-  packages: { slug: 's', name: 's', category: 's', nights: 'n', days: 'n', price: 'n', singleSupplement: 'n', stay: 's', summary: 'l', intro: 'l', image: 's', highlights: 'a', itinerary: [{ title: 's', meta: 's', desc: 'l' }], inclusions: 'a', exclusions: 'a', ideal: 'a', faqs: [{ q: 's', a: 'l' }], flightIncluded: 'b', featured: 'b', active: 'b', order: 'n' },
+  packages: { slug: 's', name: 's', category: 's', nights: 'n', days: 'n', price: 'n', singleSupplement: 'n', stay: 's', summary: 'l', intro: 'l', image: 's', poster: 's', imageHasTitle: 'b', highlights: 'a', itinerary: [{ title: 's', meta: 's', desc: 'l' }], inclusions: 'a', exclusions: 'a', ideal: 'a', faqs: [{ q: 's', a: 'l' }], flightIncluded: 'b', featured: 'b', active: 'b', order: 'n' },
   departures: { packageId: 's', date: 's', fromCity: 's', seats: 'n', booked: 'n', priceOverride: 'n', status: 's', airline: 's', flightNo: 's', route: 's', depTime: 's', arrTime: 's', notes: 'l' },
   faqs: { q: 's', a: 'l', order: 'n', active: 'b' },
   testimonials: { name: 's', place: 's', text: 'l', rating: 'n', active: 'b' },
@@ -69,11 +69,11 @@ const SCHEMAS = {
 };
 const SLUGGED = { packages: 'name', posts: 'title', pages: 'title' };
 const SETTINGS = {
-  brand: 's', tagline: 's', heroTitle: 's', heroSub: 'l', whatsapp: 's', phone: 's', emails: 'a', address: 'l', hours: 's', siteUrl: 's', logo: 's', favicon: 's',
+  brand: 's', tagline: 's', heroTitle: 's', heroSub: 'l', whatsapp: 's', phone: 's', emails: 'a', address: 'l', hours: 's', siteUrl: 's', logo: 's', favicon: 's', ogImage: 's', documents: 'a',
   sdfINR: 'n', gstPct: 'n', gstIncluded: 'b', showPrices: 'b', advanceInfo: 'l',
   payment: { upiId: 's', accountName: 's', bank: 's', accountNo: 's', ifsc: 's', note: 'l' },
   announcement: { enabled: 'b', text: 's' },
-  social: { instagram: 's', facebook: 's', youtube: 's', tripadvisor: 's', trustpilot: 's', linkedin: 's' },
+  social: { instagram: 's', facebook: 's', youtube: 's', tripadvisor: 's', trustpilot: 's', linkedin: 's', pinterest: 's', blog: 's' },
   seo: { title: 's', description: 'l' }
 };
 function cleanSettings(input, schema = SETTINGS) {
@@ -240,12 +240,12 @@ const shell = fs.readFileSync(path.join(PUB, 'index.html'), 'utf8');
 const baseUrl = req => (DB.db.settings.siteUrl || (req.protocol + '://' + req.get('host'))).replace(/\/$/, '');
 function meta(req) {
   const d = DB.db, s = d.settings, base = baseUrl(req), p = req.path.replace(/\/$/, '') || '/';
-  let title = s.seo.title, desc = s.seo.description, status = 200, ld = null, img = s.logo || '';
+  let title = s.seo.title, desc = s.seo.description, status = 200, ld = null, img = s.ogImage || s.logo || '';
   let m;
   if ((m = p.match(/^\/package\/([\w-]+)$/))) {
     const k = d.packages.find(x => x.slug === m[1] && x.active);
     if (k) {
-      title = `${k.name} ${k.nights} Nights / ${k.days} Days — Bhutan Tour Package | ${s.brand}`; desc = k.summary; img = k.image || img;
+      title = `${k.name} ${k.nights} Nights / ${k.days} Days — Bhutan Tour Package | ${s.brand}`; desc = k.summary; img = k.poster || k.image || img;
       ld = { '@context': 'https://schema.org', '@type': 'TouristTrip', name: `${k.name} ${k.nights}N/${k.days}D`, description: k.summary, touristType: 'Leisure', provider: { '@type': 'TravelAgency', name: s.brand }, ...(k.price > 0 && s.showPrices ? { offers: { '@type': 'Offer', priceCurrency: 'INR', price: k.price, url: base + req.path } } : {}) };
     } else status = 404;
   } else if ((m = p.match(/^\/blog\/([\w-]+)$/))) {

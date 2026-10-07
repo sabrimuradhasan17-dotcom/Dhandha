@@ -35,8 +35,15 @@ SEO: per-page titles/descriptions, canonical URLs, Open Graph, JSON-LD (TravelAg
 ## Security notes
 scrypt-hashed password, HMAC-signed HttpOnly SameSite=Strict cookie, login/enquiry rate limits, origin check on admin writes, CSP + security headers, server-side input whitelisting, HTML sanitising, image upload type sniffing (no SVG). Single admin account; the JSON database suits a small business (thousands of enquiries). Move to a SQL database if you need multiple staff accounts or heavy traffic.
 
-## Content status — please review before launch
-- **Package prices are sample values** (admin shows a warning until each is confirmed).
-- Departures shown are sample dates/seats from Mumbai; flight numbers/times are blank.
-- Generic inclusions/exclusions for land packages, the Terms & Privacy pages and the booking-advance wording are starter text.
-- Logo and photos could not be copied from the old site (its image host blocks automated downloads): upload them in Settings → Logo and Packages → Cover photo.
+## Content from the original bhutanz.com
+Everything below was taken from the live site and is editable in the admin panel:
+- **Logo, favicon, share image, package posters and tour banners** (downloaded from the old site and optimised; `public/img`). The brand colours (red `#8a2124`, gold `#e5bd4a`) come from the logo.
+- **All 9 tour itineraries** (highlights, day-by-day text, "ideal for", per-tour FAQs) and the **2 fixed departures** (inclusions, exclusions, itinerary).
+- **46 FAQs, Visa & Entry Permit guide, Festivals, About Bhutan, Do's & Don'ts, About us**, home-page copy, experiences, "why choose us", contact details, WhatsApp number, office hours, and all social links (Instagram, Facebook, YouTube, Tripadvisor, Trustpilot, LinkedIn, Pinterest, blog).
+- The old home page also advertised a **"Discover Bhutan 10N/11D"** tour that had no page. It is added as a hidden draft package with its poster: add its itinerary and price, then tick "Visible on website".
+- Left out on purpose: the old fixed-departure pages' 2024 departure dates and the "Covid vaccination certificate" entry requirement (both out of date).
+
+## Still needs your input — please review before launch
+- **Package prices are sample values** (the old site said "price on request"). The admin shows a warning until each price is confirmed.
+- Departures shown are sample dates and seats from Mumbai; flight numbers and times are blank.
+- Generic inclusions/exclusions for the land packages, the Terms & Privacy pages and the booking-advance wording are starter text.

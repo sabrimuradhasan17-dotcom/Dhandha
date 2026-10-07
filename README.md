@@ -20,6 +20,11 @@ Set `ADMIN_PASSWORD=...` to choose the initial password instead.
 
 Deploy anywhere that runs Node (Render, Railway, Fly.io, a VPS) or with the included `Dockerfile` (mount a volume at `/data`). Put it behind HTTPS.
 
+## Deploy (put it live)
+**Render (simplest):** push this repo to GitHub → Render → *New → Blueprint* → select the repo and branch. `render.yaml` sets up the web service and a 1 GB persistent disk (a paid "Starter" plan is required for disks; on a free plan your data is wiped on every restart). Enter an `ADMIN_PASSWORD` when asked. Add your own domain under *Settings → Custom Domains*, then set the same address in Admin → Settings → Website address.
+**Docker / VPS / Railway / Fly.io:** use the included `Dockerfile`, mount a volume at `/data`, set `ADMIN_PASSWORD`, serve over HTTPS.
+**Static preview (no server):** `node tools/build-preview.js <dir>` builds a read-only copy of the public site for quick sharing. Enquiries and the admin panel need the Node server.
+
 ## Website
 Home · Packages (filters/search) · Package detail (itinerary, inclusions, departures, **cost estimator** with SDF + GST) · Departures & flights · Journal · FAQ · Visa/Festivals/About/Do's & Don'ts/Terms/Privacy pages · How to book & pay · Contact.
 **WhatsApp**: floating button, header button, mobile call/WhatsApp bar, and pre-filled messages per package, departure and enquiry. Enquiry form saves to the CRM *and* offers "Continue on WhatsApp".

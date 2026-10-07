@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin — La Bhutanz Tours</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.login{max-width:380px;margin:12vh auto;background:var(--card);padding:30px;border-radius:var(--r);box-shadow:var(--shadow);border:1px solid var(--line)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:14px 0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+td input,td select{padding:6px 8px;min-width:90px;font-size:.85rem}td input[type=number]{min-width:70px;width:80px}
+.dirty{color:var(--amber);font-weight:600}.ok{color:var(--green)}.btn-sm{padding:6px 12px;font-size:.8rem}
+.panel{display:none}.panel.on{display:block}.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.warn{background:#fff6dd;border:1px solid #f0d58a;color:#5a4400;border-radius:12px;padding:12px 16px;font-size:.88rem;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div id="login" class="login">
+  <h2>Admin sign in</h2>
+  <p class="note">La Bhutanz Tours — manage flights, departure dates and package prices.</p>
+  <label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+  <p id="err" style="color:var(--red);min-height:1.2em;font-size:.85rem"></p>
+  <button class="btn btn-primary" id="go" style="width:100%;justify-content:center">Sign in</button>
+  <p class="note" style="margin-top:14px">Default password: <code>bhutanz@2026</code> — change it after first sign in (Settings tab).</p>
+  <p class="note"><a href="index.html">← Back to website</a></p>
+</div>
+
+<div id="app" style="display:none"><div class="wrap">
+  <div class="bar">
+    <div><span class="logo">La <span>Bhutanz</span></span> <span class="note">Admin</span></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span id="state" class="note ok">Saved</span>
+      <button class="btn btn-primary btn-sm" id="save">Save changes</button>
+      <a class="btn btn-ghost btn-sm" href="index.html" target="_blank">View site</a>
+      <button class="btn btn-ghost btn-sm" id="out">Sign out</button>
+    </div>
+  </div>
+  <div class="warn"><b>How publishing works:</b> “Save changes” stores edits in <i>this browser</i> so you can preview them on the site. To make them live for every visitor, open the <b>Backup</b> tab, click <b>Download site-data.js</b>, and replace <code>data/site-data.js</code> on your hosting.</div>
+  <div class="tabs" id="tabs">
+    <button class="chip on" data-t="dep">✈ Departures &amp; flights</button>
+    <button class="chip" data-t="pkg">💰 Packages &amp; prices</button>
+    <button class="chip" data-t="set">⚙ Settings</button>
+    <button class="chip" data-t="bak">💾 Backup</button>
+  </div>
+
+  <div class="panel on" id="p-dep">
+    <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px">
+      <p class="note" style="margin:0">Edit dates, flights, seats and per-departure price. Leave price at 0 to use the package price.</p>
+      <button class="btn btn-primary btn-sm" id="addDep">+ Add departure</button>
+    </div>
+    <div class="table-wrap"><table style="min-width:1200px"><thead><tr><th>Date</th><th>Package</th><th>From</th><th>Airline</th><th>Flight no.</th><th>Route</th><th>Dep. time</th><th>Arr. time</th><th>Seats</th><th>Price USD</th><th>Status</th><th></th></tr></thead><tbody id="depRows"></tbody></table></div>
+  </div>
+
+  <div class="panel" id="p-pkg">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px">
+      <div><label for="pct">Bulk change all prices (%)</label><input id="pct" type="number" value="5" style="width:110px"></div>
+      <button class="btn btn-ghost btn-sm" id="applyPct">Apply</button>
+      <button class="btn btn-primary btn-sm" id="addPkg" style="margin-left:auto">+ Add package</button>
+    </div>
+    <div class="table-wrap"><table style="min-width:1000px"><thead><tr><th>Name</th><th>Type</th><th>Nights</th><th>Days</th><th>Price USD / person</th><th>Route</th><th>Summary</th><th>Visible</th><th></th></tr></thead><tbody id="pkgRows"></tbody></table></div>
+    <p class="note">Price 0 shows “On request”. Itinerary day-by-day text is edited in <code>data/site-data.js</code> (ask us to add an itinerary editor).</p>
+  </div>
+
+  <div class="panel" id="p-set">
+    <div class="grid2">
+      <div><label>WhatsApp number (digits only, with country code)</label><input data-s="whatsapp"></div>
+      <div><label>Phone</label><input data-s="phone"></div>
+      <div><label>Email 1</label><input data-s="email0"></div>
+      <div><label>Email 2</label><input data-s="email1"></div>
+      <div><label>Office hours</label><input data-s="hours"></div>
+      <div><label>SDF per person per night (USD)</label><input type="number" data-s="sdfUSD"></div>
+      <div style="grid-column:1/-1"><label>Address</label><input data-s="address"></div>
+      <div style="grid-column:1/-1"><label>Announcement banner text</label><input data-s="annText"></div>
+      <div><label><input type="checkbox" data-s="annOn" style="width:auto"> Show announcement banner</label></div>
+    </div>
+    <h3 style="margin-top:28px">Change admin password</h3>
+    <div class="grid2"><div><label for="np">New password (min 8 characters)</label><input id="np" type="password"></div><div style="align-self:end"><button class="btn btn-ghost btn-sm" id="setPw">Update password</button></div></div>
+    <p class="note">This password only gates the admin screen in the browser. Don't treat it as strong security — see the README for hardening options.</p>
+  </div>
+
+  <div class="panel" id="p-bak">
+    <div class="grid2">
+      <div class="feat"><h3>Publish to the live site</h3><p class="note">Downloads <code>site-data.js</code>. Replace <code>data/site-data.js</code> on your hosting with it.</p><button class="btn btn-primary" id="dlJs">Download site-data.js</button></div>
+      <div class="feat"><h3>Backup (JSON)</h3><p class="note">Save or restore all data as a JSON file.</p><button class="btn btn-ghost" id="dlJson">Export JSON</button> <input type="file" id="imp" accept=".json" style="margin-top:10px"></div>
+      <div class="feat"><h3>Reset</h3><p class="note">Discard browser edits and go back to the published data.</p><button class="btn btn-ghost" id="reset" style="color:var(--red)">Discard my edits</button></div>
+    </div>
+  </div>
+</div></div>
+<script src="data/site-data.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

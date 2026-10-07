@@ -1,0 +1,90 @@
+/* Default site data. The admin panel edits a copy of this in the browser;
+   use Admin → Backup → "Download site-data.js" and replace this file to publish changes to all visitors. */
+window.BHUTANZ_DEFAULT = {
+  version: 1,
+  settings: {
+    brand: "La Bhutanz Tours",
+    tagline: "Exceptional · Explorable · Experience",
+    whatsapp: "919324455999",
+    phone: "+91 98203 89595",
+    emails: ["tours@bhutanz.com", "bhutanztours@gmail.com"],
+    address: "14, Kapeesh Mall, 1st Floor, M. G. Road, Mulund (West), Mumbai 400080, Maharashtra, India",
+    hours: "Mon–Fri 11:00–18:00 IST · Sat & Sun closed",
+    sdfUSD: 100,
+    announcement: { enabled: true, text: "Autumn & spring departures are filling fast — message us on WhatsApp for live availability." },
+    social: {
+      instagram: "https://www.instagram.com/labhutanz/",
+      facebook: "https://www.facebook.com/Bhutanztours/",
+      youtube: "https://www.youtube.com/@bhutanztours681",
+      tripadvisor: "https://www.tripadvisor.com/Attraction_Review-g304554-d34595555-Reviews-La_Bhutanz_Tours-Mumbai_Maharashtra.html",
+      trustpilot: "https://www.trustpilot.com/review/bhutanz.com"
+    }
+  },
+  /* SAMPLE PRICES (USD per person, twin sharing) — replace in Admin → Packages. 0 = "Price on request". */
+  packages: [
+    { id: "fly-4n5d", category: "fly", name: "Fly In Fly Out", nights: 4, days: 5, price: 780, active: true,
+      route: "Paro · Thimphu · Punakha", summary: "The classic short escape: Tiger's Nest, Thimphu and the Dochula Pass to Punakha.",
+      highlights: ["Tiger's Nest hike", "Dochula Pass 3,050 m", "Punakha Dzong"],
+      itinerary: ["Arrival at Paro (2,250 m)", "Tiger's Nest hike & drive to Thimphu", "Sightseeing in Thimphu", "Excursion to Punakha via Dochula Pass", "Departure via Paro Airport"] },
+    { id: "fly-5n6d", category: "fly", name: "Fly In Fly Out", nights: 5, days: 6, price: 940, active: true,
+      route: "Paro · Thimphu · Punakha", summary: "An unhurried version with a night in Punakha and a dedicated Tiger's Nest day.",
+      highlights: ["Overnight in Punakha", "Dedicated Tiger's Nest day", "Cultural capital Thimphu"],
+      itinerary: ["Arrive Paro, transfer to Thimphu", "Discover Thimphu", "Thimphu to Punakha via Dochula Pass", "Punakha to Paro", "Tiger's Nest Monastery excursion", "Departure from Paro"] },
+    { id: "fly-6n7d", category: "fly", name: "Fly In Fly Out", nights: 6, days: 7, price: 1090, active: true,
+      route: "Paro · Thimphu · Punakha · Gangtey", summary: "Adds the glacial Phobjikha (Gangtey) valley and a hint of central Bhutan.",
+      highlights: ["Gangtey / Phobjikha valley", "Trongsa views", "Day hike to Tiger's Nest"],
+      itinerary: ["Arrival at Paro", "Thimphu sightseeing", "Punakha to Trongsa", "Punakha to Gangtey", "Gangtey to Paro", "Day hike to Tiger's Nest", "Departure"] },
+    { id: "fly-7n8d", category: "fly", name: "Fly In Fly Out", nights: 7, days: 8, price: 1240, active: true,
+      route: "Paro · Thimphu · Punakha", summary: "A relaxed western Bhutan journey with time to explore Punakha and Paro at leisure.",
+      highlights: ["Explore Punakha valley", "Paro at leisure", "Tiger's Nest"],
+      itinerary: ["Arrival in Paro, transfer to Thimphu", "Thimphu sightseeing", "Thimphu to Punakha via Dochula Pass", "Explore Punakha valley", "Punakha to Paro", "Excursion to Tiger's Nest", "Explore Paro valley at leisure", "Departure from Paro"] },
+    { id: "drive-6n7d", category: "drive", name: "Drive In Drive Out", nights: 6, days: 7, price: 690, active: true,
+      route: "Bagdogra · Phuentsholing · Thimphu · Paro", summary: "Enter overland from Bagdogra / NJP via Phuentsholing and see the landscape change.",
+      highlights: ["Overland border crossing", "Thimphu & Paro", "Tiger's Nest"],
+      itinerary: ["Arrive Bagdogra / NJP, transfer to Phuentsholing", "Phuentsholing to Thimphu", "Explore Thimphu", "Thimphu to Paro", "Explore Paro & Tiger's Nest", "Paro to Phuentsholing", "Depart to Bagdogra / NJP"] },
+    { id: "drive-7n8d", category: "drive", name: "Drive In Drive Out", nights: 7, days: 8, price: 790, active: true,
+      route: "Bagdogra · Phuentsholing · Thimphu · Punakha · Paro", summary: "The overland route with an added night in Punakha via Dochula Pass.",
+      highlights: ["Dochula Pass", "Punakha Dzong", "Tiger's Nest"],
+      itinerary: ["Arrive Bagdogra / NJP, transfer to Phuentsholing", "Phuentsholing to Thimphu", "Explore Thimphu", "Thimphu to Punakha via Dochula Pass", "Punakha to Paro", "Explore Paro & Tiger's Nest", "Paro to Phuentsholing", "Depart to Bagdogra / NJP"] },
+    { id: "meditation-7n8d", category: "special", name: "Meditation Tour", nights: 7, days: 8, price: 1180, active: true,
+      route: "Paro · Thimphu · Punakha", summary: "A contemplative journey through sacred monasteries, meditation centres and quiet valleys.",
+      highlights: ["Sacred monasteries", "Guided stillness", "Tiger's Nest"],
+      itinerary: ["Arrive Paro, explore the valley", "Explore Paro valley", "Tiger's Nest Monastery", "Paro to Thimphu", "Explore Thimphu", "Thimphu to Punakha", "Punakha to Paro", "Departure from Paro"] },
+    { id: "explore-10n11d", category: "special", name: "Explore Bhutan", nights: 10, days: 11, price: 1690, active: true,
+      route: "Paro · Thimphu · Punakha · Bumthang", summary: "Cross the Himalayan heartland to Bumthang, the spiritual centre of the kingdom.",
+      highlights: ["Bumthang valley", "Ura valley 3,100 m", "Chele La Pass 3,810 m"],
+      itinerary: ["Arrive Paro, transfer to Thimphu", "Explore Thimphu", "Thimphu to Punakha", "Punakha to Bumthang", "Explore Bumthang valley", "Excursion to Ura valley", "Bumthang to Punakha", "Punakha to Paro", "Paro & Tiger's Nest", "Excursion to Chele La Pass", "Departure from Paro"] },
+    { id: "photography-12n13d", category: "special", name: "Photography Tour", nights: 12, days: 13, price: 2290, active: true,
+      route: "Paro to Samdrupjongkhar (west to east)", summary: "A west-to-east crossing for landscapes, festivals, wildlife and village life.",
+      highlights: ["Haa valley", "Mongar · Trashiyangtse · Trashigang", "Exit via Samdrupjongkhar"],
+      itinerary: ["Arrive Paro, explore the valley", "Explore Paro valley", "Tiger's Nest Monastery", "Haa valley via Chele La", "Paro to Thimphu", "Thimphu to Gangtey valley", "Gangtey to Bumthang", "Explore Bumthang", "Bumthang to Mongar", "Mongar to Trashiyangtse", "Trashiyangtse to Trashigang", "Trashigang to Samdrupjongkhar", "Departure from Samdrupjongkhar"] },
+    { id: "last-shangri-la-9n10d", category: "fixed", name: "The Last Shangri-La", nights: 9, days: 10, price: 1590, active: true,
+      route: "Paro · Thimphu · Punakha · Bumthang · Gangtey", summary: "Group fixed-departure with a hot-stone bath, female guide and daily mineral water.",
+      highlights: ["Hot stone bath", "Bumthang & Gangtey", "Female guide"],
+      itinerary: ["Paro airport, lunch & transfer to Thimphu", "Thimphu sightseeing", "Dochula Pass to Punakha", "Punakha · Gangtey · Bumthang", "Bumthang sightseeing", "Bumthang to Gangtey, hot stone bath", "Gangtey to Paro", "Paro sightseeing", "Excursion to Chele La Pass", "Services end at Paro airport"] },
+    { id: "thunder-dragon-6n7d", category: "fixed", name: "Land of the Thunder Dragon", nights: 6, days: 7, price: 990, active: true,
+      route: "Paro · Thimphu · Punakha · Gangtey", summary: "Group fixed-departure covering the western highlights with a hot-stone bath.",
+      highlights: ["Hot stone bath", "Gangtey excursion", "Female guide"],
+      itinerary: ["Paro airport to Thimphu", "Thimphu sightseeing", "Thimphu to Punakha / Wangdue", "Excursion to Gangtey (Phobjikha)", "Paro sightseeing", "Paro sightseeing", "Paro airport"] }
+  ],
+  /* SAMPLE DEPARTURES — replace with real flights in Admin → Departures & flights. */
+  departures: [
+    { id: "d1", packageId: "last-shangri-la-9n10d", date: "2026-11-10", from: "Mumbai", airline: "Drukair", flight: "", route: "Mumbai → Paro", depTime: "", arrTime: "", seats: 12, price: 0, status: "open" },
+    { id: "d2", packageId: "last-shangri-la-9n10d", date: "2026-11-24", from: "Mumbai", airline: "Bhutan Airlines", flight: "", route: "Mumbai → Paro", depTime: "", arrTime: "", seats: 4, price: 0, status: "open" },
+    { id: "d3", packageId: "last-shangri-la-9n10d", date: "2027-03-16", from: "Bengaluru", airline: "Drukair", flight: "", route: "Bengaluru → Paro", depTime: "", arrTime: "", seats: 14, price: 0, status: "open" },
+    { id: "d4", packageId: "thunder-dragon-6n7d", date: "2026-11-03", from: "Mumbai", airline: "Drukair", flight: "", route: "Mumbai → Paro", depTime: "", arrTime: "", seats: 0, price: 0, status: "open" },
+    { id: "d5", packageId: "thunder-dragon-6n7d", date: "2026-11-17", from: "Bengaluru", airline: "Bhutan Airlines", flight: "", route: "Bengaluru → Paro", depTime: "", arrTime: "", seats: 9, price: 0, status: "open" },
+    { id: "d6", packageId: "thunder-dragon-6n7d", date: "2027-03-23", from: "Mumbai", airline: "Drukair", flight: "", route: "Mumbai → Paro", depTime: "", arrTime: "", seats: 16, price: 0, status: "open" },
+    { id: "d7", packageId: "fly-5n6d", date: "2026-12-05", from: "Delhi", airline: "Drukair", flight: "", route: "Delhi → Paro", depTime: "", arrTime: "", seats: 8, price: 0, status: "open" }
+  ],
+  faqs: [
+    ["Do I need a visa for Bhutan?", "It depends on your passport. Most international visitors need an e-visa approved before travel. Indian citizens need no visa but must hold an Entry Permit (valid passport or voter ID). Bangladeshi and Maldivian travellers may get a visa on arrival. We arrange all of it for you."],
+    ["What is the Sustainable Development Fee (SDF)?", "International visitors pay USD 100 per person per night (50% off the standard USD 200 rate until 31 Aug 2027). Indian visitors pay Nu. 1,200 per person per night. Children 6–12 pay half; under 6 are free. It is paid during the visa/permit application."],
+    ["Is there GST on a Bhutan tour?", "Yes — Bhutan applies 5% GST on tour package services (hotels, transport, guiding) from 1 January 2026. It does not apply to the SDF, visa fee or air tickets."],
+    ["When is the best time to visit?", "March–May (rhododendrons, mild weather) and September–November (clear skies and major festivals). Winter is cold but sunny and quiet; summer is green with monsoon rain. Book early for festival weeks."],
+    ["Fly in or drive in?", "Flying into Paro (Drukair / Bhutan Airlines) is fastest and most scenic. Driving in via Phuentsholing from Bagdogra / NJP is more economical and shows the landscape change."],
+    ["Is travel insurance mandatory?", "Yes, valid cover for the full trip is required. International visitors need it when applying for the visa."],
+    ["Do I need a guide?", "Yes — most visitors travel with a licensed guide and stay in approved accommodation. Your guide handles permits, culture and logistics."],
+    ["Can I customise my trip?", "Absolutely. Every journey is personalised around dates, interests, pace and group size — the packages here are starting points."]
+  ]
+};

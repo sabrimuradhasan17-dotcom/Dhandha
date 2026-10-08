@@ -103,7 +103,7 @@ ${cleaning}
 })();
 `;
 const html = `<title>Skyland Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${css}\nbody{font-size:16px}</style>
 <div id="root"><div style="max-width:420px;margin:12vh auto;padding:0 20px;font:16px/1.5 system-ui,sans-serif;color:#0f1b2d"><h2 style="margin:0 0 8px">Loading the admin demo…</h2><p>If this page stays blank or empty, your viewer is blocking scripts. Please open this file in Chrome, Edge or Safari on a computer or phone.</p></div></div>
 <script>${shim}</script>

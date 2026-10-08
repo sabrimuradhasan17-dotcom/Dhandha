@@ -50,7 +50,7 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
 })();
 `;
 const html = `<title>Skyland Tours &amp; Travels</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${css}
 .pv{background:#1d1512;color:#f1e6d8;font:500 12px/1.4 Inter,system-ui,sans-serif;text-align:center;padding:7px 16px}
 body{font-size:16px}</style>

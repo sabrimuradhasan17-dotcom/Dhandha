@@ -9,12 +9,24 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bzsingle-'));
 const run = (script, dir, link) => cp.execFileSync('node', [path.join(__dirname, script), path.join(tmp, dir), link], { stdio: 'pipe' });
 run('build-preview.js', 'site', ADMIN);
 run('build-admin-demo.js', 'admin', SITE);
+// embed fonts so the file looks right offline / in restricted viewers
+const font = (family, file, weight) => `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:swap;src:url(data:font/woff2;base64,${fs.readFileSync(path.join(__dirname, 'fonts', file)).toString('base64')}) format('woff2')}`;
+const FONT_CSS = font('Fraunces', 'fraunces.woff2', '600 700') + font('Inter', 'inter.woff2', '400 700');
+// smaller images keep the files light enough for phones and chat previews
+for (const dir of ['site', 'admin']) {
+  const root = path.join(tmp, dir, 'img'); if (!fs.existsSync(root)) continue;
+  const walk = d => fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]);
+  for (const f of walk(root).filter(f => f.endsWith('.jpg'))) {
+    const w = f.endsWith('hero.jpg') ? 1200 : f.includes('packages') ? 720 : 640;
+    cp.execFileSync('convert', [f, '-resize', w + 'x>', '-strip', '-interlace', 'Plane', '-quality', '62', f]);
+  }
+}
 const mime = { png: 'image/png', jpg: 'image/jpeg', svg: 'image/svg+xml' };
 const inline = (html, dir) => html.replace(/img\/[\w\/.-]+?\.(png|jpg|svg)/g, m => {
   const f = path.join(dir, m); if (!fs.existsSync(f)) return m;
   return `data:${mime[m.split('.').pop()]};base64,${fs.readFileSync(f).toString('base64')}`;
 });
-const wrap = f => { const i = f.indexOf('</style>') + 8;
+const wrap = f => { f = f.replace(/<link href="https:\/\/fonts\.googleapis\.com[^>]*>/, '<style>' + FONT_CSS + '</style>'); const i = f.lastIndexOf('</style>') + 8;
   return `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">\n${f.slice(0, i)}\n</head><body>\n${f.slice(i)}\n</body></html>\n`; };
 fs.mkdirSync(out, { recursive: true });
 for (const [dir, name] of [['site', SITE], ['admin', ADMIN]]) {

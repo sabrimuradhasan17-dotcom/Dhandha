@@ -7,11 +7,14 @@ const fs = require('fs'), path = require('path'), cp = require('child_process');
 const out = process.argv[2]; if (!out) { console.error('usage: build-static-preview.js <out-dir>'); process.exit(1); }
 const tmp = fs.mkdtempSync(path.join(require('os').tmpdir(), 'bzprev-'));
 const run = (script, dir, link) => cp.execFileSync('node', [path.join(__dirname, script), path.join(tmp, dir), link], { stdio: 'pipe' });
-run('build-preview.js', 'site', 'admin/');
-run('build-admin-demo.js', 'admin', '../');
+run('build-preview.js', 'site', 'admin/index.html');
+run('build-admin-demo.js', 'admin', '../index.html');
+// embed fonts so the pages look right offline
+const font = (family, file, weight) => `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:swap;src:url(data:font/woff2;base64,${fs.readFileSync(path.join(__dirname, 'fonts', file)).toString('base64')}) format('woff2')}`;
+const FONT_CSS = font('Fraunces', 'fraunces.woff2', '600 700') + font('Inter', 'inter.woff2', '400 700');
 // the builders emit page fragments (for a host that wraps them); add the document shell for standalone hosting
 const wrap = (file, icon) => {
-  const f = fs.readFileSync(file, 'utf8'), i = f.indexOf('</style>') + 8;
+  const f = fs.readFileSync(file, 'utf8').replace(/<link href="https:\/\/fonts\.googleapis\.com[^>]*>/, '<style>' + FONT_CSS + '</style>'), i = f.lastIndexOf('</style>') + 8;
   return `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><link rel="icon" href="${icon}">\n${f.slice(0, i)}\n</head><body>\n${f.slice(i)}\n</body></html>\n`;
 };
 fs.rmSync(out, { recursive: true, force: true });

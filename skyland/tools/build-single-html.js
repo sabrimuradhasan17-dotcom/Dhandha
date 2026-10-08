@@ -7,8 +7,8 @@ const out = process.argv[2]; if (!out) { console.error('usage: build-single-html
 const SITE = 'skyland-website-preview.html', ADMIN = 'skyland-admin-demo.html';
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bzsingle-'));
 const run = (script, dir, link) => cp.execFileSync('node', [path.join(__dirname, script), path.join(tmp, dir), link], { stdio: 'pipe' });
-run('build-preview.js', 'site', ADMIN);
-run('build-admin-demo.js', 'admin', SITE);
+run('build-preview.js', 'site', process.env.ADMIN_URL || ADMIN);
+run('build-admin-demo.js', 'admin', process.env.SITE_URL || SITE);
 // embed fonts so the file looks right offline / in restricted viewers
 const font = (family, file, weight) => `@font-face{font-family:'${family}';font-style:normal;font-weight:${weight};font-display:swap;src:url(data:font/woff2;base64,${fs.readFileSync(path.join(__dirname, 'fonts', file)).toString('base64')}) format('woff2')}`;
 const FONT_CSS = font('Fraunces', 'fraunces.woff2', '600 700') + font('Inter', 'inter.woff2', '400 700');

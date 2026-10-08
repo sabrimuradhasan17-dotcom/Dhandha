@@ -1,0 +1,19 @@
+# One-click deploy on Render: New → Blueprint → pick this repo/branch.
+# The persistent disk keeps your database (prices, departures, enquiries) and uploads across deploys.
+services:
+  - type: web
+    name: skyland-tours-travels
+    runtime: node
+    plan: starter            # disks need a paid plan; free plans lose data on every restart
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/site
+    envVars:
+      - key: DATA_DIR
+        value: /data
+      - key: ADMIN_PASSWORD   # you will be asked for this when you create the Blueprint
+        sync: false
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS workers (
   category_id INTEGER NOT NULL REFERENCES categories(id),
   approved INTEGER NOT NULL DEFAULT 0,
   available INTEGER NOT NULL DEFAULT 0,
+  bio TEXT NOT NULL DEFAULT '',
+  experience_years INTEGER NOT NULL DEFAULT 0,
   lat REAL,
   lng REAL,
   location_updated_at TEXT
@@ -41,6 +43,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   customer_id INTEGER NOT NULL REFERENCES users(id),
   service_id INTEGER NOT NULL REFERENCES services(id),
   worker_id INTEGER REFERENCES users(id),
+  requested_worker_id INTEGER REFERENCES users(id),
   address TEXT NOT NULL,
   lat REAL NOT NULL,
   lng REAL NOT NULL,
@@ -78,6 +81,15 @@ CREATE TABLE IF NOT EXISTS ratings (
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 `);
+
+// Lightweight migrations for databases created before these columns existed.
+for (const sql of [
+  "ALTER TABLE workers ADD COLUMN bio TEXT NOT NULL DEFAULT ''",
+  'ALTER TABLE workers ADD COLUMN experience_years INTEGER NOT NULL DEFAULT 0',
+  'ALTER TABLE bookings ADD COLUMN requested_worker_id INTEGER REFERENCES users(id)',
+]) {
+  try { db.exec(sql); } catch { /* column already exists */ }
+}
 
 export function tx(fn) {
   db.exec('BEGIN IMMEDIATE');

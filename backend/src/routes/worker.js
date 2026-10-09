@@ -23,6 +23,14 @@ r.put('/availability', (req, res) => {
   res.json(db.prepare('SELECT * FROM workers WHERE user_id = ?').get(req.user.id));
 });
 
+r.put('/profile', (req, res) => {
+  const { bio = '', experienceYears = 0 } = req.body || {};
+  if (!Number.isInteger(experienceYears) || experienceYears < 0 || experienceYears > 60)
+    return res.status(400).json({ error: 'experienceYears must be 0-60' });
+  db.prepare('UPDATE workers SET bio = ?, experience_years = ? WHERE user_id = ?').run(String(bio).slice(0, 500), experienceYears, req.user.id);
+  res.json(db.prepare('SELECT * FROM workers WHERE user_id = ?').get(req.user.id));
+});
+
 r.put('/location', (req, res) => {
   const { lat, lng } = req.body || {};
   if (typeof lat !== 'number' || typeof lng !== 'number') return res.status(400).json({ error: 'lat and lng required' });

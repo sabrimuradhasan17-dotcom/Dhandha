@@ -10,7 +10,8 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 /**
- * Offer a booking to the nearest available workers of the right category who
+ * If the customer chose a specific worker, only that worker is offered the job.
+ * Otherwise offer a booking to the nearest available workers of the right category who
  * have not been offered it yet. Marks the booking `unassigned` when nobody is left.
  */
 export function dispatchBooking(bookingId) {
@@ -25,15 +26,16 @@ export function dispatchBooking(bookingId) {
     const candidates = db
       .prepare(
         `SELECT w.user_id, w.lat, w.lng FROM workers w
-         WHERE w.category_id = ? AND w.approved = 1 AND w.available = 1
-           AND w.lat IS NOT NULL AND w.lng IS NOT NULL
+         WHERE w.category_id = ? AND w.approved = 1
+           AND (? IS NOT NULL OR (w.available = 1 AND w.lat IS NOT NULL AND w.lng IS NOT NULL))
+           AND (? IS NULL OR w.user_id = ?)
            AND w.user_id NOT IN (SELECT worker_id FROM offers WHERE booking_id = ?)
            AND w.user_id NOT IN (SELECT worker_id FROM bookings
                                  WHERE worker_id IS NOT NULL AND status IN ('assigned','on_the_way','in_progress')
                                    AND scheduled_at = ?)`,
       )
-      .all(b.category_id, b.id, b.scheduled_at)
-      .map((w) => ({ ...w, km: haversineKm(b.lat, b.lng, w.lat, w.lng) }))
+      .all(b.category_id, b.requested_worker_id, b.requested_worker_id, b.requested_worker_id, b.id, b.scheduled_at)
+      .map((w) => ({ ...w, km: w.lat == null ? 0 : haversineKm(b.lat, b.lng, w.lat, w.lng) }))
       .sort((x, y) => x.km - y.km)
       .slice(0, config.offerFanout);
 

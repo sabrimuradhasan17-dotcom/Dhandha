@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, Alert, StatusBar, Switch, ActivityIndicator } from 'react-native';
+import { SafeAreaView, ScrollView, View, Text, Alert, Linking, StatusBar, Switch, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import { api, setToken, loadToken } from './api';
 import { Btn, Input, Card, H, Muted, colors, STATUS_LABEL } from './ui';
@@ -113,11 +113,14 @@ function BookForm({ service, user, onDone, onCancel }) {
   const [notes, setNotes] = useState('');
   const [method, setMethod] = useState('online');
   const [busy, setBusy] = useState(false);
+  const [workers, setWorkers] = useState([]);
+  const [workerId, setWorkerId] = useState(null); // null = auto-assign nearest
+  useEffect(() => { api('GET', `/workers?categoryId=${service.category_id}`).then(setWorkers).catch(() => {}); }, []);
   const submit = async () => {
     setBusy(true);
     try {
       const loc = await here();
-      const b = await api('POST', '/bookings', { serviceId: service.id, address, notes, ...loc, scheduledAt: slot.toISOString(), paymentMethod: method });
+      const b = await api('POST', '/bookings', { serviceId: service.id, address, notes, ...loc, scheduledAt: slot.toISOString(), paymentMethod: method, workerId });
       if (method === 'online') {
         try { await payForBooking(b, user); } catch (e) { Alert.alert('Payment pending', `${e.message}\nYou can pay from My Bookings.`); }
       }
@@ -139,13 +142,26 @@ function BookForm({ service, user, onDone, onCancel }) {
       </View>
       <Input placeholder="Full address (house, street, landmark)" value={address} onChangeText={setAddress} multiline />
       <Input placeholder="Notes for the professional (optional)" value={notes} onChangeText={setNotes} />
+      <Muted>Professional</Muted>
+      <Card onPress={() => setWorkerId(null)}>
+        <Text style={{ fontWeight: '600' }}>{workerId === null ? '● ' : '○ '}Auto-assign nearest available</Text>
+      </Card>
+      {workers.map((w) => (
+        <Card key={w.id} onPress={() => setWorkerId(w.id)}>
+          <Text style={{ fontWeight: '600' }}>{workerId === w.id ? '● ' : '○ '}{w.name}  {w.avg_rating ? `★ ${w.avg_rating} (${w.rating_count})` : 'New'}</Text>
+          <Muted>{w.experience_years} yrs experience · {w.jobs} jobs done</Muted>
+          {w.bio ? <Muted>{w.bio}</Muted> : null}
+          <Btn title={`Call ${w.name}`} kind="ghost" onPress={() => Linking.openURL(`tel:${w.phone}`)} />
+        </Card>
+      ))}
+      {workerId !== null && <Muted>Your request goes only to this professional. If they decline, you'll be notified to pick another.</Muted>}
       <Muted>Payment</Muted>
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <View style={{ flex: 1 }}><Btn title="UPI / Card" kind={method === 'online' ? 'primary' : 'ghost'} onPress={() => setMethod('online')} /></View>
         <View style={{ flex: 1 }}><Btn title="Cash after service" kind={method === 'cash' ? 'primary' : 'ghost'} onPress={() => setMethod('cash')} /></View>
       </View>
       <Btn title={busy ? 'Booking…' : `Book now · ₹${service.price}`} disabled={busy || !address.trim()} onPress={submit} />
-      <Muted>Your current location is used to match the nearest professional.</Muted>
+      <Muted>Your current location is used for matching and travel.</Muted>
     </>
   );
 }
@@ -159,6 +175,7 @@ function BookingCard({ b, user, reload }) {
       <Muted>{when(b.scheduled_at)}</Muted>
       <Text style={{ color: colors.primary, marginVertical: 4 }}>{STATUS_LABEL[b.status]}</Text>
       {b.worker_name && <Muted>Professional: {b.worker_name} · {b.worker_phone}</Muted>}
+      {b.worker_phone && <Btn title="Call professional" kind="ghost" onPress={() => Linking.openURL(`tel:${b.worker_phone}`)} />}
       <Muted>{b.payment_method === 'cash' ? 'Cash' : 'Online'} · payment {b.payment_status}</Muted>
       {b.payment_method === 'online' && b.payment_status === 'pending' && b.status !== 'cancelled' && (
         <Btn title="Pay now" onPress={act(() => payForBooking(b, user))} />
@@ -207,6 +224,22 @@ function Customer({ user }) {
 }
 
 /* --------------------------------- Worker -------------------------------- */
+function Profile({ worker, onSaved }) {
+  const [bio, setBio] = useState(worker?.bio || '');
+  const [yrs, setYrs] = useState(String(worker?.experience_years || 0));
+  const save = async () => {
+    try { await api('PUT', '/worker/profile', { bio, experienceYears: parseInt(yrs, 10) || 0 }); onSaved(); Alert.alert('Saved', 'Customers see this on your profile.'); } catch (e) { fail(e); }
+  };
+  return (
+    <Card>
+      <Text style={{ fontWeight: '700' }}>Your public profile</Text>
+      <Input placeholder="About you / skills" value={bio} onChangeText={setBio} multiline maxLength={500} />
+      <Input placeholder="Years of experience" keyboardType="number-pad" value={yrs} onChangeText={setYrs} />
+      <Btn title="Save profile" onPress={save} />
+    </Card>
+  );
+}
+
 function WorkerHome() {
   const [me, reloadMe] = usePoll(() => api('GET', '/auth/me'), 30000);
   const [offers, reloadOffers] = usePoll(() => api('GET', '/worker/offers'), 5000);
@@ -233,6 +266,7 @@ function WorkerHome() {
         </View>
         {earn && <Muted>{earn.jobs} jobs · earned ₹{earn.earned} · cash commission to remit ₹{earn.commission_owed_on_cash}</Muted>}
       </Card>
+      <Profile worker={me.worker} onSaved={reloadMe} />
       <H>New job requests</H>
       {offers?.length === 0 && <Muted>None right now. Stay online to receive jobs.</Muted>}
       {offers?.map((o) => (

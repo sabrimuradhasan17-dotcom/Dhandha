@@ -22,7 +22,7 @@ const VIEW = `
 export const getBooking = (id) => db.prepare(`${VIEW} WHERE b.id = ?`).get(id);
 
 r.post('/', requireAuth('customer'), (req, res) => {
-  const { serviceId, address, lat, lng, scheduledAt, notes = '', paymentMethod } = req.body || {};
+  const { serviceId, address, lat, lng, scheduledAt, notes = '', paymentMethod, workerId } = req.body || {};
   const svc = db.prepare('SELECT * FROM services WHERE id = ? AND active = 1').get(serviceId);
   if (!svc) return res.status(400).json({ error: 'Unknown service' });
   if (!address || typeof lat !== 'number' || typeof lng !== 'number')
@@ -33,13 +33,16 @@ r.post('/', requireAuth('customer'), (req, res) => {
   if (!['online', 'cash'].includes(paymentMethod))
     return res.status(400).json({ error: "paymentMethod must be 'online' or 'cash'" });
 
+  if (workerId != null && !db.prepare('SELECT 1 FROM workers WHERE user_id = ? AND approved = 1 AND category_id = ?').get(workerId, svc.category_id))
+    return res.status(400).json({ error: 'Chosen professional is not available for this service' });
+
   const commission = Math.round((svc.price * config.commissionPercent) / 100);
   const { lastInsertRowid } = db
     .prepare(
-      `INSERT INTO bookings (customer_id, service_id, address, lat, lng, scheduled_at, notes, amount, commission, payment_method)
-       VALUES (?,?,?,?,?,?,?,?,?,?)`,
+      `INSERT INTO bookings (customer_id, service_id, address, lat, lng, scheduled_at, notes, amount, commission, payment_method, requested_worker_id)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
     )
-    .run(req.user.id, svc.id, address, lat, lng, when.toISOString(), notes, svc.price, commission, paymentMethod);
+    .run(req.user.id, svc.id, address, lat, lng, when.toISOString(), notes, svc.price, commission, paymentMethod, workerId ?? null);
   dispatchBooking(Number(lastInsertRowid));
   res.status(201).json(getBooking(Number(lastInsertRowid)));
 });

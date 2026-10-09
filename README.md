@@ -28,7 +28,7 @@ EXPO_PUBLIC_API_URL=http://<your-LAN-ip>:4000 npx expo start
 Mock payments work in Expo Go. Real Razorpay checkout needs a dev build (`npx expo prebuild`).
 
 ## How it works
-1. Customer picks a service, time slot, address (GPS used for matching) and payment method.
+1. Customer picks a service, time slot, address and payment method, then either lets the system auto-assign or **browses professionals (rating, experience, bio), calls them, and books one directly**. A direct request goes only to that professional.
 2. The booking is offered to the 3 nearest approved, online workers in that category; first to accept wins.
    If all decline, the next nearest are offered; if nobody is left it shows as *unassigned* in the admin dashboard to assign manually.
 3. Worker advances the job: on the way → in progress → completed. Online-paid jobs must be paid before completion; cash jobs are marked paid when the worker completes them.

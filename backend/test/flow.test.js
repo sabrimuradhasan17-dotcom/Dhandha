@@ -105,3 +105,37 @@ test('decline widens dispatch to next nearest worker', async () => {
   assert.equal(done.status, 'completed');
   assert.equal(done.payment_status, 'paid');
 });
+
+test('customer can browse, contact and book a specific worker; others are not offered', async () => {
+  const cats = (await call('GET', '/categories')).body;
+  const ac = cats.find((c) => c.name === 'AC Service');
+  const svc = (await call('GET', `/services?categoryId=${ac.id}`)).body[0];
+  const admin = (await call('POST', '/auth/login', { phone: '9999999999', password: 'admin123' })).body.token;
+  const cust = (await reg({ name: 'C5', phone: '9000000031', password: 'secret1' })).body.token;
+  const [a, b] = [];
+  const mk = async (n, phone) => {
+    const w = await reg({ name: n, phone, password: 'secret1', role: 'worker', categoryId: ac.id });
+    await call('PUT', `/admin/workers/${w.body.user.id}/approval`, { approved: true }, admin);
+    await call('PUT', '/worker/availability', { available: true, lat: 5, lng: 5 }, w.body.token);
+    return w.body;
+  };
+  const w1 = await mk('Pick', '9000000032'), w2 = await mk('Other', '9000000033');
+  await call('PUT', '/worker/profile', { bio: '10 yrs AC expert', experienceYears: 10 }, w1.token);
+
+  const list = (await call('GET', `/workers?categoryId=${ac.id}`, null, cust)).body;
+  const pick = list.find((w) => w.id === w1.user.id);
+  assert.equal(pick.phone, '9000000032');
+  assert.equal(pick.experience_years, 10);
+
+  const bk = await call('POST', '/bookings', { serviceId: svc.id, workerId: w1.user.id, address: 'X', lat: 5, lng: 5, scheduledAt: future(), paymentMethod: 'cash' }, cust);
+  assert.equal(bk.status, 201);
+  assert.equal((await call('GET', '/worker/offers', null, w1.token)).body.length, 1);
+  assert.equal((await call('GET', '/worker/offers', null, w2.token)).body.length, 0);
+  // declining a chosen-worker request must NOT fan out to others
+  await call('POST', `/worker/offers/${bk.body.id}/decline`, null, w1.token);
+  assert.equal((await call('GET', '/worker/offers', null, w2.token)).body.length, 0);
+  assert.equal((await call('GET', `/bookings/${bk.body.id}`, null, cust)).body.status, 'unassigned');
+
+  const bad = await call('POST', '/bookings', { serviceId: svc.id, workerId: 1, address: 'X', lat: 5, lng: 5, scheduledAt: future(), paymentMethod: 'cash' }, cust);
+  assert.equal(bad.status, 400);
+});

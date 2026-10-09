@@ -34,7 +34,7 @@ const fontsInline = (html, dir) => html.replace(/url\(fonts\/([\w.-]+\.woff2)\)/
 const logoInline = (html, dir) => html.split('img/logo.png').join('data:image/png;base64,' + b64(path.join(dir, 'img/logo.png')));
 const faviconInline = (html, dir) => { const f = path.join(dir, 'img/favicon.png'); return fs.existsSync(f) ? html.split('img/favicon.png').join('data:image/png;base64,' + b64(f)) : html; };
 const wrap = f => { const i = f.indexOf('</style>') + 8;
-  return `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0d0a09">\n${f.slice(0, i)}\n</head><body>\n${f.slice(i)}\n</body></html>\n`; };
+  return `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#fbf7f0">\n${f.slice(0, i)}\n</head><body>\n${f.slice(i)}\n</body></html>\n`; };
 
 // website
 {

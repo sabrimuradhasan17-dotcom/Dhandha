@@ -47,6 +47,10 @@ const requireAdmin = (req, res, next) => validToken(cookie(req, 'bz_admin')) ? n
 /* ---------- input cleaning ---------- */
 const S = (v, max = 500) => String(v == null ? '' : v).trim().slice(0, max);
 const N = v => { const n = Number(v); return isFinite(n) ? n : 0; };
+/* lead-source tracking: normalise whatever the browser reports into a short, tidy platform name */
+const PLAT = { instagram: 'Instagram', ig: 'Instagram', facebook: 'Facebook', fb: 'Facebook', google: 'Google', youtube: 'YouTube', whatsapp: 'WhatsApp', linkedin: 'LinkedIn', twitter: 'X', x: 'X', tiktok: 'TikTok', pinterest: 'Pinterest', email: 'Email', tripadvisor: 'TripAdvisor', bing: 'Bing', direct: 'Direct', blog: 'Blog' };
+const plat = v => { const t = S(v, 40); if (!t) return 'Direct'; return PLAT[t.toLowerCase()] || t.replace(/[^\w .&-]/g, '').slice(0, 30) || 'Other'; };
+const attrOf = b => { const a = (b && typeof b.attr === 'object' && b.attr) || {}; return { platform: plat(a.platform), medium: S(a.medium, 30).replace(/[^\w .-]/g, ''), campaign: S(a.campaign, 60).replace(/[^\w .-]/g, ''), referrer: S(a.referrer, 80).replace(/[^\w.-]/g, ''), landing: S(a.landing, 120) }; };
 const B = v => v === true || v === 'true' || v === 1;
 const A = (v, max = 300) => (Array.isArray(v) ? v : String(v || '').split('\n')).map(x => S(x, max)).filter(Boolean).slice(0, 100);
 function clean(schema, input) {
@@ -118,13 +122,24 @@ app.post('/api/enquiries', express.json({ limit: '20kb' }), (req, res) => {
     id: DB.uid(), createdAt: new Date().toISOString(), name, phone, email,
     packageId: S(b.packageId, 60), departureId: S(b.departureId, 60), travelMonth: S(b.travelMonth, 20),
     adults: Math.min(50, Math.max(1, N(b.adults) || 1)), children: Math.min(50, Math.max(0, N(b.children))),
-    message: S(b.message, 1500), source: S(b.source, 60), status: 'new', notes: ''
+    message: S(b.message, 1500), source: S(b.source, 60), ...attrOf(b), status: 'new', notes: ''
   };
   DB.db.enquiries.unshift(e); DB.save();
   if (process.env.NOTIFY_WEBHOOK_URL) { // optional: forward new leads to Zapier / Slack / Make
     fetch(process.env.NOTIFY_WEBHOOK_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: `New enquiry from ${e.name} (${e.phone})`, enquiry: e }) }).catch(() => {});
   }
   res.json({ ok: true, ref: e.id.slice(0, 6).toUpperCase() });
+});
+
+/* WhatsApp / call taps, tagged with the visitor's platform (so leads that go straight to WhatsApp are counted too) */
+app.post('/api/events', express.json({ limit: '4kb' }), (req, res) => {
+  const b = req.body || {};
+  if (!limit('ev:' + req.ip, 60, 10 * 60e3)) return res.status(429).json({ ok: false });
+  if (!['whatsapp', 'call'].includes(b.type)) return res.status(400).json({ ok: false });
+  const a = attrOf(b), ev = DB.db.events = DB.db.events || [];
+  ev.unshift({ t: new Date().toISOString(), type: b.type, ...a, page: S(b.page, 120) });
+  if (ev.length > 5000) ev.length = 5000;
+  DB.save(); res.json({ ok: true });
 });
 
 /* ---------- admin auth ---------- */
@@ -163,7 +178,13 @@ admin.get('/stats', (req, res) => {
     enquiries: d.enquiries.length, byStatus, last7: d.enquiries.filter(e => new Date(e.createdAt) > week).length,
     upcoming: up.slice(0, 8), upcomingCount: up.length,
     unpriced: d.packages.filter(p => p.active && !(p.price > 0)).length,
-    mustChange: !!d.admin.mustChange, recent: d.enquiries.slice(0, 6)
+    mustChange: !!d.admin.mustChange, recent: d.enquiries.slice(0, 6),
+    sources: (() => { // leads by platform: enquiries (all time + last 30 days) and WhatsApp / call taps (last 30 days)
+      const m30 = Date.now() - 30 * 864e5, o = {}, row = k => o[k] = o[k] || { platform: k, enquiries: 0, enq30: 0, whatsapp: 0, calls: 0 };
+      d.enquiries.forEach(e => { const r = row(e.platform || 'Direct'); r.enquiries++; if (new Date(e.createdAt) > m30) r.enq30++; });
+      (d.events || []).filter(v => new Date(v.t) > m30).forEach(v => { const r = row(v.platform || 'Direct'); v.type === 'call' ? r.calls++ : r.whatsapp++; });
+      return Object.values(o).sort((a, b) => (b.enq30 + b.whatsapp + b.calls) - (a.enq30 + a.whatsapp + a.calls) || b.enquiries - a.enquiries);
+    })()
   });
 });
 admin.get('/settings', (req, res) => res.json(DB.db.settings));
@@ -185,8 +206,8 @@ admin.delete('/enquiries/:id', (req, res) => { DB.db.enquiries = DB.db.enquiries
 admin.get('/enquiries.csv', (req, res) => {
   const cell = v => { v = String(v == null ? '' : v); if (/^[=+\-@\t\r]/.test(v)) v = "'" + v; return '"' + v.replace(/"/g, '""') + '"'; };
   const pk = Object.fromEntries(DB.db.packages.map(p => [p.id, p.name + ' ' + p.nights + 'N/' + p.days + 'D']));
-  const rows = [['Date', 'Name', 'Phone', 'Email', 'Package', 'Travel month', 'Adults', 'Children', 'Status', 'Message', 'Notes']];
-  DB.db.enquiries.forEach(e => rows.push([e.createdAt, e.name, e.phone, e.email, pk[e.packageId] || '', e.travelMonth, e.adults, e.children, e.status, e.message, e.notes]));
+  const rows = [['Date', 'Name', 'Phone', 'Email', 'Package', 'Travel month', 'Adults', 'Children', 'Status', 'Message', 'Notes', 'Platform', 'Medium', 'Campaign', 'Referrer', 'Landing page']];
+  DB.db.enquiries.forEach(e => rows.push([e.createdAt, e.name, e.phone, e.email, pk[e.packageId] || '', e.travelMonth, e.adults, e.children, e.status, e.message, e.notes, e.platform || 'Direct', e.medium, e.campaign, e.referrer, e.landing]));
   res.set({ 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="enquiries.csv"' }).send(rows.map(r => r.map(cell).join(',')).join('\n'));
 });
 

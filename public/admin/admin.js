@@ -57,28 +57,46 @@
       ${!s.upcomingCount ? '<div class="alert"><b>No departures scheduled.</b> Add dates, seats and flight details in <a href="#" data-go="dep">Departures &amp; flights</a> — until then visitors are invited to enquire for private dates.</div>' : ''}
       <div class="cards4"><div class="kpi"><b>${s.byStatus.new || 0}</b>New enquiries</div><div class="kpi"><b>${s.last7}</b>Last 7 days</div><div class="kpi"><b>${s.enquiries}</b>Total enquiries</div><div class="kpi"><b>${s.upcomingCount}</b>Upcoming departures</div><div class="kpi"><b>${s.byStatus.booked || 0}</b>Booked</div></div>
       <div class="panel"><h3>Next departures</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Package</th><th>Seats left</th><th>Status</th></tr></thead><tbody>${s.upcoming.map(d => `<tr><td>${fd(d.date)}</td><td>${esc(pkgName(d.packageId))}</td><td>${Math.max(0, d.seats - d.booked)} / ${d.seats}</td><td>${esc(d.status)}</td></tr>`).join('') || '<tr><td colspan="4">None scheduled — add one in Departures.</td></tr>'}</tbody></table></div></div>
-      <div class="panel"><h3>Recent enquiries</h3>${s.recent.length ? `<div class="table-wrap"><table><thead><tr><th>When</th><th>Name</th><th>Phone</th><th>Package</th><th>Status</th></tr></thead><tbody>${s.recent.map(e => `<tr><td>${fd(e.createdAt)}</td><td>${esc(e.name)}</td><td>${esc(e.phone)}</td><td>${esc(pkgName(e.packageId))}</td><td><span class="pill status-${e.status}">${e.status}</span></td></tr>`).join('')}</tbody></table></div>` : '<p class="note">No enquiries yet. They appear here as soon as someone submits the form.</p>'}</div>
+      <div class="panel"><h3>Where your leads come from</h3><p class="note">Every enquiry is tagged with the platform the visitor arrived from (Instagram, Facebook, Google, WhatsApp…). WhatsApp and call taps are counted too. Enquiries are shown for the last 30 days and all time; taps for the last 30 days.</p>${srcTable(s.sources)}
+        <details class="linkb"><summary><b>Tracked-link builder</b> — tag links you post so they are counted correctly</summary><div class="fgrid" style="margin-top:12px"><div><label>Where will you post the link?</label><select id="lb-p">${LINKS.map(([k, v]) => `<option value="${k}">${k}</option>`).join('')}</select></div><div><label>Campaign name (optional)</label><input id="lb-c" placeholder="e.g. diwali-offer"></div><div class="full"><label>Your link — copy and paste it</label><input id="lb-o" readonly onfocus="this.select()"></div></div><p class="note">Links from Instagram or Facebook are often detected automatically, but tagged links are the most reliable (Instagram bio, stories, ads, WhatsApp status, email, QR codes).</p></details></div>
+      <div class="panel"><h3>Recent enquiries</h3>${s.recent.length ? `<div class="table-wrap"><table><thead><tr><th>When</th><th>Name</th><th>Phone</th><th>Package</th><th>Source</th><th>Status</th></tr></thead><tbody>${s.recent.map(e => `<tr><td>${fd(e.createdAt)}</td><td>${esc(e.name)}</td><td>${esc(e.phone)}</td><td>${esc(pkgName(e.packageId))}</td><td>${srcBadge(e)}</td><td><span class="pill status-${e.status}">${e.status}</span></td></tr>`).join('')}</tbody></table></div>` : '<p class="note">No enquiries yet. They appear here as soon as someone submits the form.</p>'}</div>
       <div class="panel"><h3>Launch checklist</h3><ul class="ticks"><li>Enter the price (₹ per person) for every package</li><li>Add real departure dates, seats and flight details</li><li>Upload your logo and package photos (Settings / Packages)</li><li>Add UPI / bank details for booking advances (Settings → Payment)</li><li>Review the Terms and Privacy pages (Pages)</li><li>Set your website address in Settings (for SEO)</li><li>Change the admin password</li></ul></div>`;
     $$('[data-go]', m).forEach(a => a.onclick = e => { e.preventDefault(); state.tab = a.dataset.go; shell(); view(); });
+    linkBuilder();
+  }
+
+  /* ---------- lead sources ---------- */
+  const LINKS = [['Instagram bio / post', ['instagram', 'social']], ['Instagram story', ['instagram', 'story']], ['Instagram ads', ['instagram', 'paid']], ['Facebook post / page', ['facebook', 'social']], ['Facebook ads', ['facebook', 'paid']], ['Google Ads', ['google', 'paid']], ['YouTube description', ['youtube', 'social']], ['WhatsApp status / broadcast', ['whatsapp', 'social']], ['Email newsletter', ['email', 'email']], ['QR code / print', ['qr', 'offline']]].map(([k, v]) => [k, v]);
+  const srcBadge = e => { const p = e.platform || 'Direct'; return `<span class="src src-${esc(p.toLowerCase().replace(/[^a-z]/g, ''))}">${esc(p)}</span>${e.medium && e.medium !== 'direct' ? `<div class="sub">${esc(e.medium)}${e.campaign ? ' · ' + esc(e.campaign) : ''}</div>` : ''}`; };
+  function srcTable(rows) {
+    if (!rows || !rows.length) return '<p class="note">No data yet — it appears as soon as visitors enquire or tap WhatsApp.</p>';
+    const mx = Math.max(1, ...rows.map(r => r.enq30 + r.whatsapp + r.calls));
+    return `<div class="table-wrap"><table><thead><tr><th>Platform</th><th>Enquiries (30 days)</th><th>Enquiries (all time)</th><th>WhatsApp taps (30 d)</th><th>Calls (30 d)</th><th style="width:22%"></th></tr></thead><tbody>${rows.map(r => `<tr><td><span class="src src-${esc(r.platform.toLowerCase().replace(/[^a-z]/g, ''))}">${esc(r.platform)}</span></td><td><b>${r.enq30}</b></td><td>${r.enquiries}</td><td>${r.whatsapp}</td><td>${r.calls}</td><td><div class="bar"><i style="width:${Math.round(100 * (r.enq30 + r.whatsapp + r.calls) / mx)}%"></i></div></td></tr>`).join('')}</tbody></table></div>`;
+  }
+  function linkBuilder() {
+    const p = $('#lb-p'), c = $('#lb-c'), o = $('#lb-o'); if (!p) return;
+    const upd = () => { const [src, med] = Object.fromEntries(LINKS)[p.value]; const u = new URLSearchParams({ utm_source: src, utm_medium: med }); if (c.value.trim()) u.set('utm_campaign', c.value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')); o.value = location.origin + '/?' + u; };
+    p.onchange = c.oninput = upd; upd();
   }
 
   /* ---------- enquiries ---------- */
   async function enq(m) {
     let list = await api('GET', '/enquiries'); const STAT = ['new', 'contacted', 'quoted', 'booked', 'lost'];
-    m.innerHTML = `<div class="row"><h1 style="margin:0">Enquiries</h1><div class="tools"><select id="fs"><option value="">All statuses</option>${STAT.map(s => `<option>${s}</option>`).join('')}</select><input id="fq" placeholder="Search name / phone…" style="width:200px"><a class="btn btn-ghost btn-sm" href="/api/admin/enquiries.csv">⬇ Export CSV</a></div></div><div class="table-wrap"><table style="min-width:1000px"><thead><tr><th>When</th><th>Guest</th><th>Interest</th><th>Message</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>`;
+    m.innerHTML = `<div class="row"><h1 style="margin:0">Enquiries</h1><div class="tools"><select id="fs"><option value="">All statuses</option>${STAT.map(s => `<option>${s}</option>`).join('')}</select><select id="fp"><option value="">All platforms</option>${[...new Set(list.map(e => e.platform || 'Direct'))].sort().map(s => `<option>${esc(s)}</option>`).join('')}</select><input id="fq" placeholder="Search name / phone…" style="width:200px"><a class="btn btn-ghost btn-sm" href="/api/admin/enquiries.csv">⬇ Export CSV</a></div></div><div class="table-wrap"><table style="min-width:1000px"><thead><tr><th>When</th><th>Guest</th><th>Source</th><th>Interest</th><th>Message</th><th>Status</th><th>Notes</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>`;
     const waLink = e => { let d = e.phone.replace(/\D/g, ''); if (d.length === 10) d = '91' + d; return 'https://wa.me/' + d + '?text=' + encodeURIComponent(`Hello ${e.name}, this is La Bhutanz Tours regarding your Bhutan enquiry.`); };
     const draw = () => {
-      const s = $('#fs').value, q = $('#fq').value.toLowerCase();
-      const l = list.filter(e => (!s || e.status === s) && (!q || (e.name + e.phone + e.email).toLowerCase().includes(q)));
+      const s = $('#fs').value, q = $('#fq').value.toLowerCase(), fp = $('#fp').value;
+      const l = list.filter(e => (!s || e.status === s) && (!fp || (e.platform || 'Direct') === fp) && (!q || (e.name + e.phone + e.email).toLowerCase().includes(q)));
       $('#rows').innerHTML = l.map(e => `<tr data-id="${e.id}"><td>${fd(e.createdAt)}<div class="sub">${new Date(e.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</div></td>
         <td><b>${esc(e.name)}</b><div class="sub"><a href="tel:${esc(e.phone)}">${esc(e.phone)}</a>${e.email ? ` · <a href="mailto:${esc(e.email)}">${esc(e.email)}</a>` : ''}</div></td>
+        <td>${srcBadge(e)}<div class="sub">${esc(e.landing || '')}</div></td>
         <td>${esc(pkgName(e.packageId))}<div class="sub">${e.departureId ? 'Dep. selected · ' : ''}${esc(e.travelMonth || '')} · ${e.adults}A${e.children ? ' + ' + e.children + 'C' : ''}</div></td>
         <td style="max-width:260px">${esc(e.message)}</td>
         <td><select data-st class="status-${e.status}">${STAT.map(x => `<option ${x === e.status ? 'selected' : ''}>${x}</option>`).join('')}</select></td>
         <td><textarea data-notes rows="2" placeholder="Add notes…">${esc(e.notes)}</textarea></td>
-        <td><div class="tools"><a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waLink(e)}">WhatsApp</a><button class="btn btn-ghost btn-sm" data-del>✕</button></div></td></tr>`).join('') || '<tr><td colspan="7" class="empty">No enquiries.</td></tr>';
+        <td><div class="tools"><a class="btn btn-wa btn-sm" target="_blank" rel="noopener" href="${waLink(e)}">WhatsApp</a><button class="btn btn-ghost btn-sm" data-del>✕</button></div></td></tr>`).join('') || '<tr><td colspan="8" class="empty">No enquiries.</td></tr>';
     };
-    draw(); $('#fs').onchange = $('#fq').oninput = draw;
+    draw(); $('#fs').onchange = $('#fp').onchange = $('#fq').oninput = draw;
     m.onchange = guard(async e => { const tr = e.target.closest('tr[data-id]'); if (!tr) return; const en = list.find(x => x.id === tr.dataset.id);
       if (e.target.matches('[data-st]')) { en.status = e.target.value; await api('PATCH', '/enquiries/' + en.id, { status: en.status }); e.target.className = 'status-' + en.status; toast('Status updated'); }
       if (e.target.matches('[data-notes]')) { en.notes = e.target.value; await api('PATCH', '/enquiries/' + en.id, { notes: en.notes }); toast('Notes saved'); } });

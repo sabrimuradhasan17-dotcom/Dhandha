@@ -18,8 +18,37 @@
   let D, S, pending = null, rid = 0, firstDone = false;
   const app = $('#app');
 
+  /* ---------- lead-source attribution: which platform did this visitor come from? ---------- */
+  const NAMES = { instagram: 'Instagram', ig: 'Instagram', facebook: 'Facebook', fb: 'Facebook', google: 'Google', youtube: 'YouTube', whatsapp: 'WhatsApp', linkedin: 'LinkedIn', twitter: 'X', x: 'X', tiktok: 'TikTok', pinterest: 'Pinterest', email: 'Email', tripadvisor: 'TripAdvisor', bing: 'Bing', qr: 'QR code' };
+  const HOSTS = [[/(^|\.)mail\.google\.com$|(^|\.)outlook\.(live|office)\.com$/, 'Email', 'email'], [/(^|\.)(instagram\.com|ig\.me)$/, 'Instagram', 'social'], [/(^|\.)(facebook\.com|fb\.com|fb\.me|fb\.watch|messenger\.com)$/, 'Facebook', 'social'], [/(^|\.)(youtube\.com|youtu\.be)$/, 'YouTube', 'social'], [/(^|\.)(wa\.me|whatsapp\.com)$/, 'WhatsApp', 'social'], [/(^|\.)(t\.co|twitter\.com|x\.com)$/, 'X', 'social'], [/(^|\.)(linkedin\.com|lnkd\.in)$/, 'LinkedIn', 'social'], [/(^|\.)pinterest\./, 'Pinterest', 'social'], [/(^|\.)tiktok\.com$/, 'TikTok', 'social'], [/(^|\.)tripadvisor\./, 'TripAdvisor', 'referral'], [/(^|\.)google\./, 'Google', 'organic'], [/(^|\.)bing\.com$/, 'Bing', 'organic'], [/(^|\.)(duckduckgo\.com|yahoo\.com)$/, 'Search', 'organic']];
+  function detectAttr() {
+    let q; try { q = new URLSearchParams(location.search); } catch (e) { q = new URLSearchParams(''); }
+    const g = k => (q.get(k) || '').trim().slice(0, 60);
+    let ref = ''; try { ref = document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, '') : ''; } catch (e) { /* ignore */ }
+    if (ref && ref === location.hostname) ref = '';
+    const ua = navigator.userAgent || '', us = g('utm_source').toLowerCase() || g('src').toLowerCase();
+    let platform = '', medium = '';
+    if (us) { platform = NAMES[us] || us; medium = g('utm_medium') || 'campaign'; }
+    else if (g('gclid')) { platform = 'Google'; medium = 'paid'; }
+    else if (g('igshid')) { platform = 'Instagram'; medium = 'social'; }
+    else if (g('fbclid')) { platform = /Instagram/i.test(ua) || /instagram/.test(ref) ? 'Instagram' : 'Facebook'; medium = 'social'; }
+    else if (ref) { const h = HOSTS.find(x => x[0].test(ref)); platform = h ? h[1] : ref; medium = h ? h[2] : 'referral'; }
+    else if (/Instagram/i.test(ua)) { platform = 'Instagram'; medium = 'social'; }
+    else if (/FBAN|FBAV|FB_IAB/.test(ua)) { platform = 'Facebook'; medium = 'social'; }
+    return platform ? { platform, medium, campaign: g('utm_campaign'), referrer: ref, landing: location.pathname } : null;
+  }
+  const ATTR = (function () {
+    const K = 'bz_attr_v1', now = Date.now(); let old = null;
+    try { old = JSON.parse(localStorage.getItem(K)); } catch (e) { /* storage blocked */ }
+    const cur = detectAttr();
+    if (cur) { try { localStorage.setItem(K, JSON.stringify({ ...cur, ts: now })); } catch (e) { /* ignore */ } return cur; }
+    if (old && old.platform && now - old.ts < 30 * 864e5) return old;   // returning visitor: remember where they first came from
+    return { platform: 'Direct', medium: 'direct', campaign: '', referrer: '', landing: location.pathname };
+  })();
+  const ping = type => { try { fetch('/api/events', { method: 'POST', keepalive: true, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type, attr: ATTR, page: location.pathname }) }).catch(() => {}); } catch (e) { /* ignore */ } };
+
   /* ---------- data helpers ---------- */
-  const wa = t => 'https://wa.me/' + S.whatsapp + '?text=' + encodeURIComponent(t);
+  const wa = t => 'https://wa.me/' + S.whatsapp + '?text=' + encodeURIComponent(t + (ATTR.platform !== 'Direct' ? '\n\n(via ' + ATTR.platform + ')' : ''));
   const tel = () => 'tel:' + S.phone.replace(/[^\d+]/g, '');
   const dur = p => p.nights + 'N / ' + p.days + 'D';
   const pkgOf = id => D.packages.find(p => p.id === id);
@@ -129,7 +158,7 @@
       ev.preventDefault(); const f = ev.target, b = Object.fromEntries(new FormData(f)); $('#e-err').textContent = '';
       $('#e-go').disabled = true; $('#e-go').textContent = 'Sending…';
       try {
-        const r = await fetch('/api/enquiries', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...b, source: o.source || location.pathname }) });
+        const r = await fetch('/api/enquiries', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...b, source: o.source || location.pathname, attr: ATTR }) });
         const j = await r.json(); if (!r.ok) throw new Error(j.error || 'Something went wrong');
         const p = pkgOf(b.packageId), d = D.departures.find(x => x.id === b.departureId);
         const text = `Hello ${S.brand}, I'm ${b.name} (ref ${j.ref}). I'd like to plan a Bhutan trip` + (p ? ` — ${p.name} ${dur(p)}` : '') + (d ? `, departing ${fd(d.date)} from ${d.fromCity}` : (b.travelMonth ? ` in ${fm(b.travelMonth)}` : '')) + ` for ${b.adults} adult(s)` + (+b.children ? ` + ${b.children} child(ren)` : '') + '.' + (b.message ? ' ' + b.message : '');
@@ -481,6 +510,7 @@
 
   document.addEventListener('click', e => {
     const t = e.target;
+    const lk = t.closest && t.closest('a[href]'); if (lk) { const h0 = lk.getAttribute('href') || ''; if (/^https:\/\/wa\.me\//.test(h0)) ping('whatsapp'); else if (h0.startsWith('tel:')) ping('call'); }
     const enq = t.closest('[data-enq]'); if (enq) { e.preventDefault(); openEnquiry({ pkg: enq.dataset.pkg, dep: enq.dataset.dep }); return; }
     if (t.closest('[data-close]') && !t.closest('a[href^="/"]')) { closeModal(); return; }
     if (t.id === 'mbg') { closeModal(); return; }

@@ -19,10 +19,13 @@ seed.departures = [
   { id: 'dm3', packageId: 'fly-5n6d', date: day(70).slice(0, 10), fromCity: 'Mumbai', seats: 12, booked: 0, priceOverride: 0, status: 'open', airline: '', flightNo: '', route: '', depTime: '', arrTime: '', notes: 'DEMO ROW — land package' }
 ];
 seed.enquiries = [
-  { id: 'e1', createdAt: day(-0.2), name: 'Priya Shah', phone: '+91 98200 11122', email: 'priya@example.com', packageId: 'fly-5n6d', departureId: '', travelMonth: '2026-12', adults: 2, children: 0, message: 'Honeymoon trip. Can we add a hot stone bath?', source: '/package/fly-5n6d', status: 'new', notes: '' },
-  { id: 'e2', createdAt: day(-1.5), name: 'Rohit Mehta', phone: '9987654321', email: '', packageId: 'last-shangri-la-9n10d', departureId: 'dm1', travelMonth: '', adults: 4, children: 1, message: 'Family of 5, vegetarian.', source: '/departures', status: 'contacted', notes: 'Called, sending quote tomorrow.' },
-  { id: 'e3', createdAt: day(-4), name: 'Anita Rao', phone: '9876500000', email: 'anita@example.com', packageId: '', departureId: '', travelMonth: '2027-03', adults: 2, children: 0, message: 'Looking for something for senior parents.', source: '/', status: 'quoted', notes: '' }
+  { id: 'e1', createdAt: day(-0.2), name: 'Priya Shah', phone: '+91 98200 11122', email: 'priya@example.com', packageId: 'fly-5n6d', departureId: '', travelMonth: '2026-12', adults: 2, children: 0, message: 'Honeymoon trip. Can we add a hot stone bath?', source: '/package/fly-5n6d', platform: 'Instagram', medium: 'social', campaign: 'honeymoon-reels', referrer: 'instagram.com', landing: '/package/fly-5n6d', status: 'new', notes: '' },
+  { id: 'e2', createdAt: day(-1.5), name: 'Rohit Mehta', phone: '9987654321', email: '', packageId: 'last-shangri-la-9n10d', departureId: 'dm1', travelMonth: '', adults: 4, children: 1, message: 'Family of 5, vegetarian.', source: '/departures', platform: 'Facebook', medium: 'paid', campaign: 'family-summer', referrer: 'facebook.com', landing: '/', status: 'contacted', notes: 'Called, sending quote tomorrow.' },
+  { id: 'e3', createdAt: day(-4), name: 'Anita Rao', phone: '9876500000', email: 'anita@example.com', packageId: '', departureId: '', travelMonth: '2027-03', adults: 2, children: 0, message: 'Looking for something for senior parents.', source: '/', platform: 'Google', medium: 'organic', campaign: '', referrer: 'google.com', landing: '/', status: 'quoted', notes: '' },
+  { id: 'e4', createdAt: day(-2.4), name: 'Vikram Desai', phone: '9822200011', email: '', packageId: 'fly-4n5d', departureId: '', travelMonth: '2027-01', adults: 2, children: 0, message: 'Saw your story, is Jan good for snow?', source: '/', platform: 'Instagram', medium: 'story', campaign: 'jan-snow', referrer: '', landing: '/', status: 'new', notes: '' },
+  { id: 'e5', createdAt: day(-6), name: 'Neha Kulkarni', phone: '9833300022', email: '', packageId: '', departureId: '', travelMonth: '', adults: 3, children: 0, message: '', source: '/contact', platform: 'Direct', medium: 'direct', campaign: '', referrer: '', landing: '/contact', status: 'lost', notes: '' }
 ];
+seed.events = [['Instagram', 'whatsapp', 9], ['Instagram', 'call', 2], ['Facebook', 'whatsapp', 6], ['Google', 'whatsapp', 4], ['Google', 'call', 3], ['Direct', 'whatsapp', 2]].flatMap(([platform, type, n]) => Array.from({ length: n }, (_, i) => ({ t: day(-i), type, platform, medium: '', campaign: '', referrer: '', landing: '/', page: '/' })));
 seed.testimonials = []; 
 const SEED = JSON.stringify(rel(seed)).replace(/<\//g, '<\\/');
 
@@ -47,7 +50,7 @@ ${sanitize}
 ${slug}
 ${cleaning}
 (function () {
-  const KEY = 'bz_admin_demo_v1', SEED = ${SEED}, origFetch = window.fetch.bind(window);
+  const KEY = 'bz_admin_demo_v2', SEED = ${SEED}, origFetch = window.fetch.bind(window);
   let DB = null; try { DB = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
   if (!DB) DB = SEED;
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} };
@@ -69,7 +72,7 @@ ${cleaning}
     if (p === '/password') { if (!body.next || body.next.length < 10) return R({ error: 'New password must be at least 10 characters.' }, 400); DB.pw = body.next; DB.passwordChanged = true; must = false; save(); return R({ ok: true }); }
     if (p === '/stats') {
       const t = today(), up = DB.departures.filter(x => x.date >= t && x.status !== 'cancelled').sort((a, b) => a.date < b.date ? -1 : 1), by = {}; DB.enquiries.forEach(e => by[e.status] = (by[e.status] || 0) + 1);
-      return R({ enquiries: DB.enquiries.length, byStatus: by, last7: DB.enquiries.filter(e => new Date(e.createdAt) > Date.now() - 7 * 864e5).length, upcoming: up.slice(0, 8), upcomingCount: up.length, unpriced: DB.packages.filter(x => x.active && !(x.price > 0)).length, mustChange: must, recent: DB.enquiries.slice(0, 6) });
+      return R({ enquiries: DB.enquiries.length, byStatus: by, last7: DB.enquiries.filter(e => new Date(e.createdAt) > Date.now() - 7 * 864e5).length, upcoming: up.slice(0, 8), upcomingCount: up.length, unpriced: DB.packages.filter(x => x.active && !(x.price > 0)).length, mustChange: must, recent: DB.enquiries.slice(0, 6), sources: (() => { const m30 = Date.now() - 30 * 864e5, o = {}, row = k => o[k] = o[k] || { platform: k, enquiries: 0, enq30: 0, whatsapp: 0, calls: 0 }; DB.enquiries.forEach(e => { const r = row(e.platform || 'Direct'); r.enquiries++; if (new Date(e.createdAt) > m30) r.enq30++; }); (DB.events || []).filter(v => new Date(v.t) > m30).forEach(v => { const r = row(v.platform || 'Direct'); v.type === 'call' ? r.calls++ : r.whatsapp++; }); return Object.values(o).sort((a, b) => (b.enq30 + b.whatsapp + b.calls) - (a.enq30 + a.whatsapp + a.calls)); })() });
     }
     if (p === '/settings') { if (m === 'PUT') { const s = cleanSettings(body || {}); for (const k of Object.keys(s)) DB.settings[k] = (s[k] && typeof s[k] === 'object' && !Array.isArray(s[k])) ? { ...DB.settings[k], ...s[k] } : s[k]; save(); } return R(DB.settings); }
     if (p === '/upload') { const f = o.body; if (!f || !f.size) return R({ error: 'No image received.' }, 400); if (f.size > 600e3) return R({ error: 'Demo images are limited to 600 KB.' }, 400); const url = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(f); }); return R({ url }); }

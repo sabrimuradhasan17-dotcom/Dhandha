@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Korva — Frames & Furniture Crafted to Last</title>
+<meta name="description" content="Korva crafts premium photo frames, coffee tables and statement décor for homes that tell a story.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader-mark"><span>K</span></div>
+  <div class="loader-word">KORVA</div>
+  <div class="loader-bar"><i></i></div>
+</div>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="progress" id="progress"></div>
+
+<header class="nav" id="nav">
+  <a href="#top" class="logo">KORVA</a>
+  <nav class="nav-links" id="navLinks">
+    <a href="#story">Story</a>
+    <a href="#owner">Founder</a>
+    <a href="#collection">Collection</a>
+    <a href="#craft">Craft</a>
+    <a href="#contact" class="nav-cta">Enquire</a>
+  </nav>
+  <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+    <span id="cartCount">0</span>
+  </button>
+  <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-frames" aria-hidden="true">
+    <div class="hf hf1"><i></i></div>
+    <div class="hf hf2"><i></i></div>
+    <div class="hf hf3"><i></i></div>
+  </div>
+  <div class="hero-inner">
+    <p class="eyebrow reveal">Frames &amp; Furniture · Est. with passion</p>
+    <h1 class="split" data-split>Where memories<br>meet <em>craftsmanship.</em></h1>
+    <p class="hero-sub reveal">Photo frames and coffee tables made to be lived with — and handed down.</p>
+    <div class="hero-btns reveal">
+      <a href="#collection" class="btn btn-gold magnetic">Explore the collection</a>
+      <a href="#story" class="btn btn-ghost magnetic">Our story</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span></span>Scroll</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Photo Frames</span><b>✦</b><span>Coffee Tables</span><b>✦</b><span>Wall Décor</span><b>✦</b><span>Handcrafted</span><b>✦</b>
+    <span>Photo Frames</span><b>✦</b><span>Coffee Tables</span><b>✦</b><span>Wall Décor</span><b>✦</b><span>Handcrafted</span><b>✦</b>
+  </div>
+</div>
+
+<!-- STORY -->
+<section class="section story" id="story">
+  <div class="wrap grid-2">
+    <div>
+      <p class="eyebrow reveal">About Korva</p>
+      <h2 class="reveal">A home is the sum of<br>what you <em>keep close.</em></h2>
+    </div>
+    <div class="story-copy">
+      <p class="reveal">Korva began with a simple belief: the things that hold your memories — and the tables your family gathers around — deserve the same care as the moments themselves.</p>
+      <p class="reveal">Every frame and every table we make is shaped from carefully chosen materials, finished by hand, and designed to look timeless in a modern home.</p>
+      <div class="stats reveal">
+        <div><strong data-count="6">0</strong><span>Signature pieces</span></div>
+        <div><strong data-count="100" data-suffix="%">0</strong><span>Handfinished</span></div>
+        <div><strong data-count="2">0</strong><span>Core crafts</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OWNER -->
+<section class="section owner" id="owner">
+  <div class="wrap grid-2 owner-grid">
+    <div class="owner-photo reveal">
+      <div class="photo-frame">
+        <div class="photo-inner">
+          <svg viewBox="0 0 200 240" aria-hidden="true"><circle cx="100" cy="85" r="42"/><path d="M20 240c0-56 36-92 80-92s80 36 80 92z"/></svg>
+          <span>Founder photo</span>
+        </div>
+      </div>
+      <div class="photo-tag">Founder, Korva</div>
+    </div>
+    <div>
+      <p class="eyebrow reveal">Meet the founder</p>
+      <h2 class="reveal">[Owner Name]</h2>
+      <blockquote class="reveal">“I wanted to build pieces that become part of a family's story — not just furniture, but heirlooms in the making.”</blockquote>
+      <p class="reveal">[Owner's journey — a short paragraph about their background, how Korva started, and what drives them. To be replaced with the client's own words.]</p>
+      <div class="signature reveal">[Owner Name]</div>
+    </div>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="section collection" id="collection">
+  <div class="wrap">
+    <p class="eyebrow center reveal">The Collection</p>
+    <h2 class="center reveal">Six pieces. <em>Endless character.</em></h2>
+  </div>
+  <div class="wrap products" id="products"></div>
+</section>
+
+<!-- CRAFT -->
+<section class="section craft" id="craft">
+  <div class="wrap">
+    <p class="eyebrow center reveal">The Korva Way</p>
+    <h2 class="center reveal">From raw material to <em>heirloom.</em></h2>
+    <div class="steps">
+      <div class="step reveal"><span>01</span><h3>Select</h3><p>Premium woods, metals and stone chosen for grain, strength and character.</p></div>
+      <div class="step reveal"><span>02</span><h3>Shape</h3><p>Precision cutting and joinery, refined by skilled hands.</p></div>
+      <div class="step reveal"><span>03</span><h3>Finish</h3><p>Layer upon layer of polish, stain and lacquer for depth and durability.</p></div>
+      <div class="step reveal"><span>04</span><h3>Deliver</h3><p>Carefully packed and delivered, ready to become part of your home.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact" id="contact">
+  <div class="wrap center">
+    <p class="eyebrow reveal">Let's talk</p>
+    <h2 class="reveal">Bring Korva <em>home.</em></h2>
+    <p class="contact-sub reveal">Tell us what you have in mind — sizes, finishes, custom orders. We reply personally on WhatsApp.</p>
+    <a href="#" class="btn btn-gold btn-lg magnetic" data-wa="Hello Korva, I'd like to know more about your collection.">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M20.5 3.5A11.8 11.8 0 0 0 .2 11.9c0 2.1.6 4.2 1.6 6L0 24l6.3-1.7a11.9 11.9 0 0 0 5.7 1.5h.1A11.9 11.9 0 0 0 20.5 3.5zM12 21.8a9.9 9.9 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4a9.9 9.9 0 1 1 8.3 4.6zm5.4-7.4c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.4.2-.7.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.6 14.6 0 0 0 5.6 4.9c2.1.9 2.9 1 3.9.8a3.3 3.3 0 0 0 2.2-1.5 2.7 2.7 0 0 0 .2-1.5c-.1-.1-.3-.2-.6-.4z"/></svg>
+      Chat on WhatsApp
+    </a>
+    <div class="contact-meta reveal">
+      <span>[Phone number]</span><span>[Email address]</span><span>[City, Country]</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="logo">KORVA</div>
+  <p>© <span id="year"></span> Korva. Crafted with care.</p>
+</footer>
+
+<a href="#" class="wa-float" data-wa="Hello Korva, I'd like to know more." aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M20.5 3.5A11.8 11.8 0 0 0 .2 11.9c0 2.1.6 4.2 1.6 6L0 24l6.3-1.7a11.9 11.9 0 0 0 5.7 1.5h.1A11.9 11.9 0 0 0 20.5 3.5zm-3.1 11c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-1 1.2-.4.2-.7.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.6 14.6 0 0 0 5.6 4.9c2.1.9 2.9 1 3.9.8a3.3 3.3 0 0 0 2.2-1.5 2.7 2.7 0 0 0 .2-1.5z"/></svg>
+</a>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="drawer" id="drawer" aria-label="Shopping cart">
+  <div class="drawer-head"><h3>Your cart</h3><button id="drawerClose" aria-label="Close">✕</button></div>
+  <div class="drawer-body" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="total"><span>Total</span><strong id="cartTotal"></strong></div>
+    <button class="btn btn-gold btn-block" id="checkoutBtn">Checkout</button>
+  </div>
+</aside>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Checkout">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    <form id="checkoutForm">
+      <h3>Complete your order</h3>
+      <div class="form-grid">
+        <label>Full name<input name="name" required></label>
+        <label>Phone<input name="phone" type="tel" required></label>
+        <label class="full">Email<input name="email" type="email"></label>
+        <label class="full">Delivery address<textarea name="address" rows="3" required></textarea></label>
+        <label>City<input name="city" required></label>
+        <label>PIN / ZIP<input name="zip" required></label>
+      </div>
+      <fieldset class="pay">
+        <legend>Payment</legend>
+        <label><input type="radio" name="pay" value="online" checked> Pay online (UPI / Card / Netbanking)</label>
+        <label><input type="radio" name="pay" value="cod"> Cash on delivery</label>
+      </fieldset>
+      <div class="total"><span>Order total</span><strong id="checkoutTotal"></strong></div>
+      <button class="btn btn-gold btn-block" type="submit">Place order</button>
+      <p class="fine" id="checkoutMsg"></p>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

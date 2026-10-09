@@ -5,7 +5,8 @@
 @font-face{font-family:'Cormorant Garamond';font-style:normal;font-weight:300 700;font-display:swap;src:url(fonts/cormorant-garamond-normal.woff2) format('woff2')}
 @font-face{font-family:'Cormorant Garamond';font-style:italic;font-weight:500;font-display:swap;src:url(fonts/cormorant-garamond-italic.woff2) format('woff2')}
 @font-face{font-family:'Inter';font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/inter-normal.woff2) format('woff2')}
-:root{--bg:#fbf7f0;--bg2:#f3ece0;--bg3:#ebe2d2;--ink:#241a14;--ink2:#5e5145;--ink3:#8a7d6e;--gold:#a67c2e;--gold2:#8a6420;--red:#a3262b;--line:rgba(36,26,20,.14);--r:22px;--ease:cubic-bezier(.22,.8,.2,1);--head:'Cormorant Garamond',Georgia,'Times New Roman',serif;--body:Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--hh:76px;--gut:clamp(20px,4.2vw,64px);color-scheme:light}
+@font-face{font-family:'Jost';font-style:normal;font-weight:300 500;font-display:swap;src:url(fonts/jost-normal.woff2) format('woff2')}
+:root{--bg:#fbf7f0;--bg2:#f3ece0;--bg3:#ebe2d2;--ink:#241a14;--ink2:#5e5145;--ink3:#8a7d6e;--gold:#a67c2e;--gold2:#8a6420;--red:#a3262b;--line:rgba(36,26,20,.14);--r:22px;--ease:cubic-bezier(.22,.8,.2,1);--head:'Cormorant Garamond',Georgia,'Times New Roman',serif;--body:Jost,Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--hh:76px;--gut:clamp(20px,4.2vw,64px);color-scheme:light}
 .hero,.band,.cta,.phero,.pk-hero,.jc,.mz,.story-media,footer,.pre-dark{--bg:#0d0a09;--bg2:#15100e;--bg3:#1e1713;--ink:#f5eee3;--ink2:#cbbfae;--ink3:#9a8f80;--gold:#d8b15e;--gold2:#f0d28e;--line:rgba(245,238,227,.16);color:var(--ink)}
 *,*::before,*::after{box-sizing:border-box}
 html{scroll-behavior:smooth;scrollbar-gutter:stable;-webkit-text-size-adjust:100%}
@@ -51,7 +52,7 @@ html.rm *{animation-duration:.001s!important;animation-iteration-count:1!importa
 .pre i{display:block;width:120px;height:1px;background:var(--line);position:relative;overflow:hidden}.pre i::after{content:"";position:absolute;inset:0;background:var(--gold);transform:translateX(-100%);animation:preBar 1.5s var(--ease) forwards}
 @keyframes preLogo{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes preBar{to{transform:none}}
-@keyframes preOut{to{opacity:0;visibility:hidden}}
+@keyframes preOut{to{clip-path:inset(0 0 100% 0);visibility:hidden}}
 .prog{position:fixed;left:0;top:0;height:2px;width:100%;z-index:130;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--gold),var(--gold2));pointer-events:none}
 
 /* ---------- header ---------- */
@@ -436,6 +437,177 @@ tr{background:transparent}
 .hero h1,.hero .lead,.phero h1,.pk-hero h1,.pk-hero .lead{text-shadow:0 2px 28px rgba(0,0,0,.45)}
 .phero .crumb,.pk-hero .crumb{color:rgba(245,238,227,.85)}.phero .crumb a,.pk-hero .crumb a{color:#f5eee3}
 
+/* =====================================================================
+   LUXURY LAYER — quiet luxury: restraint, hairlines, editorial type
+   ===================================================================== */
+:root{--r:3px;--ease:cubic-bezier(.16,1,.3,1);--gold:#9c7a3c;--gold2:#7d5f26}
+.hero,.band,.cta,.phero,.pk-hero,.mz,.story-media,footer{--gold:#d9b86c;--gold2:#ecd7a1}
+.nav{--gold:#d9b86c;--bg:#0d0a09}.nav.solid{--bg:#fbf7f0;--gold:#9c7a3c}
+body{font:400 clamp(16px,1.12vw,18px)/1.8 var(--body);letter-spacing:.005em;background:var(--bg)}
+h1,h2,h3,h4{font-weight:300;letter-spacing:-.018em}
+h3{font-weight:400}
+em,.it{font-weight:400}
+.eyebrow{font:500 .7rem/1.6 var(--body);letter-spacing:.34em;color:var(--gold)}
+.eyebrow::before{flex-basis:46px;background:currentColor;opacity:.7}
+.lead{font-weight:300;color:var(--ink2)}
+.note{letter-spacing:.02em}
+
+/* soft film grain over everything (static, no cost on scroll) */
+body::after{content:"";position:fixed;inset:0;z-index:250;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .1  0 0 0 0 .08  0 0 0 0 .05  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+
+/* ---- preloader: monogram, hairline, curtain lift ---- */
+.pre{background:#fbf7f0;color:#241a14;display:grid;place-items:center}
+.pre-in{gap:22px}
+.pre img{width:64px}
+.pre span{font:400 .72rem/1 var(--body);letter-spacing:.7em;margin-right:-.7em;color:#7d5f26}
+.pre i{width:160px;background:rgba(36,26,20,.14)}.pre i::after{background:#9c7a3c;animation-duration:1.7s}
+.pre.done{animation:preOut 1s var(--ease) forwards}
+.pre::after{content:"Private journeys  ·  Kingdom of Bhutan";position:absolute;bottom:9vh;left:0;right:0;text-align:center;font:400 .62rem/1 var(--body);letter-spacing:.5em;text-transform:uppercase;color:rgba(36,26,20,.5)}
+
+/* ---- navigation ---- */
+.logo span{font:400 1.45rem/1 var(--head);letter-spacing:.06em}
+.logo small{font:400 .52rem/1 var(--body);letter-spacing:.6em;margin-top:7px}
+.menu>a,.dd>button{font:400 .72rem/1 var(--body);letter-spacing:.24em}
+.menu>a::after,.dd>button::after{height:1px;bottom:0}
+.nav .btn{padding:14px 24px}
+
+/* ---- buttons: rectangular, hairline, no gradients ---- */
+.btn{border-radius:0;padding:18px 34px;font:500 .7rem/1 var(--body);letter-spacing:.26em;box-shadow:none}
+.btn::after{font-size:1em;opacity:.8}
+.btn-gold{background:var(--ink);color:var(--bg);border-color:var(--ink);box-shadow:none}
+.btn-gold:hover{color:#fff;box-shadow:none;transform:none;border-color:#9c7a3c}
+.btn-gold::before{inset:0;background:#9c7a3c;transform:translateY(101%);transition:transform .7s var(--ease)}
+.btn-gold:hover::before{transform:none}
+.btn-line{border-radius:0;border-color:currentColor;opacity:1}
+.btn-line:hover{background:var(--ink);color:var(--bg)}
+.btn-wa{background:transparent;color:var(--ink);border-color:currentColor}.btn-wa:hover{background:#2a7a4f;color:#fff;border-color:#2a7a4f}
+.hero .btn-gold,.cta .btn-gold,.band .btn-gold,.phero .btn-gold,.pk-hero .btn-gold{background:#f5eee3;color:#1a130f;border-color:#f5eee3}
+.hero .btn-gold:hover,.cta .btn-gold:hover,.band .btn-gold:hover{color:#1a130f;border-color:#d9b86c}
+.hero .btn-gold::before,.cta .btn-gold::before,.band .btn-gold::before{background:#d9b86c}
+.btn-sm{padding:13px 22px;font-size:.64rem}
+.link{font:500 .68rem/1 var(--body);letter-spacing:.28em;position:relative;padding-bottom:6px}
+.link::before{content:"";position:absolute;left:0;right:1.6em;bottom:0;height:1px;background:currentColor;opacity:.5;transform-origin:0 50%;transition:transform .6s var(--ease)}
+.link:hover::before{transform:scaleX(1.12)}
+.fab{width:56px;height:56px;background:#2a7a4f;box-shadow:0 10px 30px rgba(36,26,20,.28)}.fab::before{border-color:#2a7a4f}
+
+/* ---- shape language: near-square, hairlines instead of shadows ---- */
+.imgrv{--r:2px}
+.jc,.mz,.pc-img,.story-media,.pt,.quotes figure,.side,.tbl-wrap,.modal,.est,.empty,tr,.band,.hero-in,.story-m{border-radius:2px}
+.tbl-wrap{box-shadow:none;border:1px solid var(--line)}
+.quotes figure{box-shadow:none;border:1px solid var(--line)}
+.side{box-shadow:0 1px 0 rgba(36,26,20,.04),0 40px 80px -50px rgba(36,26,20,.35);border-color:rgba(156,122,60,.35)}
+.modal{border-radius:2px}
+@media(max-width:600px){.modal{border-radius:2px 2px 0 0}}
+input,select,textarea{border-radius:0;padding:16px 16px;border-color:rgba(36,26,20,.22);font-weight:400}
+label{font:500 .62rem/1 var(--body);letter-spacing:.26em}
+.pill-b{border-radius:0;font:500 .66rem/1 var(--body);letter-spacing:.2em;padding:12px 18px}
+.pill,.chip,.badge{border-radius:0}
+.arrow{border-radius:0;width:56px;height:56px}
+.burger{border-radius:0}
+.acc>button i,.rail-bar{border-radius:0}
+.acc>button{font-weight:300}
+.jc,.mz,.pc-img,.story-media,.pt{box-shadow:none}
+img{filter:none}
+.hs img,.jc-img img,.pc-img img,.mz>img,.band-bg img,.phero-bg img,.pk-hero .band-bg img,.story-media img,.place img{filter:saturate(.93) contrast(1.03)}
+
+/* ---- hero: inset hairline frame, caption + counter ---- */
+.hero-frame{position:absolute;inset:clamp(10px,1.6vw,26px);border:1px solid rgba(245,238,227,.26);z-index:3;pointer-events:none}
+.hero h1{font-weight:300;font-size:clamp(2.4rem,5vw,4.7rem);line-height:1.04;max-width:18ch;letter-spacing:-.02em}
+.hero .lead{font-weight:300;max-width:50ch;font-size:clamp(1rem,1.2vw,1.18rem)}
+.hero-in{padding-bottom:clamp(120px,17vh,170px)}
+.hero-cta{gap:26px 34px;align-items:center}
+.hero-dots button{height:1px;width:56px;background:rgba(245,238,227,.35)}.hero-dots button::after{height:1px}
+.hero-dots button.on::after{animation-duration:7s}
+.hero-cap{font:400 .66rem/1 var(--body);letter-spacing:.34em;display:flex;gap:18px;align-items:center;justify-content:flex-end}
+.hero-cap b{font:300 1.5rem/1 var(--head);letter-spacing:0;color:#f5eee3}
+.hero-cap em{font:400 .66rem/1 var(--body);font-style:normal;letter-spacing:.34em;color:var(--ink2)}
+.hero-meta{bottom:clamp(34px,6vh,60px)}
+.cue{font:400 .6rem/1 var(--body);letter-spacing:.4em;bottom:110px}
+@media(max-width:720px){.hero-frame{inset:10px}.hero-cap{display:none}.hero-meta{bottom:92px}}
+
+/* ---- marquee: whisper-quiet small caps ---- */
+.marq{background:transparent;border-block:1px solid var(--line);padding:22px 0}
+.marq span{font:400 .72rem/1 var(--body);letter-spacing:.5em;text-transform:uppercase;color:var(--ink3);font-style:normal}
+.marq span::after{content:"";width:5px;height:5px;transform:rotate(45deg);background:var(--gold);font-size:0}
+.marq-t{animation-duration:70s}
+
+/* ---- statement + pillars ---- */
+.stmt{font-weight:300;font-size:clamp(2rem,4.6vw,4.1rem);line-height:1.14;max-width:22ch}
+.pillars{display:grid;grid-template-columns:repeat(4,1fr);margin-top:clamp(56px,8vw,120px);border-top:1px solid var(--line)}
+.pillars>div{padding:34px 30px 0 0}.pillars>div+div{border-left:1px solid var(--line);padding-left:30px}
+.pillars .n{font:300 1rem/1 var(--head);font-style:italic;color:var(--gold);display:block;margin-bottom:26px;letter-spacing:.1em}
+.pillars h4{font:400 clamp(1.35rem,1.8vw,1.7rem)/1.15 var(--head);margin-bottom:12px}
+.pillars p{color:var(--ink2);font-size:.95rem;margin:0;max-width:30ch}
+@media(max-width:900px){.pillars{grid-template-columns:1fr 1fr}.pillars>div{padding:28px 18px 8px 0}.pillars>div+div{border-left:0;padding-left:0}.pillars>div:nth-child(2n){border-left:1px solid var(--line);padding-left:20px}.pillars>div:nth-child(n+3){border-top:1px solid var(--line)}}
+@media(max-width:520px){.pillars{grid-template-columns:1fr}.pillars>div,.pillars>div:nth-child(2n){border-left:0;padding-left:0;border-top:1px solid var(--line)}.pillars>div:first-child{border-top:0}}
+
+/* ---- editorial journey cards: photograph first, words beneath ---- */
+.jc{aspect-ratio:auto;background:transparent;color:var(--ink);display:flex;flex-direction:column;gap:0;overflow:visible;isolation:auto;transform:none;box-shadow:none}
+.jc::before{display:none}
+.jc-img{position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--bg3);border-radius:2px}
+.jc-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.6s var(--ease),filter .8s}
+.jc>img{position:static}
+.jc-img::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);pointer-events:none}
+.jc-top{display:none}
+.jc-in{position:static;padding:22px 2px 6px;gap:8px;transform:none!important}
+.jc-meta{font:500 .64rem/1.5 var(--body);letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.jc h3{font:300 clamp(1.7rem,2.2vw,2.15rem)/1.08 var(--head);letter-spacing:-.01em;margin:0}
+.jc-sub{color:var(--ink2);font-size:.95rem;line-height:1.6}
+.jc-row{border-top:1px solid var(--line);padding-top:16px;margin-top:10px;align-items:center}
+.jc-price{font:300 1.35rem/1 var(--head);color:var(--ink)}.jc-price small{font:500 .58rem/1 var(--body);letter-spacing:.28em;color:var(--ink3);margin-bottom:7px}
+.jc-go{color:var(--ink);font:500 .64rem/1 var(--body);letter-spacing:.3em;text-transform:uppercase}
+@media(hover:hover){.jc:hover .jc-img img{transform:scale(1.045);filter:saturate(1) contrast(1.04)}}
+.pgrid{gap:clamp(36px,4vw,64px) clamp(18px,2.4vw,36px)}
+.pgrid .jc{aspect-ratio:auto}.pgrid .jc-img{aspect-ratio:4/5}
+.rail .jc{flex-basis:clamp(260px,76vw,380px)}
+.rail{gap:clamp(18px,2vw,32px)}
+
+/* ---- mosaic, places, timeline, quotes: finer hairlines ---- */
+.mz>div{padding:clamp(18px,2.2vw,32px)}.mz h3{font-weight:300}
+.mz::before{background:linear-gradient(180deg,transparent 30%,rgba(13,10,9,.78))}
+.place h3{font-weight:300}
+.pt{border-radius:2px}
+.tl-i h3,.ess h3{font-weight:300}
+.quotes blockquote{font-weight:300}
+.facts b{font-weight:300}
+.bigprice{font-weight:300}
+.side{padding:clamp(26px,2.6vw,40px)}
+.band h2,.cta h2{font-weight:300}
+.cta h2{font-size:clamp(2.6rem,6vw,5.4rem)}
+.phero h1,.pk-hero h1{font-weight:300}
+.phero h1{font-size:clamp(2.5rem,5.8vw,5rem)}
+.story-text h3{font-weight:300}
+.story-text .k{font-weight:300;font-style:italic}
+.story-n{font-weight:300;font-style:italic}
+footer{padding-top:clamp(80px,10vw,140px)}
+.f-big{font-weight:300;-webkit-text-stroke:1px rgba(245,238,227,.3)}
+footer h4{font:500 .64rem/1 var(--body);letter-spacing:.34em}
+.fbot,.soc a{font-family:var(--body)}.soc a{border-radius:0;letter-spacing:.2em}
+
+/* ---- ornamental divider helper ---- */
+.orn{display:flex;align-items:center;gap:18px;color:var(--gold);margin:0 auto;max-width:200px;justify-content:center}
+.orn::before,.orn::after{content:"";height:1px;flex:1;background:currentColor;opacity:.4}
+.orn i{width:6px;height:6px;transform:rotate(45deg);background:currentColor}
+
+/* ---- signature cursor (fine pointers only) ---- */
+.cur{position:fixed;left:0;top:0;z-index:260;pointer-events:none;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#d9b86c;mix-blend-mode:normal;opacity:0;transition:width .5s var(--ease),height .5s var(--ease),margin .5s var(--ease),background .4s,opacity .3s;display:grid;place-items:center;will-change:transform}
+.cur span{font:500 .56rem/1 var(--body);letter-spacing:.24em;text-transform:uppercase;color:#1a130f;opacity:0;transition:opacity .3s;white-space:nowrap}
+.cur.on{opacity:1}
+.cur.link{width:46px;height:46px;margin:-23px 0 0 -23px;background:transparent;border:1px solid #d9b86c}
+.cur.lbl{width:92px;height:92px;margin:-46px 0 0 -46px;background:rgba(236,215,161,.94)}.cur.lbl span{opacity:1}
+.cur.hide{opacity:0!important}
+html.has-cur,html.has-cur a,html.has-cur button,html.has-cur .jc,html.has-cur .rail,html.has-cur label{cursor:none}
+html.has-cur input,html.has-cur select,html.has-cur textarea{cursor:text}
+html.has-cur select{cursor:pointer}
+@media(hover:none),(pointer:coarse){.cur{display:none}}
+.rm .cur{display:none}
+html.has-cur .modal,html.has-cur .modal *{cursor:auto}
+html.has-cur .modal a,html.has-cur .modal button,html.has-cur .modal select{cursor:pointer}
+html.has-cur .modal input,html.has-cur .modal textarea{cursor:text}
+.jc{--bg:#fbf7f0;--bg2:#f3ece0;--bg3:#ebe2d2;--ink:#241a14;--ink2:#5e5145;--ink3:#8a7d6e;--gold:#9c7a3c;--gold2:#7d5f26;--line:rgba(36,26,20,.14);color:var(--ink)}
+@media(max-width:720px){.eyebrow{letter-spacing:.22em}.hero h1{font-size:clamp(2.3rem,10vw,3rem)}.btn{padding:17px 28px}}
+.f-big{font-size:clamp(4rem,26vw,25rem);line-height:.82}
+
 .pv{position:relative;z-index:120;background:#1d1512;color:#f1e6d8;font:500 12px/1.4 Inter,system-ui,sans-serif;text-align:center;padding:7px 16px}
 .pv a{color:#e5bd4a}</style>
 </head><body>
@@ -451,48 +623,39 @@ tr{background:transparent}
       <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button></div></div></div>
 <main id="app" tabindex="-1"><section class="hero go" id="hero">
       <div class="hs on"><img src="img/photos/hero-tiger.jpg" alt="" fetchpriority="high" decoding="async" class="ld"></div><div class="hs"><img src="img/photos/hero-punakha.jpg" alt="" decoding="async" class="ld"></div><div class="hs"><img src="img/photos/hero-flags.jpg" alt="" decoding="async" class="ld"></div><div class="hs"><img src="img/photos/hero-chortens.jpg" alt="" decoding="async" class="ld"></div>
-      <div class="hero-shade"></div>
+      <div class="hero-shade"></div><div class="hero-frame" aria-hidden="true"></div>
       <div class="wrap hero-in" id="hero-in" style="transform: translate3d(0px, 0px, 0px); opacity: 1;"><div class="eyebrow rv in">Exceptional · Explorable · Experience</div><h1 data-sp="" class="in"><span class="w"><span class="wi" style="--i:0">Personalised</span></span> <span class="w"><span class="wi it" style="--i:1">Bhutan</span></span> <span class="w"><span class="wi" style="--i:2">Journeys</span></span> <span class="w"><span class="wi" style="--i:3">Crafted</span></span> <span class="w"><span class="wi" style="--i:4">by</span></span> <span class="w"><span class="wi" style="--i:5">Local</span></span> <span class="w"><span class="wi" style="--i:6">Travel</span></span> <span class="w"><span class="wi" style="--i:7">Experts</span></span></h1><p class="lead rv in" style="--d:.5s">La Bhutanz Tours specialises in personalised Bhutan journeys for travellers from Mumbai, Thane, Navi Mumbai and across India, along with NRI and international travellers seeking authentic, meaningful and luxury experiences in the Kingdom of Bhutan.</p>
-        <div class="hero-cta rv in" style="--d:.65s"><button class="btn btn-gold" data-enq="" type="button">Plan my trip</button><a class="btn btn-line" href="/packages">Explore journeys</a></div></div>
+        <div class="hero-cta rv in" style="--d:.65s"><button class="btn btn-gold" data-enq="" type="button">Begin your journey</button><a class="link" href="/packages">Explore journeys</a></div></div>
       <div class="cue" aria-hidden="true">Scroll</div>
-      <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots"><button type="button" class="on" aria-label="Show photo 1"></button><button type="button" class="" aria-label="Show photo 2"></button><button type="button" class="" aria-label="Show photo 3"></button><button type="button" class="" aria-label="Show photo 4"></button></div><div class="hero-cap">La Bhutanz · The Last Shangri-La</div></div></div>
+      <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots"><button type="button" class="on" aria-label="Show photo 1"></button><button type="button" class="" aria-label="Show photo 2"></button><button type="button" class="" aria-label="Show photo 3"></button><button type="button" class="" aria-label="Show photo 4"></button></div><div class="hero-cap"><b id="hcn">01</b><em id="hcap">Paro · Tiger's Nest</em></div></div></div>
     </section>
     <div class="marq" aria-hidden="true"><div class="marq-t"><span>Paro</span><span>Thimphu</span><span>Punakha</span><span>Gangtey</span><span>Bumthang</span><span>Haa Valley</span><span>Tiger's Nest</span><span>Dochula Pass</span><span>Phobjikha</span><span>Land of the Thunder Dragon</span><span>Paro</span><span>Thimphu</span><span>Punakha</span><span>Gangtey</span><span>Bumthang</span><span>Haa Valley</span><span>Tiger's Nest</span><span>Dochula Pass</span><span>Phobjikha</span><span>Land of the Thunder Dragon</span></div></div>
 
     <section class="sec"><div class="wrap"><div class="stmt-wrap"><div><div class="eyebrow rv in">Why Bhutan</div><p class="stmt" data-lit=""><span class="sw">Bhutan</span> <span class="sw">is</span> <span class="sw">not</span> <span class="sw">a</span> <span class="sw">place</span> <span class="sw">you</span> <span class="sw">visit.</span> <span class="sw">It</span> <span class="sw">is</span> <span class="sw">a</span> <span class="sw">feeling</span> <span class="sw">you</span> <span class="sw">carry</span> <span class="sw">home.</span></p></div>
       <div class="stmt-side rv in" style="--d:.15s"><p>La Bhutanz Tours designs personalised journeys across the Kingdom of Happiness — hand-built around your dates, pace and curiosity, with local experts at every step.</p><a class="link" href="/page/about-us">About us</a></div></div>
-      <div class="stats rv in"><div class="stat"><b data-count="11">10</b><span>Tour packages</span></div>
-      <div class="stat"><b>Private</b><span>Departures on your dates</span></div>
-      <div class="stat"><b>Custom</b><span>Itineraries &amp; quotes</span></div>
-      <div class="stat"><b>Mumbai</b><span>Based · India-wide</span></div></div></div></section>
+      <div class="pillars rv in"><div><span class="n">i.</span><h4>Private by design</h4><p>Every journey is shaped around your dates, your pace and your curiosity — never a fixed group script.</p></div><div><span class="n">ii.</span><h4>Local expertise</h4><p>Guides and hosts who know Paro, Thimphu, Punakha, Gangtey and Bumthang as home.</p></div><div><span class="n">iii.</span><h4>Handpicked stays</h4><p>Considered hotels and lodges, chosen for character, comfort and the views from the window.</p></div><div><span class="n">iv.</span><h4>Effortless arrangements</h4><p>Permits, fees, transfers and flights handled quietly in the background, with a team on call.</p></div></div></div></section>
 
     <section class="sec alt" style="padding-bottom:clamp(50px,6vw,90px)"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Popular journeys</div><h2 data-sp=""><span class="w"><span class="wi it" style="--i:0">Journeys</span></span> <span class="w"><span class="wi" style="--i:1">worth</span></span> <span class="w"><span class="wi" style="--i:2">the</span></span> <span class="w"><span class="wi" style="--i:3">climb</span></span></h2></div><div class="shead-r rv"><a class="link" href="/packages">All journeys</a></div></div></div>
-      <div class="rail" id="rail"><a class="jc" href="/package/fly-4n5d">
-      <img class="lz ld" src="img/photos/tiger.jpg" alt="Fly In Fly Out 4N / 5D Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">Fly in · Fly out</span><span class="chip g">4N / 5D</span></div>
-      <div class="jc-in"><h3>Fly In Fly Out</h3><div class="jc-sub">A comfortable first introduction to Bhutan — Tiger's Nest, Thimphu and the Dochula Pass to Punakha.</div><div class="jc-row"><div class="jc-price"><small>Pricing</small>On request</div><span class="jc-go">Explore</span></div></div></a><a class="jc" href="/package/fly-5n6d">
-      <img class="lz ld" src="img/photos/punakha-river.jpg" alt="Fly In Fly Out 5N / 6D Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">Fly in · Fly out</span><span class="chip g">5N / 6D</span></div>
-      <div class="jc-in"><h3>Fly In Fly Out</h3><div class="jc-sub">Thimphu, Punakha and Paro at an unhurried pace, with a night in Punakha and a full Tiger's Nest day.</div><div class="jc-row"><div class="jc-price"><small>Pricing</small>On request</div><span class="jc-go">Explore</span></div></div></a><a class="jc" href="/package/meditation-7n8d">
-      <img class="lz ld" src="img/photos/monk-sit.jpg" alt="Meditation Tour 7N / 8D Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">Special interest</span><span class="chip g">7N / 8D</span></div>
-      <div class="jc-in"><h3>Meditation Tour</h3><div class="jc-sub">A contemplative journey through sacred monasteries, meditation centres and peaceful valleys.</div><div class="jc-row"><div class="jc-price"><small>Pricing</small>On request</div><span class="jc-go">Explore</span></div></div></a><a class="jc" href="/package/explore-10n11d">
-      <img class="lz ld" src="img/photos/dzong-river.jpg" alt="Explore Bhutan 10N / 11D Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">Special interest</span><span class="chip g">10N / 11D</span></div>
-      <div class="jc-in"><h3>Explore Bhutan</h3><div class="jc-sub">Cross the Himalayan heartland to Bumthang, the spiritual centre of the kingdom.</div><div class="jc-row"><div class="jc-price"><small>Pricing</small>On request</div><span class="jc-go">Explore</span></div></div></a><a class="jc" href="/package/last-shangri-la-9n10d">
-      <img class="lz ld" src="img/photos/buddha.jpg" alt="The Last Shangri-La 9N / 10D Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">Fixed departures</span><span class="chip g">9N / 10D</span></div>
-      <div class="jc-in"><h3>The Last Shangri-La</h3><div class="jc-sub">Group fixed departure from Mumbai with return flights, hot-stone bath, pure-veg &amp; Jain food and a female guide.</div><div class="jc-row"><div class="jc-price"><small>Pricing</small>On request</div><span class="jc-go">Explore</span></div></div></a><a class="jc" href="/package/thunder-dragon-6n7d">
-      <img class="lz ld" src="img/photos/hero-tiger.jpg" alt="Land of the Thunder Dragon 6N / 7D Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">Fixed departures</span><span class="chip g">6N / 7D</span></div>
-      <div class="jc-in"><h3>Land of the Thunder Dragon</h3><div class="jc-sub">Group fixed departure from Mumbai with return flights, hot-stone bath, pure-veg &amp; Jain food and a female guide.</div><div class="jc-row"><div class="jc-price"><small>Pricing</small>On request</div><span class="jc-go">Explore</span></div></div></a></div>
+      <div class="rail" id="rail"><a class="jc" href="/package/fly-4n5d" data-cur="View">
+      <div class="jc-img"><img class="lz ld" src="img/photos/tiger.jpg" alt="Fly In Fly Out 4N / 5D Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">4 Nights · 5 Days</span><h3>Fly In Fly Out</h3><div class="jc-sub">Thimphu 2N | Paro 2N</div><div class="jc-row"><span class="jc-meta" style="color:var(--ink3)">Price on request</span><span class="jc-go">Discover</span></div></div></a><a class="jc" href="/package/fly-5n6d" data-cur="View">
+      <div class="jc-img"><img class="lz ld" src="img/photos/punakha-river.jpg" alt="Fly In Fly Out 5N / 6D Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">5 Nights · 6 Days</span><h3>Fly In Fly Out</h3><div class="jc-sub">Thimphu 2N | Punakha 1N</div><div class="jc-row"><span class="jc-meta" style="color:var(--ink3)">Price on request</span><span class="jc-go">Discover</span></div></div></a><a class="jc" href="/package/meditation-7n8d" data-cur="View">
+      <div class="jc-img"><img class="lz ld" src="img/photos/monk-sit.jpg" alt="Meditation Tour 7N / 8D Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">7 Nights · 8 Days</span><h3>Meditation Tour</h3><div class="jc-sub">Special interest</div><div class="jc-row"><span class="jc-meta" style="color:var(--ink3)">Price on request</span><span class="jc-go">Discover</span></div></div></a><a class="jc" href="/package/explore-10n11d" data-cur="View">
+      <div class="jc-img"><img class="lz ld" src="img/photos/dzong-river.jpg" alt="Explore Bhutan 10N / 11D Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">10 Nights · 11 Days</span><h3>Explore Bhutan</h3><div class="jc-sub">Special interest</div><div class="jc-row"><span class="jc-meta" style="color:var(--ink3)">Price on request</span><span class="jc-go">Discover</span></div></div></a><a class="jc" href="/package/last-shangri-la-9n10d" data-cur="View">
+      <div class="jc-img"><img class="lz ld" src="img/photos/buddha.jpg" alt="The Last Shangri-La 9N / 10D Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">9 Nights · 10 Days · Fixed departure</span><h3>The Last Shangri-La</h3><div class="jc-sub">Fixed departures</div><div class="jc-row"><span class="jc-meta" style="color:var(--ink3)">Price on request</span><span class="jc-go">Discover</span></div></div></a><a class="jc" href="/package/thunder-dragon-6n7d" data-cur="View">
+      <div class="jc-img"><img class="lz ld" src="img/photos/hero-tiger.jpg" alt="Land of the Thunder Dragon 6N / 7D Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">6 Nights · 7 Days · Fixed departure</span><h3>Land of the Thunder Dragon</h3><div class="jc-sub">Fixed departures</div><div class="jc-row"><span class="jc-meta" style="color:var(--ink3)">Price on request</span><span class="jc-go">Discover</span></div></div></a></div>
       <div class="rail-ctl"><div class="rail-bar"><i style="transform: scaleX(0.1);"></i></div><button class="arrow" type="button" data-rp="" aria-label="Previous" disabled="">←</button><button class="arrow" type="button" data-rn="" aria-label="Next">→</button></div></section>
 
-    <section class="sec"><div class="wrap"><div class="eyebrow rv">The way we travel</div><div class="story"><div class="story-media" aria-hidden="true"><img src="img/photos/paro-valley.jpg" alt="" loading="lazy" class="on"><img src="img/photos/tiger.jpg" alt="" loading="lazy" class="ld"><img src="img/photos/monk-sit.jpg" alt="" loading="lazy" class="ld"><img src="img/photos/mask.jpg" alt="" loading="lazy" class=""><div class="story-n" id="sn">01</div></div>
-      <div><div class="story-text" data-i="0"><div class="k">01</div><h3>Arrive in the clouds</h3><p class="lead">Fly into Paro, one of the world's most dramatic landings, and step into a valley of rice terraces, prayer flags and mountain air. Your guide is waiting — and so is the slowest, most welcoming pace you have ever travelled at.</p><div class="story-m imgrv"><img src="img/photos/paro-valley.jpg" alt="" loading="lazy" class="lz"></div></div><div class="story-text" data-i="1"><div class="k">02</div><h3>Climb to the sacred</h3><p class="lead">A morning hike through pine and prayer flags leads to Tiger's Nest, a monastery clinging to a cliff 900 metres above the valley. The reward is quiet, wide and unforgettable.</p><div class="story-m imgrv"><img src="img/photos/tiger.jpg" alt="" loading="lazy" class="lz ld"></div></div><div class="story-text" data-i="2"><div class="k">03</div><h3>Sit with silence</h3><p class="lead">Share butter tea with monks, light a lamp at a hilltop temple and let the rhythm of horns and chanting reset your own. Bhutan does not hurry — and neither will you.</p><div class="story-m imgrv"><img src="img/photos/monk-sit.jpg" alt="" loading="lazy" class="lz ld"></div></div><div class="story-text" data-i="3"><div class="k">04</div><h3>Celebrate with the valley</h3><p class="lead">Time your journey with a Tshechu and watch masked dancers whirl through a dzong courtyard as families in their finest gho and kira cheer on. It is the Bhutan that no postcard captures.</p><div class="story-m imgrv"><img src="img/photos/mask.jpg" alt="" loading="lazy" class="lz"></div></div></div></div></div></section>
+    <section class="sec"><div class="wrap"><div class="eyebrow rv">The way we travel</div><div class="story"><div class="story-media" aria-hidden="true"><img src="img/photos/paro-valley.jpg" alt="" loading="lazy" class="on ld"><img src="img/photos/tiger.jpg" alt="" loading="lazy" class="ld"><img src="img/photos/monk-sit.jpg" alt="" loading="lazy" class="ld"><img src="img/photos/mask.jpg" alt="" loading="lazy" class="ld"><div class="story-n" id="sn">01</div></div>
+      <div><div class="story-text" data-i="0"><div class="k">01</div><h3>Arrive in the clouds</h3><p class="lead">Fly into Paro, one of the world's most dramatic landings, and step into a valley of rice terraces, prayer flags and mountain air. Your guide is waiting — and so is the slowest, most welcoming pace you have ever travelled at.</p><div class="story-m imgrv"><img src="img/photos/paro-valley.jpg" alt="" loading="lazy" class="lz ld"></div></div><div class="story-text" data-i="1"><div class="k">02</div><h3>Climb to the sacred</h3><p class="lead">A morning hike through pine and prayer flags leads to Tiger's Nest, a monastery clinging to a cliff 900 metres above the valley. The reward is quiet, wide and unforgettable.</p><div class="story-m imgrv"><img src="img/photos/tiger.jpg" alt="" loading="lazy" class="lz ld"></div></div><div class="story-text" data-i="2"><div class="k">03</div><h3>Sit with silence</h3><p class="lead">Share butter tea with monks, light a lamp at a hilltop temple and let the rhythm of horns and chanting reset your own. Bhutan does not hurry — and neither will you.</p><div class="story-m imgrv"><img src="img/photos/monk-sit.jpg" alt="" loading="lazy" class="lz ld"></div></div><div class="story-text" data-i="3"><div class="k">04</div><h3>Celebrate with the valley</h3><p class="lead">Time your journey with a Tshechu and watch masked dancers whirl through a dzong courtyard as families in their finest gho and kira cheer on. It is the Bhutan that no postcard captures.</p><div class="story-m imgrv"><img src="img/photos/mask.jpg" alt="" loading="lazy" class="lz ld"></div></div></div></div></div></section>
 
     <section class="sec alt"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Travel your way</div><h2 data-sp=""><span class="w"><span class="wi" style="--i:0">Experiences</span></span> <span class="w"><span class="wi" style="--i:1">for</span></span> <span class="w"><span class="wi" style="--i:2">every</span></span> <span class="w"><span class="wi" style="--i:3">traveller</span></span></h2></div><p class="lead rv" style="max-width:44ch;--d:.2s">Every traveller discovers Bhutan in their own way. We shape the journey around your interests, travel style and pace.</p></div>
-      <div class="mosaic"><a class="mz rv" style="--d:0s" href="/packages"><img class="lz" src="img/photos/paro-town.jpg" alt="" loading="lazy" decoding="async"><div><h3>Family Holidays</h3><p>Relaxed holidays with comfortable stays, scenic sightseeing and thoughtfully planned experiences for families of all ages.</p></div></a><a class="mz rv" style="--d:0.08s" href="/packages"><img class="lz ld" src="img/photos/punakha-river.jpg" alt="" loading="lazy" decoding="async"><div><h3>Honeymoon Journeys</h3><p>Romantic landscapes, peaceful monasteries and handpicked hotels for a new beginning.</p></div></a><a class="mz rv" style="--d:0.16s" href="/packages"><img class="lz" src="img/photos/dzong-white.jpg" alt="" loading="lazy" decoding="async"><div><h3>Cultural Journeys</h3><p>Ancient monasteries, traditional villages, museums and historic landmarks.</p></div></a><a class="mz rv" style="--d:0s" href="/packages"><img class="lz" src="img/photos/monks-window.jpg" alt="" loading="lazy" decoding="async"><div><h3>Spiritual Retreats</h3><p>Sacred monasteries and meditation centres reflecting Bhutan's timeless Buddhist traditions.</p></div></a><a class="mz rv" style="--d:0.08s" href="/packages"><img class="lz" src="img/photos/dancer.jpg" alt="" loading="lazy" decoding="async"><div><h3>Festival Experiences</h3><p>Colourful Tshechu festivals, traditional mask dances and authentic local celebrations.</p></div></a><a class="mz rv" style="--d:0.16s" href="/packages"><img class="lz" src="img/photos/archers.jpg" alt="" loading="lazy" decoding="async"><div><h3>Photography Journeys</h3><p>Himalayan landscapes, ancient monasteries, festivals and everyday Bhutanese life through carefully planned photography experiences.</p></div></a><a class="mz rv" style="--d:0s" href="/packages"><img class="lz" src="img/photos/road.jpg" alt="" loading="lazy" decoding="async"><div><h3>Adventure Holidays</h3><p>Mountain trails, hidden valleys and spectacular Himalayan scenery through safe, well-planned adventure.</p></div></a></div></div></section>
+      <div class="mosaic"><a class="mz rv" style="--d:0s" href="/packages" data-cur="Explore"><img class="lz" src="img/photos/paro-town.jpg" alt="" loading="lazy" decoding="async"><div><h3>Family Holidays</h3><p>Relaxed holidays with comfortable stays, scenic sightseeing and thoughtfully planned experiences for families of all ages.</p></div></a><a class="mz rv" style="--d:0.08s" href="/packages" data-cur="Explore"><img class="lz ld" src="img/photos/punakha-river.jpg" alt="" loading="lazy" decoding="async"><div><h3>Honeymoon Journeys</h3><p>Romantic landscapes, peaceful monasteries and handpicked hotels for a new beginning.</p></div></a><a class="mz rv" style="--d:0.16s" href="/packages" data-cur="Explore"><img class="lz" src="img/photos/dzong-white.jpg" alt="" loading="lazy" decoding="async"><div><h3>Cultural Journeys</h3><p>Ancient monasteries, traditional villages, museums and historic landmarks.</p></div></a><a class="mz rv" style="--d:0s" href="/packages" data-cur="Explore"><img class="lz" src="img/photos/monks-window.jpg" alt="" loading="lazy" decoding="async"><div><h3>Spiritual Retreats</h3><p>Sacred monasteries and meditation centres reflecting Bhutan's timeless Buddhist traditions.</p></div></a><a class="mz rv" style="--d:0.08s" href="/packages" data-cur="Explore"><img class="lz" src="img/photos/dancer.jpg" alt="" loading="lazy" decoding="async"><div><h3>Festival Experiences</h3><p>Colourful Tshechu festivals, traditional mask dances and authentic local celebrations.</p></div></a><a class="mz rv" style="--d:0.16s" href="/packages" data-cur="Explore"><img class="lz" src="img/photos/archers.jpg" alt="" loading="lazy" decoding="async"><div><h3>Photography Journeys</h3><p>Himalayan landscapes, ancient monasteries, festivals and everyday Bhutanese life through carefully planned photography experiences.</p></div></a><a class="mz rv" style="--d:0s" href="/packages" data-cur="Explore"><img class="lz" src="img/photos/road.jpg" alt="" loading="lazy" decoding="async"><div><h3>Adventure Holidays</h3><p>Mountain trails, hidden valleys and spectacular Himalayan scenery through safe, well-planned adventure.</p></div></a></div></div></section>
 
     <section class="band"><div class="band-bg" data-par=""><img class="lz" src="img/photos/flags-wheels.jpg" alt="" loading="lazy" decoding="async"></div><div class="wrap"><div class="eyebrow rv">The Kingdom of Happiness</div><h2 data-sp=""><span class="w"><span class="wi" style="--i:0">Where</span></span> <span class="w"><span class="wi" style="--i:1">progress</span></span> <span class="w"><span class="wi" style="--i:2">is</span></span> <span class="w"><span class="wi" style="--i:3">measured</span></span> <span class="w"><span class="wi" style="--i:4">in</span></span> <span class="w"><span class="wi it" style="--i:5">happiness</span></span></h2><p class="lead rv" style="--d:.25s">Bhutan guides its future by Gross National Happiness, protects its forests by law and welcomes visitors as honoured guests. Travel here is slow, deliberate and deeply human.</p><div class="rv" style="--d:.35s"><button class="btn btn-gold" data-enq="" type="button">Begin your journey</button></div></div></section>
 
@@ -503,7 +666,7 @@ tr{background:transparent}
       <div><div class="eyebrow rv">How it works</div><div class="tl" id="tl" style="--p: 0.000;"><div class="tl-i"><span class="n">Step 01</span><h3>Tell us your plan</h3><p>Dates, group and interests — by WhatsApp or the enquiry form.</p></div><div class="tl-i"><span class="n">Step 02</span><h3>Get a tailored quote</h3><p>Clear per-person pricing and a day-wise itinerary.</p></div><div class="tl-i"><span class="n">Step 03</span><h3>Confirm with an advance</h3><p>We handle permits, SDF, hotels and transfers.</p></div><div class="tl-i"><span class="n">Step 04</span><h3>Travel with confidence</h3><p>A local guide and 24×7 support in Bhutan.</p></div></div></div></div></section>
 
     <section class="sec"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Destinations</div><h2 data-sp=""><span class="w"><span class="wi" style="--i:0">Where</span></span> <span class="w"><span class="wi" style="--i:1">we</span></span> <span class="w"><span class="wi" style="--i:2">take</span></span> <span class="w"><span class="wi" style="--i:3">you</span></span></h2></div></div>
-      <div class="places"><a class="place rv" href="/packages" style="--d:0s"><span class="pn">01</span><h3>Paro</h3><p>Home of Tiger's Nest and Bhutan's only international airport.</p><span class="pt"><img class="lz" src="img/photos/paro-valley.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.06s"><span class="pn">02</span><h3>Thimphu</h3><p>The capital — dzongs, markets, museums and monasteries.</p><span class="pt"><img class="lz" src="img/photos/thimphu-valley.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.12s"><span class="pn">03</span><h3>Punakha</h3><p>Bhutan's most beautiful dzong at the river confluence.</p><span class="pt"><img class="lz ld" src="img/photos/dzong-river.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.18s"><span class="pn">04</span><h3>Gangtey</h3><p>Glacial Phobjikha valley, home of black-necked cranes.</p><span class="pt"><img class="lz" src="img/photos/valley-town.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.24s"><span class="pn">05</span><h3>Bumthang</h3><p>The spiritual heartland with Bhutan's oldest temples.</p><span class="pt"><img class="lz" src="img/photos/chortens.jpg" alt="" loading="lazy" decoding="async"></span></a></div></div></section>
+      <div class="places"><a class="place rv" href="/packages" style="--d:0s"><span class="pn">01</span><h3>Paro</h3><p>Home of Tiger's Nest and Bhutan's only international airport.</p><span class="pt"><img class="lz ld" src="img/photos/paro-valley.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.06s"><span class="pn">02</span><h3>Thimphu</h3><p>The capital — dzongs, markets, museums and monasteries.</p><span class="pt"><img class="lz" src="img/photos/thimphu-valley.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.12s"><span class="pn">03</span><h3>Punakha</h3><p>Bhutan's most beautiful dzong at the river confluence.</p><span class="pt"><img class="lz ld" src="img/photos/dzong-river.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.18s"><span class="pn">04</span><h3>Gangtey</h3><p>Glacial Phobjikha valley, home of black-necked cranes.</p><span class="pt"><img class="lz" src="img/photos/valley-town.jpg" alt="" loading="lazy" decoding="async"></span></a><a class="place rv" href="/packages" style="--d:0.24s"><span class="pn">05</span><h3>Bumthang</h3><p>The spiritual heartland with Bhutan's oldest temples.</p><span class="pt"><img class="lz" src="img/photos/chortens.jpg" alt="" loading="lazy" decoding="async"></span></a></div></div></section>
 
     <section class="sec alt"><div class="wrap"><div class="eyebrow rv">Before you go</div><h2 data-sp=""><span class="w"><span class="wi" style="--i:0">Entry</span></span> <span class="w"><span class="wi" style="--i:1">permit</span></span> <span class="w"><span class="wi" style="--i:2">&amp;</span></span> <span class="w"><span class="wi" style="--i:3">fee</span></span> <span class="w"><span class="wi" style="--i:4">essentials</span></span> <span class="w"><span class="wi" style="--i:5">for</span></span> <span class="w"><span class="wi" style="--i:6">Indian</span></span> <span class="w"><span class="wi" style="--i:7">travellers</span></span></h2>
       <div class="ess"><div class="rv"><span class="n">01</span><h3>Entry permit</h3><p>No visa needed. Carry a valid passport (6 months) or voter ID; we arrange the permit.</p></div>
@@ -620,11 +783,11 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
 
   /* ---------- cards ---------- */
   function jc(p, i, rv) {
-    const price = showPrice(p) ? `<div class="jc-price"><small>From · per person</small>${inr(p.price)}</div>` : '<div class="jc-price"><small>Pricing</small>On request</div>';
-    return `<a class="jc${rv ? ' rv' : ''}" ${rv ? `style="--d:${((i || 0) % 3) * 0.09}s"` : ''} href="/package/${esc(p.slug)}">
-      <img class="lz" src="${esc(pimg(p))}" alt="${esc(p.name)} ${dur(p)} Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">${esc(CAT[p.category] || 'Journey')}</span><span class="chip g">${dur(p)}</span></div>
-      <div class="jc-in"><h3>${esc(p.name)}</h3><div class="jc-sub">${esc(p.summary)}</div><div class="jc-row">${price}<span class="jc-go">Explore</span></div></div></a>`;
+    const price = showPrice(p) ? `<div class="jc-price"><small>From · per guest</small>${inr(p.price)}</div>` : '<span class="jc-meta" style="color:var(--ink3)">Price on request</span>';
+    const meta = `${p.nights} Nights · ${p.days} Days`, sub = p.stay || CAT[p.category] || '';
+    return `<a class="jc${rv ? ' rv' : ''}" ${rv ? `style="--d:${((i || 0) % 3) * 0.09}s"` : ''} href="/package/${esc(p.slug)}" data-cur="View">
+      <div class="jc-img"><img class="lz" src="${esc(pimg(p))}" alt="${esc(p.name)} ${dur(p)} Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">${esc(meta)}${p.category === 'fixed' ? ' · Fixed departure' : ''}</span><h3>${esc(p.name)}</h3><div class="jc-sub">${esc(sub)}</div><div class="jc-row">${price}<span class="jc-go">Discover</span></div></div></a>`;
   }
   const postCard = (p, i) => `<a class="pc rv" style="--d:${((i || 0) % 3) * 0.09}s" href="/blog/${esc(p.slug)}"><div class="pc-img imgrv">${p.image ? `<img class="lz" src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" decoding="async">` : ''}</div><div><span class="note">${fd(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`;
   const acc = (q, a, open) => `<div class="acc${open ? ' open' : ''}"><button type="button" aria-expanded="${!!open}"><span>${esc(q)}</span><i></i></button><div class="acc-b"><div><p>${esc(a)}</p></div></div></div>`;
@@ -727,6 +890,8 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
   const STEPS = [['Tell us your plan', 'Dates, group and interests — by WhatsApp or the enquiry form.'], ['Get a tailored quote', 'Clear per-person pricing and a day-wise itinerary.'], ['Confirm with an advance', 'We handle permits, SDF, hotels and transfers.'], ['Travel with confidence', 'A local guide and 24×7 support in Bhutan.']];
 
   /* ---------- views ---------- */
+  const HERO_CAP = { 'hero-tiger': 'Paro · Tiger\'s Nest', 'hero-punakha': 'Punakha · The Dzong', 'hero-flags': 'Prayer flags of the Himalaya', 'hero-chortens': 'Bumthang · Sacred chortens' };
+  const heroCap = src => HERO_CAP[(String(src).split('/').pop() || '').replace(/\.\w+$/, '')] || 'The Last Shangri-La';
   function home() {
     const feat = D.packages.filter(p => p.featured), list = (feat.length >= 4 ? feat : D.packages).slice(0, 8);
     const prices = D.packages.filter(showPrice).map(p => p.price);
@@ -736,20 +901,17 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
     pending = () => { heroSlider(); };
     return `<section class="hero" id="hero">
       ${heroes.map((h, i) => `<div class="hs${i === 0 ? ' on' : ''}"><img src="${esc(h)}" alt="" ${i === 0 ? 'fetchpriority="high"' : ''} decoding="async"></div>`).join('')}
-      <div class="hero-shade"></div>
+      <div class="hero-shade"></div><div class="hero-frame" aria-hidden="true"></div>
       <div class="wrap hero-in" id="hero-in"><div class="eyebrow rv">${esc(S.tagline)}</div><h1 data-sp>${sp(S.heroTitle, { em: 1 })}</h1><p class="lead rv" style="--d:.5s">${esc(S.heroSub)}</p>
-        <div class="hero-cta rv" style="--d:.65s"><button class="btn btn-gold" data-enq type="button">Plan my trip</button><a class="btn btn-line" href="/packages">Explore journeys</a></div></div>
+        <div class="hero-cta rv" style="--d:.65s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button><a class="link" href="/packages">Explore journeys</a></div></div>
       <div class="cue" aria-hidden="true">Scroll</div>
-      <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots">${heroes.length > 1 ? heroes.map((h, i) => `<button type="button" class="${i === 0 ? 'on' : ''}" aria-label="Show photo ${i + 1}"></button>`).join('') : ''}</div><div class="hero-cap">La Bhutanz · The Last Shangri-La</div></div></div>
+      <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots">${heroes.length > 1 ? heroes.map((h, i) => `<button type="button" class="${i === 0 ? 'on' : ''}" aria-label="Show photo ${i + 1}"></button>`).join('') : ''}</div><div class="hero-cap"><b id="hcn">01</b><em id="hcap">${esc(heroCap(heroes[0]))}</em></div></div></div>
     </section>
     <div class="marq" aria-hidden="true"><div class="marq-t">${[0, 1].map(() => ['Paro', 'Thimphu', 'Punakha', 'Gangtey', 'Bumthang', 'Haa Valley', 'Tiger\'s Nest', 'Dochula Pass', 'Phobjikha', 'Land of the Thunder Dragon'].map(x => `<span>${x}</span>`).join('')).join('')}</div></div>
 
     <section class="sec"><div class="wrap"><div class="stmt-wrap"><div><div class="eyebrow rv">Why Bhutan</div><p class="stmt" data-lit>${stmt.map(w => `<span class="sw">${esc(w)}</span>`).join(' ')}</p></div>
       <div class="stmt-side rv" style="--d:.15s"><p>La Bhutanz Tours designs personalised journeys across the Kingdom of Happiness — hand-built around your dates, pace and curiosity, with local experts at every step.</p><a class="link" href="/page/about-us">About us</a></div></div>
-      <div class="stats rv"><div class="stat"><b data-count="${D.packages.length}">${D.packages.length}</b><span>Tour packages</span></div>
-      ${D.departures.length ? `<div class="stat"><b data-count="${D.departures.length}">${D.departures.length}</b><span>Upcoming departures</span></div>` : '<div class="stat"><b>Private</b><span>Departures on your dates</span></div>'}
-      ${prices.length ? `<div class="stat"><b data-count="${Math.min(...prices)}" data-pre="₹">${inr(Math.min(...prices))}</b><span>Starting per person</span></div>` : '<div class="stat"><b>Custom</b><span>Itineraries &amp; quotes</span></div>'}
-      <div class="stat"><b>Mumbai</b><span>Based · India-wide</span></div></div></div></section>
+      <div class="pillars rv"><div><span class="n">i.</span><h4>Private by design</h4><p>Every journey is shaped around your dates, your pace and your curiosity — never a fixed group script.</p></div><div><span class="n">ii.</span><h4>Local expertise</h4><p>Guides and hosts who know Paro, Thimphu, Punakha, Gangtey and Bumthang as home.</p></div><div><span class="n">iii.</span><h4>Handpicked stays</h4><p>Considered hotels and lodges, chosen for character, comfort and the views from the window.</p></div><div><span class="n">iv.</span><h4>Effortless arrangements</h4><p>Permits, fees, transfers and flights handled quietly in the background, with a team on call.</p></div></div></div></section>
 
     <section class="sec alt" style="padding-bottom:clamp(50px,6vw,90px)"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Popular journeys</div><h2 data-sp>${sp('Journeys worth the climb', { em: 1 })}</h2></div><div class="shead-r rv"><a class="link" href="/packages">All journeys</a></div></div></div>
       <div class="rail" id="rail">${list.map(p => jc(p)).join('')}</div>
@@ -759,7 +921,7 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
       <div>${CHAPTERS.map((c, i) => `<div class="story-text" data-i="${i}"><div class="k">0${i + 1}</div><h3>${esc(c[0])}</h3><p class="lead">${esc(c[1])}</p><div class="story-m imgrv"><img src="${PH + c[2]}.jpg" alt="" loading="lazy" class="lz"></div></div>`).join('')}</div></div></div></section>
 
     <section class="sec alt"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Travel your way</div><h2 data-sp>${sp('Experiences for every traveller')}</h2></div><p class="lead rv" style="max-width:44ch;--d:.2s">Every traveller discovers Bhutan in their own way. We shape the journey around your interests, travel style and pace.</p></div>
-      <div class="mosaic">${EXPERIENCES.map((e, i) => `<a class="mz rv" style="--d:${(i % 3) * 0.08}s" href="/packages"><img class="lz" src="${PH + e[2]}.jpg" alt="" loading="lazy" decoding="async"><div><h3>${esc(e[0])}</h3><p>${esc(e[1])}</p></div></a>`).join('')}</div></div></section>
+      <div class="mosaic">${EXPERIENCES.map((e, i) => `<a class="mz rv" style="--d:${(i % 3) * 0.08}s" href="/packages" data-cur="Explore"><img class="lz" src="${PH + e[2]}.jpg" alt="" loading="lazy" decoding="async"><div><h3>${esc(e[0])}</h3><p>${esc(e[1])}</p></div></a>`).join('')}</div></div></section>
 
     <section class="band"><div class="band-bg" data-par><img class="lz" src="${PH}flags-wheels.jpg" alt="" loading="lazy" decoding="async"></div><div class="wrap"><div class="eyebrow rv">The Kingdom of Happiness</div><h2 data-sp>${sp('Where progress is measured in happiness', { em: 1 })}</h2><p class="lead rv" style="--d:.25s">Bhutan guides its future by Gross National Happiness, protects its forests by law and welcomes visitors as honoured guests. Travel here is slow, deliberate and deeply human.</p><div class="rv" style="--d:.35s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button></div></div></section>
 
@@ -936,7 +1098,7 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
       const prev = slides[i]; i = (n + slides.length) % slides.length;
       slides.forEach(s => s.classList.remove('prev'));
       if (prev !== slides[i]) { prev.classList.remove('on'); prev.classList.add('prev'); setTimeout(() => prev.classList.remove('prev'), 2000); }
-      slides[i].classList.add('on'); dots.forEach((d, k) => { d.classList.remove('on'); if (k === i) { void d.offsetWidth; d.classList.add('on'); } });
+      slides[i].classList.add('on'); const hn = $('#hcn'), hc = $('#hcap'); if (hn) hn.textContent = String(i + 1).padStart(2, '0'); if (hc) hc.textContent = heroCap($('img', slides[i]).getAttribute('src')); dots.forEach((d, k) => { d.classList.remove('on'); if (k === i) { void d.offsetWidth; d.classList.add('on'); } });
     };
     const start = () => { clearInterval(heroTimer); if (!REDUCED) heroTimer = setInterval(() => { if (!document.hidden) show(i + 1); }, 7000); };
     dots.forEach((d, k) => { d.onclick = () => { show(k); start(); }; });
@@ -1010,9 +1172,28 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
   window.addEventListener('scroll', tick, { passive: true });
   window.addEventListener('resize', () => { tick(); if (innerWidth > 1024 && document.body.classList.contains('menu-open')) setMenu(false); });
 
+  /* ---------- signature cursor (mouse only) ---------- */
+  function cursor() {
+    if (!FINE || REDUCED || $('.cur')) return;
+    const c = document.createElement('div'); c.className = 'cur'; c.innerHTML = '<span></span>'; document.body.appendChild(c);
+    const lab = $('span', c); let x = 0, y = 0, cx = 0, cy = 0, run = false;
+    const loop = () => { cx += (x - cx) * 0.28; cy += (y - cy) * 0.28; c.style.transform = `translate3d(${cx.toFixed(1)}px,${cy.toFixed(1)}px,0)`; if (Math.abs(x - cx) + Math.abs(y - cy) > 0.3) requestAnimationFrame(loop); else run = false; };
+    document.addEventListener('mousemove', e => { x = e.clientX; y = e.clientY; if (!c.classList.contains('on')) { cx = x; cy = y; c.classList.add('on'); root.classList.add('has-cur'); } if (!run) { run = true; requestAnimationFrame(loop); } }, { passive: true });
+    document.addEventListener('mouseover', e => {
+      const t = e.target, form = t.closest && t.closest('input,select,textarea,.modal');
+      c.classList.toggle('hide', !!form);
+      const card = t.closest && t.closest('[data-cur]'), rl = t.closest && t.closest('.rail');
+      const lk = t.closest && t.closest('a,button,.acc>button,.day>button,.pill-b');
+      lab.textContent = card ? card.dataset.cur : rl ? 'Drag' : '';
+      c.classList.toggle('lbl', !!(card || rl)); c.classList.toggle('link', !!lk && !card && !rl);
+    }, { passive: true });
+    document.addEventListener('mouseleave', () => c.classList.remove('on'));
+    document.addEventListener('mouseenter', () => c.classList.add('on'));
+  }
+
   function afterRender() {
     parEls = $$('[data-par]'); litEls = $$('[data-lit]'); tlEls = $$('.tl');
-    sweepImages(app); observe(app); rail(); story(); magnet();
+    sweepImages(app); observe(app); rail(); story(); magnet(); cursor();
     $$('[data-count]').forEach(el => { if (REDUCED || !cio) return; el.textContent = (el.dataset.pre || '') + '0'; cio.observe(el); });
     setTimeout(() => $$('[data-count]').forEach(el => { if (!counted.has(el)) { counted.add(el); el.textContent = (el.dataset.pre || '') + Math.round(+el.dataset.count).toLocaleString('en-IN'); } }), 7000);
     const path = __P().replace(/\/$/, '') || '/';

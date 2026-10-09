@@ -77,11 +77,11 @@
 
   /* ---------- cards ---------- */
   function jc(p, i, rv) {
-    const price = showPrice(p) ? `<div class="jc-price"><small>From · per person</small>${inr(p.price)}</div>` : '<div class="jc-price"><small>Pricing</small>On request</div>';
-    return `<a class="jc${rv ? ' rv' : ''}" ${rv ? `style="--d:${((i || 0) % 3) * 0.09}s"` : ''} href="/package/${esc(p.slug)}">
-      <img class="lz" src="${esc(pimg(p))}" alt="${esc(p.name)} ${dur(p)} Bhutan tour" loading="lazy" decoding="async" draggable="false">
-      <div class="jc-top"><span class="chip">${esc(CAT[p.category] || 'Journey')}</span><span class="chip g">${dur(p)}</span></div>
-      <div class="jc-in"><h3>${esc(p.name)}</h3><div class="jc-sub">${esc(p.summary)}</div><div class="jc-row">${price}<span class="jc-go">Explore</span></div></div></a>`;
+    const price = showPrice(p) ? `<div class="jc-price"><small>From · per guest</small>${inr(p.price)}</div>` : '<span class="jc-meta" style="color:var(--ink3)">Price on request</span>';
+    const meta = `${p.nights} Nights · ${p.days} Days`, sub = p.stay || CAT[p.category] || '';
+    return `<a class="jc${rv ? ' rv' : ''}" ${rv ? `style="--d:${((i || 0) % 3) * 0.09}s"` : ''} href="/package/${esc(p.slug)}" data-cur="View">
+      <div class="jc-img"><img class="lz" src="${esc(pimg(p))}" alt="${esc(p.name)} ${dur(p)} Bhutan tour" loading="lazy" decoding="async" draggable="false"></div>
+      <div class="jc-in"><span class="jc-meta">${esc(meta)}${p.category === 'fixed' ? ' · Fixed departure' : ''}</span><h3>${esc(p.name)}</h3><div class="jc-sub">${esc(sub)}</div><div class="jc-row">${price}<span class="jc-go">Discover</span></div></div></a>`;
   }
   const postCard = (p, i) => `<a class="pc rv" style="--d:${((i || 0) % 3) * 0.09}s" href="/blog/${esc(p.slug)}"><div class="pc-img imgrv">${p.image ? `<img class="lz" src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" decoding="async">` : ''}</div><div><span class="note">${fd(p.date)}</span><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`;
   const acc = (q, a, open) => `<div class="acc${open ? ' open' : ''}"><button type="button" aria-expanded="${!!open}"><span>${esc(q)}</span><i></i></button><div class="acc-b"><div><p>${esc(a)}</p></div></div></div>`;
@@ -184,6 +184,8 @@
   const STEPS = [['Tell us your plan', 'Dates, group and interests — by WhatsApp or the enquiry form.'], ['Get a tailored quote', 'Clear per-person pricing and a day-wise itinerary.'], ['Confirm with an advance', 'We handle permits, SDF, hotels and transfers.'], ['Travel with confidence', 'A local guide and 24×7 support in Bhutan.']];
 
   /* ---------- views ---------- */
+  const HERO_CAP = { 'hero-tiger': 'Paro · Tiger\'s Nest', 'hero-punakha': 'Punakha · The Dzong', 'hero-flags': 'Prayer flags of the Himalaya', 'hero-chortens': 'Bumthang · Sacred chortens' };
+  const heroCap = src => HERO_CAP[(String(src).split('/').pop() || '').replace(/\.\w+$/, '')] || 'The Last Shangri-La';
   function home() {
     const feat = D.packages.filter(p => p.featured), list = (feat.length >= 4 ? feat : D.packages).slice(0, 8);
     const prices = D.packages.filter(showPrice).map(p => p.price);
@@ -193,20 +195,17 @@
     pending = () => { heroSlider(); };
     return `<section class="hero" id="hero">
       ${heroes.map((h, i) => `<div class="hs${i === 0 ? ' on' : ''}"><img src="${esc(h)}" alt="" ${i === 0 ? 'fetchpriority="high"' : ''} decoding="async"></div>`).join('')}
-      <div class="hero-shade"></div>
+      <div class="hero-shade"></div><div class="hero-frame" aria-hidden="true"></div>
       <div class="wrap hero-in" id="hero-in"><div class="eyebrow rv">${esc(S.tagline)}</div><h1 data-sp>${sp(S.heroTitle, { em: 1 })}</h1><p class="lead rv" style="--d:.5s">${esc(S.heroSub)}</p>
-        <div class="hero-cta rv" style="--d:.65s"><button class="btn btn-gold" data-enq type="button">Plan my trip</button><a class="btn btn-line" href="/packages">Explore journeys</a></div></div>
+        <div class="hero-cta rv" style="--d:.65s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button><a class="link" href="/packages">Explore journeys</a></div></div>
       <div class="cue" aria-hidden="true">Scroll</div>
-      <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots">${heroes.length > 1 ? heroes.map((h, i) => `<button type="button" class="${i === 0 ? 'on' : ''}" aria-label="Show photo ${i + 1}"></button>`).join('') : ''}</div><div class="hero-cap">La Bhutanz · The Last Shangri-La</div></div></div>
+      <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots">${heroes.length > 1 ? heroes.map((h, i) => `<button type="button" class="${i === 0 ? 'on' : ''}" aria-label="Show photo ${i + 1}"></button>`).join('') : ''}</div><div class="hero-cap"><b id="hcn">01</b><em id="hcap">${esc(heroCap(heroes[0]))}</em></div></div></div>
     </section>
     <div class="marq" aria-hidden="true"><div class="marq-t">${[0, 1].map(() => ['Paro', 'Thimphu', 'Punakha', 'Gangtey', 'Bumthang', 'Haa Valley', 'Tiger\'s Nest', 'Dochula Pass', 'Phobjikha', 'Land of the Thunder Dragon'].map(x => `<span>${x}</span>`).join('')).join('')}</div></div>
 
     <section class="sec"><div class="wrap"><div class="stmt-wrap"><div><div class="eyebrow rv">Why Bhutan</div><p class="stmt" data-lit>${stmt.map(w => `<span class="sw">${esc(w)}</span>`).join(' ')}</p></div>
       <div class="stmt-side rv" style="--d:.15s"><p>La Bhutanz Tours designs personalised journeys across the Kingdom of Happiness — hand-built around your dates, pace and curiosity, with local experts at every step.</p><a class="link" href="/page/about-us">About us</a></div></div>
-      <div class="stats rv"><div class="stat"><b data-count="${D.packages.length}">${D.packages.length}</b><span>Tour packages</span></div>
-      ${D.departures.length ? `<div class="stat"><b data-count="${D.departures.length}">${D.departures.length}</b><span>Upcoming departures</span></div>` : '<div class="stat"><b>Private</b><span>Departures on your dates</span></div>'}
-      ${prices.length ? `<div class="stat"><b data-count="${Math.min(...prices)}" data-pre="₹">${inr(Math.min(...prices))}</b><span>Starting per person</span></div>` : '<div class="stat"><b>Custom</b><span>Itineraries &amp; quotes</span></div>'}
-      <div class="stat"><b>Mumbai</b><span>Based · India-wide</span></div></div></div></section>
+      <div class="pillars rv"><div><span class="n">i.</span><h4>Private by design</h4><p>Every journey is shaped around your dates, your pace and your curiosity — never a fixed group script.</p></div><div><span class="n">ii.</span><h4>Local expertise</h4><p>Guides and hosts who know Paro, Thimphu, Punakha, Gangtey and Bumthang as home.</p></div><div><span class="n">iii.</span><h4>Handpicked stays</h4><p>Considered hotels and lodges, chosen for character, comfort and the views from the window.</p></div><div><span class="n">iv.</span><h4>Effortless arrangements</h4><p>Permits, fees, transfers and flights handled quietly in the background, with a team on call.</p></div></div></div></section>
 
     <section class="sec alt" style="padding-bottom:clamp(50px,6vw,90px)"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Popular journeys</div><h2 data-sp>${sp('Journeys worth the climb', { em: 1 })}</h2></div><div class="shead-r rv"><a class="link" href="/packages">All journeys</a></div></div></div>
       <div class="rail" id="rail">${list.map(p => jc(p)).join('')}</div>
@@ -216,7 +215,7 @@
       <div>${CHAPTERS.map((c, i) => `<div class="story-text" data-i="${i}"><div class="k">0${i + 1}</div><h3>${esc(c[0])}</h3><p class="lead">${esc(c[1])}</p><div class="story-m imgrv"><img src="${PH + c[2]}.jpg" alt="" loading="lazy" class="lz"></div></div>`).join('')}</div></div></div></section>
 
     <section class="sec alt"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Travel your way</div><h2 data-sp>${sp('Experiences for every traveller')}</h2></div><p class="lead rv" style="max-width:44ch;--d:.2s">Every traveller discovers Bhutan in their own way. We shape the journey around your interests, travel style and pace.</p></div>
-      <div class="mosaic">${EXPERIENCES.map((e, i) => `<a class="mz rv" style="--d:${(i % 3) * 0.08}s" href="/packages"><img class="lz" src="${PH + e[2]}.jpg" alt="" loading="lazy" decoding="async"><div><h3>${esc(e[0])}</h3><p>${esc(e[1])}</p></div></a>`).join('')}</div></div></section>
+      <div class="mosaic">${EXPERIENCES.map((e, i) => `<a class="mz rv" style="--d:${(i % 3) * 0.08}s" href="/packages" data-cur="Explore"><img class="lz" src="${PH + e[2]}.jpg" alt="" loading="lazy" decoding="async"><div><h3>${esc(e[0])}</h3><p>${esc(e[1])}</p></div></a>`).join('')}</div></div></section>
 
     <section class="band"><div class="band-bg" data-par><img class="lz" src="${PH}flags-wheels.jpg" alt="" loading="lazy" decoding="async"></div><div class="wrap"><div class="eyebrow rv">The Kingdom of Happiness</div><h2 data-sp>${sp('Where progress is measured in happiness', { em: 1 })}</h2><p class="lead rv" style="--d:.25s">Bhutan guides its future by Gross National Happiness, protects its forests by law and welcomes visitors as honoured guests. Travel here is slow, deliberate and deeply human.</p><div class="rv" style="--d:.35s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button></div></div></section>
 
@@ -393,7 +392,7 @@
       const prev = slides[i]; i = (n + slides.length) % slides.length;
       slides.forEach(s => s.classList.remove('prev'));
       if (prev !== slides[i]) { prev.classList.remove('on'); prev.classList.add('prev'); setTimeout(() => prev.classList.remove('prev'), 2000); }
-      slides[i].classList.add('on'); dots.forEach((d, k) => { d.classList.remove('on'); if (k === i) { void d.offsetWidth; d.classList.add('on'); } });
+      slides[i].classList.add('on'); const hn = $('#hcn'), hc = $('#hcap'); if (hn) hn.textContent = String(i + 1).padStart(2, '0'); if (hc) hc.textContent = heroCap($('img', slides[i]).getAttribute('src')); dots.forEach((d, k) => { d.classList.remove('on'); if (k === i) { void d.offsetWidth; d.classList.add('on'); } });
     };
     const start = () => { clearInterval(heroTimer); if (!REDUCED) heroTimer = setInterval(() => { if (!document.hidden) show(i + 1); }, 7000); };
     dots.forEach((d, k) => { d.onclick = () => { show(k); start(); }; });
@@ -467,9 +466,28 @@
   window.addEventListener('scroll', tick, { passive: true });
   window.addEventListener('resize', () => { tick(); if (innerWidth > 1024 && document.body.classList.contains('menu-open')) setMenu(false); });
 
+  /* ---------- signature cursor (mouse only) ---------- */
+  function cursor() {
+    if (!FINE || REDUCED || $('.cur')) return;
+    const c = document.createElement('div'); c.className = 'cur'; c.innerHTML = '<span></span>'; document.body.appendChild(c);
+    const lab = $('span', c); let x = 0, y = 0, cx = 0, cy = 0, run = false;
+    const loop = () => { cx += (x - cx) * 0.28; cy += (y - cy) * 0.28; c.style.transform = `translate3d(${cx.toFixed(1)}px,${cy.toFixed(1)}px,0)`; if (Math.abs(x - cx) + Math.abs(y - cy) > 0.3) requestAnimationFrame(loop); else run = false; };
+    document.addEventListener('mousemove', e => { x = e.clientX; y = e.clientY; if (!c.classList.contains('on')) { cx = x; cy = y; c.classList.add('on'); root.classList.add('has-cur'); } if (!run) { run = true; requestAnimationFrame(loop); } }, { passive: true });
+    document.addEventListener('mouseover', e => {
+      const t = e.target, form = t.closest && t.closest('input,select,textarea,.modal');
+      c.classList.toggle('hide', !!form);
+      const card = t.closest && t.closest('[data-cur]'), rl = t.closest && t.closest('.rail');
+      const lk = t.closest && t.closest('a,button,.acc>button,.day>button,.pill-b');
+      lab.textContent = card ? card.dataset.cur : rl ? 'Drag' : '';
+      c.classList.toggle('lbl', !!(card || rl)); c.classList.toggle('link', !!lk && !card && !rl);
+    }, { passive: true });
+    document.addEventListener('mouseleave', () => c.classList.remove('on'));
+    document.addEventListener('mouseenter', () => c.classList.add('on'));
+  }
+
   function afterRender() {
     parEls = $$('[data-par]'); litEls = $$('[data-lit]'); tlEls = $$('.tl');
-    sweepImages(app); observe(app); rail(); story(); magnet();
+    sweepImages(app); observe(app); rail(); story(); magnet(); cursor();
     $$('[data-count]').forEach(el => { if (REDUCED || !cio) return; el.textContent = (el.dataset.pre || '') + '0'; cio.observe(el); });
     setTimeout(() => $$('[data-count]').forEach(el => { if (!counted.has(el)) { counted.add(el); el.textContent = (el.dataset.pre || '') + Math.round(+el.dataset.count).toLocaleString('en-IN'); } }), 7000);
     const path = location.pathname.replace(/\/$/, '') || '/';

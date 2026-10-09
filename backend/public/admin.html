@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dhandha Admin</title>
+<style>
+body{font-family:system-ui,sans-serif;margin:0;background:#f5f6f8;color:#1c1e21}
+header{background:#1d3557;color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+main{padding:20px;max-width:1100px;margin:auto}
+.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.card{background:#fff;border-radius:8px;padding:14px 18px;min-width:140px;box-shadow:0 1px 3px #0001}
+.card b{display:block;font-size:22px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;margin-bottom:24px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid #eee;font-size:14px}
+th{background:#fafafa}
+button{cursor:pointer;border:0;border-radius:6px;padding:5px 10px;background:#1d3557;color:#fff}
+input{padding:8px;border:1px solid #ccc;border-radius:6px}
+#login{max-width:300px;margin:80px auto;display:grid;gap:10px}
+</style></head><body>
+<div id="login"><h2>Admin login</h2><input id="ph" placeholder="Phone"><input id="pw" type="password" placeholder="Password"><button onclick="login()">Sign in</button><div id="err" style="color:#c00"></div></div>
+<div id="app" hidden>
+<header><b>Dhandha Admin</b> <a href="/" style="color:#fff;font-size:13px">← Website</a><button onclick="localStorage.removeItem('t');location.reload()">Logout</button></header>
+<main><div class="cards" id="stats"></div>
+<h3>Bookings</h3><table id="bk"></table>
+<h3>Workers</h3><table id="wk"></table>
+<h3>Settlements <small style="font-weight:400;color:#666">(positive = we owe the worker)</small></h3><table id="st"></table></main></div>
+<script>
+let T=localStorage.getItem('t');
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(m,p,b){const r=await fetch(p,{method:m,headers:{'Content-Type':'application/json',Authorization:'Bearer '+T},body:b&&JSON.stringify(b)});const j=await r.json();if(!r.ok)throw new Error(j.error);return j}
+async function login(){try{const r=await fetch('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:$('ph').value,password:$('pw').value})});const j=await r.json();if(!r.ok||j.user.role!=='admin')throw new Error(j.error||'Not an admin');T=j.token;localStorage.setItem('t',T);load()}catch(e){$('err').textContent=e.message}}
+async function assign(id){const w=prompt('Worker ID to assign (see Workers table):');if(!w)return;try{await api('POST',`/admin/bookings/${id}/assign`,{workerId:+w});load()}catch(e){alert(e.message)}}
+async function redispatch(id){try{await api('POST',`/admin/bookings/${id}/redispatch`);load()}catch(e){alert(e.message)}}
+async function approve(id,v){await api('PUT',`/admin/workers/${id}/approval`,{approved:v});load()}
+async function settle(id,balance){
+ const kind=balance>=0?'payout':'remittance';const max=Math.abs(balance);
+ const a=prompt(kind==='payout'?`Record a payout you made to this worker (max ₹${max}). Pay them first via UPI/bank, then record it here:`:`Record cash commission received from this worker (max ₹${max}):`,max);
+ if(!a)return;const ref=prompt('Reference (UPI txn id, etc.)')||'';
+ try{await api('POST',`/admin/workers/${id}/settlements`,{kind,amount:+a,reference:ref});load()}catch(e){alert(e.message)}}
+async function load(){try{
+ const [s,b,w,st]=await Promise.all([api('GET','/admin/stats'),api('GET','/admin/bookings'),api('GET','/admin/workers'),api('GET','/admin/settlements')]);
+ $('login').hidden=true;$('app').hidden=false;
+ $('stats').innerHTML=[['Bookings',s.bookings],['Open',s.open],['Unassigned',s.unassigned],['GMV ₹',s.gmv],['Revenue ₹',s.revenue]].map(([k,v])=>`<div class="card">${k}<b>${v??0}</b></div>`).join('');
+ $('bk').innerHTML='<tr><th>#</th><th>Service</th><th>Customer</th><th>When</th><th>₹</th><th>Pay</th><th>Status</th><th>Worker</th><th></th></tr>'+b.map(x=>`<tr><td>${x.id}</td><td>${esc(x.service_name)}</td><td>${esc(x.customer_name)}</td><td>${esc(new Date(x.scheduled_at).toLocaleString())}</td><td>${x.amount}</td><td>${x.payment_method}/${x.payment_status}</td><td>${x.status}</td><td>${esc(x.worker_name||'-')}</td><td>${x.status==='unassigned'?`<button onclick="assign(${x.id})">Assign</button> <button onclick="redispatch(${x.id})">Retry</button>`:''}</td></tr>`).join('');
+ $('wk').innerHTML='<tr><th>ID</th><th>Name</th><th>Phone</th><th>Category</th><th>Online</th><th>Rating</th><th>Jobs</th><th>Approved</th></tr>'+w.map(x=>`<tr><td>${x.id}</td><td>${esc(x.name)}</td><td>${esc(x.phone)}</td><td>${esc(x.category)}</td><td>${x.available?'●':'○'}</td><td>${x.avg_rating??'-'}</td><td>${x.jobs}</td><td><button onclick="approve(${x.id},${x.approved?0:1})">${x.approved?'Revoke':'Approve'}</button></td></tr>`).join('');
+
+ $('st').innerHTML='<tr><th>ID</th><th>Name</th><th>Online share ₹</th><th>Cash commission ₹</th><th>Paid out ₹</th><th>Remitted ₹</th><th>Balance ₹</th><th></th></tr>'+st.map(x=>`<tr><td>${x.id}</td><td>${esc(x.name)}</td><td>${x.online_share}</td><td>${x.cash_commission}</td><td>${x.paid_out}</td><td>${x.remitted}</td><td><b>${x.balance}</b></td><td>${x.balance?`<button onclick="settle(${x.id},${x.balance})">${x.balance>0?'Record payout':'Record remittance'}</button>`:''}</td></tr>`).join('');
+}catch(e){if(T){localStorage.removeItem('t');T=null}}}
+if(T)load();
+</script></body></html>

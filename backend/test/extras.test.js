@@ -108,3 +108,10 @@ test('push notifications reach the right people; settlements ledger balances', a
   assert.equal((await pay('remittance', comm)).status, 201);
   assert.equal((await call('GET', '/worker/balance', null, w.token)).body.balance, 0);
 });
+
+test('website and admin pages are served', async () => {
+  const home = await fetch(base + '/');
+  assert.equal(home.status, 200);
+  assert.match(await home.text(), /<title>Dhandha/);
+  for (const f of ['/site.js', '/site.css', '/admin.html']) assert.equal((await fetch(base + f)).status, 200, f);
+});

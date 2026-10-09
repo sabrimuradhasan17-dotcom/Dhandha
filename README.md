@@ -5,7 +5,7 @@ service, the nearest available professional is auto-assigned, and payment happen
 (Razorpay UPI/cards/netbanking) or in cash after the service.
 
 ```
-backend/   Node 22 + Express + SQLite (node:sqlite) REST API, and the web admin dashboard (backend/public)
+backend/   Node 22 + Express + SQLite (node:sqlite) REST API, the customer/professional website (backend/public, served at /) and the admin dashboard (/admin.html)
 app/       Expo (React Native) app for Android + iOS — customers AND professionals log in to the same app
 ```
 
@@ -13,12 +13,16 @@ app/       Expo (React Native) app for Android + iOS — customers AND professio
 ```bash
 cd backend && npm install
 cp .env.example .env      # optional; export vars or use `node --env-file=.env src/server.js`
-npm start                 # http://localhost:4000  (admin dashboard at /, default admin 9999999999 / admin123)
+npm start                 # http://localhost:4000  (website at /, admin dashboard at /admin.html, default admin 9999999999 / admin123)
 npm test                  # end-to-end tests
 ```
 Without Razorpay keys the API uses a **mock payment provider** (dev only; disabled when `NODE_ENV=production`).
 Set `RAZORPAY_KEY_ID` / `RAZORPAY_KEY_SECRET` and configure a `payment.captured` webhook to
 `POST /payments/webhook` for real payments. Always set `JWT_SECRET` and `ADMIN_PASSWORD` in production.
+
+## Website
+The same features are available in the browser at `/` (no extra build step — plain HTML/JS in `backend/public`):
+customers sign in with an SMS code, browse services, pick a time, choose auto-assign or a specific professional (rating, experience, call button), pay online (Razorpay checkout) or in cash, track bookings, chat, and rate. Professionals use the same site (**My jobs**) to go online, accept/decline requests, progress jobs, chat, edit their profile and see their balance. Web push notifications are not included; workers still get SMS.
 
 ## Run the app
 ```bash
@@ -47,7 +51,7 @@ Mock payments work in Expo Go. Real Razorpay checkout needs a dev build (`npx ex
 
 ## Deploy
 1. Push this repo to GitHub, then on [Render](https://render.com) choose **New → Blueprint** (uses `render.yaml`; Docker, 1 GB persistent disk for SQLite, run a single instance). Set `ADMIN_PHONE`, `ADMIN_PASSWORD`, Twilio and Razorpay vars. Add the Razorpay webhook `https://<your-api>/payments/webhook` (event `payment.captured`).
-2. Admin dashboard is then at `https://<your-api>/`.
+2. The website is then live at `https://<your-api>/` and the admin dashboard at `https://<your-api>/admin.html`. Point your own domain at it from the Render dashboard.
 3. Apps: put your API URL in `app/eas.json`, then `cd app && npx eas build --profile preview --platform android` (and `ios`) and `eas submit` for the stores. Needs an Expo account; Apple ($99/yr) and Google Play ($25 once) developer accounts for store release.
 4. Back up the disk (Render snapshots) — it holds all bookings and payments.
 

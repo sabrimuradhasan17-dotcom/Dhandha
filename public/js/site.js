@@ -193,29 +193,34 @@
     const heroes = (S.heroImages && S.heroImages.length ? S.heroImages : [PH + 'hero-tiger.jpg', PH + 'hero-punakha.jpg', PH + 'hero-flags.jpg', PH + 'hero-chortens.jpg']).slice(0, 5);
     const stmt = 'Bhutan is not a place you visit. It is a feeling you carry home.'.split(' ');
     pending = () => { heroSlider(); };
-    return `<section class="hero" id="hero">
-      ${heroes.map((h, i) => `<div class="hs${i === 0 ? ' on' : ''}"><img src="${esc(h)}" alt="" ${i === 0 ? 'fetchpriority="high"' : ''} decoding="async"></div>`).join('')}
-      <div class="hero-shade"></div><div class="hero-frame" aria-hidden="true"></div>
-      <div class="wrap hero-in" id="hero-in"><div class="eyebrow rv">${esc(S.tagline)}</div><h1 data-sp>${sp(S.heroTitle, { em: 1 })}</h1><p class="lead rv" style="--d:.5s">${esc(S.heroSub)}</p>
-        <div class="hero-cta rv" style="--d:.65s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button><a class="link" href="/packages">Explore journeys</a></div></div>
+    return `<section class="hero" id="hero"><div class="hero-stick">
+      <div class="hero-media" id="hero-media">${heroes.map((h, i) => `<div class="hs${i === 0 ? ' on' : ''}"><img src="${esc(h)}" alt="" ${i === 0 ? 'fetchpriority="high"' : ''} decoding="async"></div>`).join('')}<div class="hero-shade"></div><div class="hero-frame" aria-hidden="true"></div></div>
+      <div class="hero-in" id="hero-in"><div class="hero-c"><div class="eyebrow rv">${esc(S.tagline)}</div><h1 data-sp>${sp(S.heroTitle, { em: 1 })}</h1><p class="lead rv" style="--d:.5s">${esc(S.heroSub)}</p>
+        <div class="hero-cta rv" style="--d:.65s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button><a class="link" href="/packages">Explore journeys</a></div></div></div>
       <div class="cue" aria-hidden="true">Scroll</div>
       <div class="hero-meta"><div class="wrap"><div class="hero-dots" id="hdots">${heroes.length > 1 ? heroes.map((h, i) => `<button type="button" class="${i === 0 ? 'on' : ''}" aria-label="Show photo ${i + 1}"></button>`).join('') : ''}</div><div class="hero-cap"><b id="hcn">01</b><em id="hcap">${esc(heroCap(heroes[0]))}</em></div></div></div>
-    </section>
+    </div></section>
     <div class="marq" aria-hidden="true"><div class="marq-t">${[0, 1].map(() => ['Paro', 'Thimphu', 'Punakha', 'Gangtey', 'Bumthang', 'Haa Valley', 'Tiger\'s Nest', 'Dochula Pass', 'Phobjikha', 'Land of the Thunder Dragon'].map(x => `<span>${x}</span>`).join('')).join('')}</div></div>
 
-    <section class="sec"><div class="wrap"><div class="stmt-wrap"><div><div class="eyebrow rv">Why Bhutan</div><p class="stmt" data-lit>${stmt.map(w => `<span class="sw">${esc(w)}</span>`).join(' ')}</p></div>
-      <div class="stmt-side rv" style="--d:.15s"><p>La Bhutanz Tours designs personalised journeys across the Kingdom of Happiness — hand-built around your dates, pace and curiosity, with local experts at every step.</p><a class="link" href="/page/about-us">About us</a></div></div>
-      <div class="pillars rv"><div><span class="n">i.</span><h4>Private by design</h4><p>Every journey is shaped around your dates, your pace and your curiosity — never a fixed group script.</p></div><div><span class="n">ii.</span><h4>Local expertise</h4><p>Guides and hosts who know Paro, Thimphu, Punakha, Gangtey and Bumthang as home.</p></div><div><span class="n">iii.</span><h4>Handpicked stays</h4><p>Considered hotels and lodges, chosen for character, comfort and the views from the window.</p></div><div><span class="n">iv.</span><h4>Effortless arrangements</h4><p>Permits, fees, transfers and flights handled quietly in the background, with a team on call.</p></div></div></div></section>
+    <section class="sec stmt-sec"><div class="wrap"><div class="orn rv"><i></i></div><div class="eyebrow c rv">Why Bhutan</div><p class="stmt" data-lit>${stmt.map(w => `<span class="sw">${esc(w)}</span>`).join(' ')}</p>
+      <div class="stmt-side rv" style="--d:.15s"><p>La Bhutanz Tours designs personalised journeys across the Kingdom of Happiness — hand-built around your dates, pace and curiosity, with local experts at every step.</p><a class="link" href="/page/about-us">About us</a></div>
+      <div class="pillars rv"><div><span class="n">i.</span><h4>Private by design</h4><p>Every journey is shaped around your dates, your pace and your curiosity — never a fixed group script.</p></div><div><span class="n">ii.</span><h4>Local expertise</h4><p>Guides and hosts who know Paro, Thimphu, Punakha, Gangtey and Bumthang as home.</p></div><div><span class="n">iii.</span><h4>Handpicked stays</h4><p>Considered hotels and lodges, chosen for character, comfort and the views from the window.</p></div><div><span class="n">iv.</span><h4>Effortless arrangements</h4><p>Permits, fees, transfers and flights handled quietly in the background, with a team on call.</p></div></div></section>
 
-    <section class="sec alt" style="padding-bottom:clamp(50px,6vw,90px)"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Popular journeys</div><h2 data-sp>${sp('Journeys worth the climb', { em: 1 })}</h2></div><div class="shead-r rv"><a class="link" href="/packages">All journeys</a></div></div></div>
+    <section class="hg dark" id="hg"><div class="hg-pin"><div class="hg-head wrap"><div><div class="eyebrow">Popular journeys</div><h2>Journeys <em>worth</em> the climb</h2></div><div class="hg-count"><b id="hgn">01</b><span>/ ${String(list.length).padStart(2, '0')}</span><a class="link" href="/packages">All journeys</a></div></div>
+      <div class="hg-track" id="hg-track">${list.map((p, i) => `<a class="hg-card" href="/package/${esc(p.slug)}" data-cur="View"><div class="hg-img"><img class="lz" src="${esc(pimg(p))}" alt="${esc(p.name)} ${dur(p)} Bhutan tour" loading="lazy" decoding="async" draggable="false"></div><div class="hg-t"><span class="hg-n">${String(i + 1).padStart(2, '0')}</span><span class="jc-meta">${p.nights} Nights · ${p.days} Days${p.category === 'fixed' ? ' · Fixed departure' : ''}</span><h3>${esc(p.name)}</h3><p>${esc(p.stay || CAT[p.category] || '')}</p><span class="jc-go">Discover</span></div></a>`).join('')}<a class="hg-end" href="/packages"><span>View all<br>journeys</span></a></div>
+      <div class="hg-prog"><i id="hg-bar"></i></div></div></section>
+    <section class="sec dark rail-sec" style="padding-bottom:clamp(50px,6vw,90px)"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Popular journeys</div><h2 data-sp>${sp('Journeys worth the climb', { em: 1 })}</h2></div><div class="shead-r rv"><a class="link" href="/packages">All journeys</a></div></div></div>
       <div class="rail" id="rail">${list.map(p => jc(p)).join('')}</div>
       <div class="rail-ctl"><div class="rail-bar"><i></i></div><button class="arrow" type="button" data-rp aria-label="Previous">←</button><button class="arrow" type="button" data-rn aria-label="Next">→</button></div></section>
 
     <section class="sec"><div class="wrap"><div class="eyebrow rv">The way we travel</div><div class="story"><div class="story-media" aria-hidden="true">${CHAPTERS.map((c, i) => `<img src="${PH + c[2]}.jpg" alt="" loading="lazy" class="${i === 0 ? 'on' : ''}">`).join('')}<div class="story-n" id="sn">01</div></div>
       <div>${CHAPTERS.map((c, i) => `<div class="story-text" data-i="${i}"><div class="k">0${i + 1}</div><h3>${esc(c[0])}</h3><p class="lead">${esc(c[1])}</p><div class="story-m imgrv"><img src="${PH + c[2]}.jpg" alt="" loading="lazy" class="lz"></div></div>`).join('')}</div></div></div></section>
 
-    <section class="sec alt"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Travel your way</div><h2 data-sp>${sp('Experiences for every traveller')}</h2></div><p class="lead rv" style="max-width:44ch;--d:.2s">Every traveller discovers Bhutan in their own way. We shape the journey around your interests, travel style and pace.</p></div>
-      <div class="mosaic">${EXPERIENCES.map((e, i) => `<a class="mz rv" style="--d:${(i % 3) * 0.08}s" href="/packages" data-cur="Explore"><img class="lz" src="${PH + e[2]}.jpg" alt="" loading="lazy" decoding="async"><div><h3>${esc(e[0])}</h3><p>${esc(e[1])}</p></div></a>`).join('')}</div></div></section>
+    <div class="giant" aria-hidden="true"><div class="giant-t">${[0, 1].map(() => '<span>Bhutan</span><span class="o">The Last Shangri-La</span>').join('')}</div></div>
+
+    <section class="sec dark xp-sec"><div class="wrap"><div class="shead"><div><div class="eyebrow rv">Travel your way</div><h2 data-sp>${sp('Experiences for every traveller')}</h2></div><p class="lead rv" style="max-width:40ch;--d:.2s">Every traveller discovers Bhutan in their own way. We shape the journey around your interests, travel style and pace.</p></div>
+      <div class="xp"><ul class="xp-list" id="xp">${EXPERIENCES.map((e, i) => `<li class="rv${i === 0 ? ' on' : ''}" data-i="${i}" style="--d:${i * 0.05}s"><button type="button" class="xp-b" aria-expanded="${i === 0}"><span class="xn">0${i + 1}</span><span class="xt">${esc(e[0])}</span></button><div class="xp-d"><div><p>${esc(e[1])}</p><a class="link" href="/packages">Explore journeys</a><div class="xp-m"><img class="lz" src="${PH + e[2]}.jpg" alt="" loading="lazy" decoding="async"></div></div></div></li>`).join('')}</ul>
+      <div class="xp-media">${EXPERIENCES.map((e, i) => `<img src="${PH + e[2]}.jpg" alt="" loading="lazy" aria-hidden="true" class="${i === 0 ? 'on' : ''}">`).join('')}<div class="xp-cap"><p id="xpc">${esc(EXPERIENCES[0][1])}</p><a class="link" href="/packages">Explore journeys</a></div></div></div></div></section>
 
     <section class="band"><div class="band-bg" data-par><img class="lz" src="${PH}flags-wheels.jpg" alt="" loading="lazy" decoding="async"></div><div class="wrap"><div class="eyebrow rv">The Kingdom of Happiness</div><h2 data-sp>${sp('Where progress is measured in happiness', { em: 1 })}</h2><p class="lead rv" style="--d:.25s">Bhutan guides its future by Gross National Happiness, protects its forests by law and welcomes visitors as honoured guests. Travel here is slow, deliberate and deeply human.</p><div class="rv" style="--d:.35s"><button class="btn btn-gold" data-enq type="button">Begin your journey</button></div></div></section>
 
@@ -355,7 +360,7 @@
   const notFound = () => { document.title = 'Page not found | ' + S.brand; return `<section class="phero" style="min-height:80vh;display:flex;align-items:center"><div class="phero-bg"><img src="${PH}hero-flags.jpg" alt=""></div><div class="wrap" style="text-align:center"><h1 data-sp style="margin-inline:auto">${sp('Page not found')}</h1><p class="lead rv" style="margin:0 auto 30px">That page doesn't exist — but Bhutan is waiting.</p><a class="btn btn-gold" href="/packages">Browse journeys</a></div></section>`; };
 
   /* ---------- motion engine ---------- */
-  let io = null, parEls = [], litEls = [], tlEls = [], counted = new WeakSet(), heroTimer = null, lastY = 0, ticking = false, pres = true;
+  let hgS = null, hgT = null, hgB = null, hgC = null, hgD = 0, hgN = 1, io = null, parEls = [], litEls = [], tlEls = [], counted = new WeakSet(), heroTimer = null, lastY = 0, ticking = false, pres = true;
   if (!('IntersectionObserver' in window)) { root.classList.add('rm'); }
   io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
     if (e.isIntersecting || e.boundingClientRect.top < 0) { e.target.classList.add('in'); io.unobserve(e.target); }
@@ -442,8 +447,18 @@
     if (open || y < 500) hide = false; else if (y > lastY + 6) hide = true; else if (y < lastY - 6) hide = false;
     nav.classList.toggle('hide', hide); root.classList.toggle('nh', hide); lastY = y;
     if (!REDUCED) {
-      const hi = $('#hero-in');
-      if (hi && y < vh * 1.3) { hi.style.transform = `translate3d(0,${(y * 0.2).toFixed(1)}px,0)`; hi.style.opacity = Math.max(0, 1 - y / (vh * 0.8)).toFixed(3); }
+      const hi = $('#hero-in'), hm = $('#hero-media');
+      if (hi && hm) {
+        const hp = Math.max(0, Math.min(1, y / (vh * 0.85))), e = hp * hp * (3 - 2 * hp), sx = innerWidth < 720 ? 7 : 17, R = (e * 60).toFixed(1) + 'vw';
+        hm.style.clipPath = hp > 0 ? `inset(${(e * 12).toFixed(2)}vh ${(e * sx).toFixed(2)}vw ${(e * 8).toFixed(2)}vh ${(e * sx).toFixed(2)}vw round ${R} ${R} 0 0)` : '';
+        const o = Math.max(0, 1 - hp * 1.8); hi.style.opacity = o.toFixed(3); hi.style.transform = `translate3d(0,${(-hp * 50).toFixed(1)}px,0)`; hi.style.pointerEvents = o < 0.2 ? 'none' : '';
+        const hmeta = $('.hero-meta'), hcue = $('.cue'); if (hmeta) hmeta.style.opacity = Math.max(0, 1 - hp * 3).toFixed(3); if (hcue) hcue.style.opacity = Math.max(0, 1 - hp * 4).toFixed(3);
+      }
+      if (hgS && hgS.offsetParent) {
+        const r = hgS.getBoundingClientRect(), p = Math.max(0, Math.min(1, -r.top / Math.max(1, hgS.offsetHeight - vh)));
+        hgT.style.transform = `translate3d(${(-p * hgD).toFixed(1)}px,0,0)`; hgB.style.transform = `scaleX(${p.toFixed(3)})`;
+        const n = Math.min(hgN, Math.floor(p * hgN) + 1); if (hgC.textContent !== String(n).padStart(2, '0')) hgC.textContent = String(n).padStart(2, '0');
+      }
       parEls.forEach(el => {
         const pr = el.parentElement.getBoundingClientRect(); if (pr.bottom < -200 || pr.top > vh + 200) return;
         const extra = (el.offsetHeight - pr.height) / 2, p = (pr.top + pr.height / 2 - vh / 2) / (vh / 2 + pr.height / 2);
@@ -464,7 +479,7 @@
   }
   const tick = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
   window.addEventListener('scroll', tick, { passive: true });
-  window.addEventListener('resize', () => { tick(); if (innerWidth > 1024 && document.body.classList.contains('menu-open')) setMenu(false); });
+  window.addEventListener('resize', () => { hgSetup(); tick(); if (innerWidth > 1024 && document.body.classList.contains('menu-open')) setMenu(false); });
 
   /* ---------- signature cursor (mouse only) ---------- */
   function cursor() {
@@ -485,8 +500,23 @@
     document.addEventListener('mouseenter', () => c.classList.add('on'));
   }
 
+  function hgSetup() {
+    hgS = $('#hg'); if (!hgS) return; hgT = $('#hg-track'); hgB = $('#hg-bar'); hgC = $('#hgn'); hgN = $$('.hg-card', hgT).length || 1;
+    if (!hgS.offsetParent) return;
+    hgD = Math.max(0, hgT.offsetWidth - innerWidth + 0); hgS.style.height = (hgD + innerHeight) + 'px';
+  }
+  function xpInit() {
+    const ul = $('#xp'); if (!ul) return; const lis = $$('li', ul), imgs = $$('.xp-media img');
+    const cap = $('#xpc'), descs = EXPERIENCES.map(e => e[1]); const set = i => { if (cap) cap.textContent = descs[i]; lis.forEach((l, k) => { l.classList.toggle('on', k === i); $('.xp-b', l).setAttribute('aria-expanded', k === i); }); imgs.forEach((m, k) => m.classList.toggle('on', k === i)); };
+    lis.forEach((l, i) => {
+      l.addEventListener('mouseenter', () => { if (FINE) set(i); });
+      $('.xp-b', l).addEventListener('click', () => set(i));
+      $('.xp-b', l).addEventListener('focus', () => set(i));
+    });
+  }
+
   function afterRender() {
-    parEls = $$('[data-par]'); litEls = $$('[data-lit]'); tlEls = $$('.tl');
+    parEls = $$('[data-par]'); litEls = $$('[data-lit]'); tlEls = $$('.tl'); hgS = null; hgSetup(); xpInit();
     sweepImages(app); observe(app); rail(); story(); magnet(); cursor();
     $$('[data-count]').forEach(el => { if (REDUCED || !cio) return; el.textContent = (el.dataset.pre || '') + '0'; cio.observe(el); });
     setTimeout(() => $$('[data-count]').forEach(el => { if (!counted.has(el)) { counted.add(el); el.textContent = (el.dataset.pre || '') + Math.round(+el.dataset.count).toLocaleString('en-IN'); } }), 7000);

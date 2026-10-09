@@ -31,6 +31,9 @@ Home · Packages (filters/search) · Package detail (itinerary, inclusions, depa
 **WhatsApp**: floating button, header button, mobile call/WhatsApp bar, and pre-filled messages per package, departure and enquiry. Enquiry form saves to the CRM *and* offers "Continue on WhatsApp".
 SEO: per-page titles/descriptions, canonical URLs, Open Graph, JSON-LD (TravelAgency / TouristTrip), `sitemap.xml`, `robots.txt`.
 
+**Premium design (v2)**: "Himalayan dusk" theme with a cinematic photo slideshow (owner-editable in Settings → *Home page slideshow photos*), animated preloader, scroll-progress bar, split-text headlines, scroll-lit statement, count-up stats, drag-to-scroll journey rail, sticky storytelling, parallax bands, animated how-it-works timeline, smooth accordions and page transitions, and a full-screen mobile menu. Vanilla JS/CSS (no libraries), self-hosted fonts (`public/fonts`), free Unsplash photos (`public/img/photos`, credits at `/page/photo-credits`). Honours `prefers-reduced-motion`; content is visible even if scripts fail to load. The admin panel keeps its own stylesheet (`public/admin/base.css`).
+Previews for clients: `node tools/build-static-preview.js docs && node tools/prerender.js docs/index.html` (host-anywhere folder) and `node tools/build-single-html.js dist` (two stand-alone HTML files).
+
 ## Admin panel (`/admin`)
 - **Dashboard** — new enquiries, upcoming departures, launch checklist.
 - **Enquiries (CRM)** — status pipeline (new → contacted → quoted → booked/lost), notes, one-click WhatsApp reply, CSV export.

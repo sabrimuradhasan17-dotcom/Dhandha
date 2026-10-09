@@ -26,7 +26,7 @@ seed.enquiries = [
 seed.testimonials = []; 
 const SEED = JSON.stringify(rel(seed)).replace(/<\//g, '<\\/');
 
-let css = fs.readFileSync(path.join(root, 'public/css/site.css'), 'utf8') + '\n' + fs.readFileSync(path.join(root, 'public/admin/admin.css'), 'utf8');
+let css = fs.readFileSync(path.join(root, 'public/admin/base.css'), 'utf8').split('url(/fonts/').join('url(fonts/') + '\n' + fs.readFileSync(path.join(root, 'public/admin/admin.css'), 'utf8');
 css = css.replace(/@media\(prefers-color-scheme:dark\)\{:root\{([^}]*)\}\}/, (m, v) => `@media(prefers-color-scheme:dark){:root:not([data-theme=light]){${v};color-scheme:dark}}:root[data-theme=dark]{${v};color-scheme:dark}`);
 
 let js = fs.readFileSync(path.join(root, 'public/admin/admin.js'), 'utf8');
@@ -103,7 +103,6 @@ ${cleaning}
 })();
 `;
 const html = `<title>La Bhutanz Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${css}\nbody{font-size:16px}</style>
 <div id="root"></div>
 <script>${shim}</script>
@@ -114,4 +113,5 @@ fs.writeFileSync(path.join(out, 'index.html'), html);
 fs.mkdirSync(path.join(out, 'img'), { recursive: true });
 fs.copyFileSync(path.join(root, 'public/img/logo.png'), path.join(out, 'img/logo.png'));
 fs.copyFileSync(path.join(root, 'public/img/favicon.png'), path.join(out, 'img/favicon.png'));
+fs.cpSync(path.join(root, 'public/fonts'), path.join(out, 'fonts'), { recursive: true });
 console.log('built', out, Math.round(html.length / 1024) + 'KB');

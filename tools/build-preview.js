@@ -18,17 +18,16 @@ const posts = Object.fromEntries(seed.posts.map(p => [p.slug, p])), pages = Obje
 const data = JSON.stringify({ site, posts, pages }).replace(/<\//g, '<\\/');
 
 let css = fs.readFileSync(path.join(root, 'public/css/site.css'), 'utf8');
-// make the dark palette follow the viewer's explicit theme choice as well as the OS setting
-css = css.replace(/@media\(prefers-color-scheme:dark\)\{:root\{([^}]*)\}\}/, (m, vars) =>
-  `@media(prefers-color-scheme:dark){:root:not([data-theme=light]){${vars};color-scheme:dark}}:root[data-theme=dark]{${vars};color-scheme:dark}`);
+css = css.split('url(/fonts/').join('url(fonts/');
 
 let js = fs.readFileSync(path.join(root, 'public/js/site.js'), 'utf8');
 const must = (a, b) => { if (!js.includes(a)) throw new Error('patch target missing: ' + a.slice(0, 50)); js = js.split(a).join(b); };
 js = js.replace(/history\.replaceState\([^;]*\);/, "__route = __P() + (u.toString() ? '?' + u : '');");
 must('function go(url) { history.pushState(null, \'\', url); render(); }', "function go(url) { __route = url.split('#')[0]; render(); }");
-must("window.addEventListener('popstate', render);", '');
-must("if (location.hash && $(location.hash)) $(location.hash).scrollIntoView(); else window.scrollTo(0, 0);", 'window.scrollTo(0, 0);');
+must("window.addEventListener('popstate', () => render());", '');
+must("if (location.hash && $(location.hash)) $(location.hash).scrollIntoView(); else window.scrollTo({ top: 0, behavior: 'instant' });", "window.scrollTo({ top: 0, behavior: 'instant' });");
 must('has reached our team', 'would reach our team (preview only: nothing was sent or saved)');
+js = js.split("'/img/photos/'").join("'img/photos/'");
 js = js.split('location.pathname').join('__P()').split('location.search').join('__Q()');
 
 const shim = `
@@ -47,14 +46,14 @@ let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { 
 })();
 `;
 const html = `<title>La Bhutanz Tours</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>${css}
-.pv{background:#1d1512;color:#f1e6d8;font:500 12px/1.4 Inter,system-ui,sans-serif;text-align:center;padding:7px 16px}
-body{font-size:16px}</style>
-<div class="pv">Preview of the new La Bhutanz Tours website. Enquiries are not saved in this preview.${adminUrl ? ` <a href="${adminUrl}" target="_blank" style="color:#e5bd4a">Try the admin panel demo ↗</a>` : ' The admin panel runs on the live server.'}</div>
-<div id="banner"></div>
-<header class="nav" id="hdr"></header>
-<main id="app" tabindex="-1"><div class="wrap" style="padding:80px 20px">Loading…</div></main>
+.pv{position:relative;z-index:120;background:#1d1512;color:#f1e6d8;font:500 12px/1.4 Inter,system-ui,sans-serif;text-align:center;padding:7px 16px}
+.pv a{color:#e5bd4a}</style>
+<script>document.documentElement.className='js'</script>
+<div class="pre" id="pre" aria-hidden="true"><div class="pre-in"><img src="img/logo.png" alt=""><span>La Bhutanz</span><i></i></div></div>
+<div class="prog" id="prog"></div>
+<div class="nav" id="nav"><div class="pv">Preview of the new La Bhutanz Tours website. Enquiries are not saved in this preview.${adminUrl ? ` <a href="${adminUrl}" target="_blank">Try the admin panel demo ↗</a>` : ' The admin panel runs on the live server.'}</div><div id="banner"></div><div class="wrap"><div class="nav-in" id="hdr"></div></div></div>
+<main id="app" tabindex="-1"><div class="wrap" style="padding:160px var(--gut) 100px"><p class="lead">Loading…</p></div></main>
 <footer id="ftr"></footer>
 <div id="mbar"></div>
 <div id="fab"></div>
@@ -65,5 +64,7 @@ body{font-size:16px}</style>
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(path.join(out, 'index.html'), html);
 fs.cpSync(path.join(root, 'public/img'), path.join(out, 'img'), { recursive: true });
+fs.cpSync(path.join(root, 'public/fonts'), path.join(out, 'fonts'), { recursive: true });
 fs.rmSync(path.join(out, 'img/og.jpg'), { force: true });
+fs.rmSync(path.join(out, 'img/packages'), { recursive: true, force: true });
 console.log('built', out, Math.round(html.length / 1024) + 'KB html');

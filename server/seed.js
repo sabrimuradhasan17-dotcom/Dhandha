@@ -8,6 +8,11 @@ const clean = s => String(s || '').replace(/ /g, ' ').replace(/^[·\s]+/, '').r
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 
 // Prices start at 0 = "Price on request" on the site. The owner enters real INR per-person prices in Admin → Packages.
+const PHOTO = {
+  'fly-4n5d': 'tiger', 'fly-5n6d': 'punakha-river', 'fly-6n7d': 'valley-town', 'fly-7n8d': 'paro-valley',
+  'drive-6n7d': 'road', 'drive-7n8d': 'chortens', 'meditation-7n8d': 'monk-sit', 'explore-10n11d': 'dzong-river',
+  'photography-12n13d': 'mask', 'last-shangri-la-9n10d': 'buddha', 'thunder-dragon-6n7d': 'hero-tiger', 'discover-10n11d': 'hero-flags'
+};
 const META = [
   ['fly-4n5d', 'fly', 'Fly In Fly Out', 4, 5, 0, true],
   ['fly-5n6d', 'fly', 'Fly In Fly Out', 5, 6, 0, true],
@@ -80,7 +85,7 @@ function packages() {
       exclusions: fixed ? ['Attraction entrance fee, camera fees, activity cost', 'Personal expenses (laundry, beverages, tips, etc.)', 'Additional sightseeing or extra use of vehicle other than in the itinerary', 'Costs from natural calamities, landslides, road blockages or strikes, payable on the spot', 'Sustainable Development Fee (SDF) and Bhutan Entry Permit are arranged by us and billed as per actuals'] : GENERIC_EXC,
       ideal: (o.ideal || []).map(clean),
       faqs: (o.faqs || []).map(f => ({ q: clean(f.q), a: clean(f.a) })),
-      image: has(id + '-banner.jpg') ? '/img/packages/' + id + '-banner.jpg' : '',
+      image: '/img/photos/' + (PHOTO[id] || 'tiger') + '.jpg',
       poster: has(id + '-poster.jpg') ? '/img/packages/' + id + '-poster.jpg' : '',
       imageHasTitle: !fixed,
       flightIncluded: fixed, featured, active: id !== 'discover-10n11d', order: i, priceConfirmed: false
@@ -88,19 +93,26 @@ function packages() {
   });
 }
 
+
+const CREDITS = require('./photo-credits.json');
+const CREDIT_LABEL = { 'hero-tiger': 'Tiger’s Nest (home banner)', 'hero-punakha': 'Punakha Dzong (home banner)', 'hero-flags': 'Prayer flags (home banner)', 'hero-chortens': 'Dochula chortens (home banner)', tiger: 'Tiger’s Nest', 'paro-valley': 'Paro valley', 'paro-town': 'Paro', 'punakha-river': 'Punakha Dzong', 'thimphu-valley': 'Thimphu valley', 'valley-town': 'Bhutanese village', 'festival-crowd': 'Tshechu festival', mask: 'Mask dance', dancer: 'Festival dancer', 'monks-door': 'Monks at a temple door', 'monk-sit': 'Monk', 'monks-window': 'Monks', buddha: 'Buddha Dordenma', 'buddha-gold': 'Golden Buddha', chortens: 'Dochula chortens', 'flags-wheels': 'Prayer wheels and flags', road: 'Mountain road', archers: 'Archery', 'dzong-river': 'Dzong by the river', courtyard: 'Dzong courtyard', 'dzong-white': 'Dzong walls' };
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const CREDITS_HTML = '<p>Photographs on this website are from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a> and used under the Unsplash License, which allows free use. Thank you to the photographers below.</p><table><thead><tr><th>Photo</th><th>Photographer</th><th>Source</th></tr></thead><tbody>' +
+  Object.entries(CREDITS).map(([k, v]) => '<tr><td>' + esc(CREDIT_LABEL[k] || k) + '</td><td>' + esc(v.who || 'Unsplash photographer') + '</td><td><a href="' + esc(v.page) + '" target="_blank" rel="noopener">View photo</a></td></tr>').join('') + '</tbody></table>';
+
 const posts = [
   {
-    id: 'p1', slug: 'best-time-to-visit-bhutan', title: 'Best time to visit Bhutan', date: '2026-09-15', published: true, image: '',
+    id: 'p1', slug: 'best-time-to-visit-bhutan', title: 'Best time to visit Bhutan', date: '2026-09-15', published: true, image: '/img/photos/paro-town.jpg',
     excerpt: 'Spring and autumn are the classic seasons — here is how each month feels.',
     body: '<p>The best months for most travellers are <b>March to May</b> and <b>September to November</b>.</p><h3>Spring (March–May)</h3><p>Rhododendrons bloom, the weather is mild and the Paro Tshechu falls in this season.</p><h3>Autumn (September–November)</h3><p>Clear skies, crisp mountain views and major festivals, including Thimphu Tshechu. This is also the busiest period, so book flights and hotels early.</p><h3>Winter &amp; Summer</h3><p>Winter is cold but sunny and quiet, and the Black-Necked Crane Festival in Phobjikha is a highlight. Summer is lush and green with monsoon rain.</p><p>Not sure when to go? <a href="/contact">Ask our team</a> and we will suggest dates for your interests.</p>'
   },
   {
-    id: 'p2', slug: 'sdf-explained-for-indian-travellers', title: 'Bhutan SDF explained for Indian travellers', date: '2026-09-22', published: true, image: '',
+    id: 'p2', slug: 'sdf-explained-for-indian-travellers', title: 'Bhutan SDF explained for Indian travellers', date: '2026-09-22', published: true, image: '/img/photos/thimphu-valley.jpg',
     excerpt: 'What the Sustainable Development Fee is, what it costs and how it is paid.',
     body: '<p>Every visitor to Bhutan pays a <b>Sustainable Development Fee (SDF)</b> that supports conservation, education and the tourism infrastructure of the kingdom.</p><ul><li>Indian visitors pay <b>Nu. 1,200 per person per night</b> (the same amount in Indian rupees).</li><li>Children aged 6–12 pay half; children under 6 are exempt.</li><li>It is paid during the permit application. We handle the payment for you.</li></ul><p>For example, an Indian couple staying five nights pays ₹12,000 in total. GST of 5% applies to tour package services but not to the SDF.</p>'
   },
   {
-    id: 'p3', slug: 'tigers-nest-hike-guide', title: "Tiger's Nest (Paro Taktsang) hike — what to expect", date: '2026-10-01', published: true, image: '',
+    id: 'p3', slug: 'tigers-nest-hike-guide', title: "Tiger's Nest (Paro Taktsang) hike — what to expect", date: '2026-10-01', published: true, image: '/img/photos/hero-tiger.jpg',
     excerpt: 'Moderate fitness, a gentle pace and a café viewpoint if you prefer not to climb all the way.',
     body: '<p>Perched on a cliff roughly 900 metres above Paro valley, Taktsang is Bhutan\'s most famous monastery. The hike takes a few hours and needs moderate fitness.</p><h3>Tips</h3><ul><li>Start early, wear sturdy shoes and carry water.</li><li>Take it slowly — you are walking at altitude.</li><li>Prefer a gentler day? Walk to the café viewpoint for a superb view of the monastery.</li></ul><p>Every La Bhutanz itinerary reserves a dedicated day for Tiger\'s Nest.</p>'
   }
@@ -115,6 +127,7 @@ module.exports = function seed() {
   const pages = Object.entries(old.pages).map(([slug, p]) => ({ id: 'pg-' + slug, slug, title: p.title, html: p.html, published: true }));
   pages.push({ id: 'pg-about-us', slug: 'about-us', title: 'About La Bhutanz Tours', html: ABOUT, published: true });
   pages.push({ id: 'pg-terms', slug: 'terms', title: 'Terms & Cancellation Policy', html: TERMS, published: true });
+  pages.push({ id: 'pg-photo-credits', slug: 'photo-credits', title: 'Photo credits', html: CREDITS_HTML, published: true });
   pages.push({ id: 'pg-privacy', slug: 'privacy', title: 'Privacy Policy', html: PRIVACY, published: true });
   return {
     version: 2,
@@ -124,7 +137,7 @@ module.exports = function seed() {
       heroSub: 'La Bhutanz Tours specialises in personalised Bhutan journeys for travellers from Mumbai, Thane, Navi Mumbai and across India, along with NRI and international travellers seeking authentic, meaningful and luxury experiences in the Kingdom of Bhutan.',
       whatsapp: '919324455999', phone: '+91 98203 89595', emails: ['tours@bhutanz.com', 'bhutanztours@gmail.com'],
       address: '14, Kapeesh Mall, 1st Floor, M. G. Road, Mulund (West), Mumbai 400080, Maharashtra, India',
-      hours: 'Mon–Fri 11:00 AM – 6:00 PM · Sat & Sun closed', siteUrl: '', logo: '/img/logo.png', favicon: '/img/favicon.png', ogImage: '/img/og.jpg',
+      hours: 'Mon–Fri 11:00 AM – 6:00 PM · Sat & Sun closed', siteUrl: '', logo: '/img/logo.png', favicon: '/img/favicon.png', ogImage: '/img/og.jpg', heroImages: ['/img/photos/hero-tiger.jpg', '/img/photos/hero-punakha.jpg', '/img/photos/hero-flags.jpg', '/img/photos/hero-chortens.jpg'],
       documents: ['Passport (minimum 6 months validity) or voter ID card for adults', 'Passport (minimum 6 months validity) or birth certificate for children', 'Recent passport-size photograph', 'Valid travel insurance', 'Details of the number of times each guest has visited Bhutan', 'Please send these at the time of booking confirmation'],
       sdfINR: 1200, gstPct: 5, gstIncluded: false, showPrices: true, advanceInfo: 'A booking advance confirms your seats. The balance is due before departure.',
       payment: { upiId: '', accountName: '', bank: '', accountNo: '', ifsc: '', note: '' },

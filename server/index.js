@@ -69,7 +69,7 @@ const SCHEMAS = {
 };
 const SLUGGED = { packages: 'name', posts: 'title', pages: 'title' };
 const SETTINGS = {
-  brand: 's', tagline: 's', heroTitle: 's', heroSub: 'l', whatsapp: 's', phone: 's', emails: 'a', address: 'l', hours: 's', siteUrl: 's', logo: 's', favicon: 's', ogImage: 's', documents: 'a',
+  brand: 's', tagline: 's', heroTitle: 's', heroSub: 'l', whatsapp: 's', phone: 's', emails: 'a', address: 'l', hours: 's', siteUrl: 's', logo: 's', favicon: 's', ogImage: 's', heroImages: 'a', documents: 'a',
   sdfINR: 'n', gstPct: 'n', gstIncluded: 'b', showPrices: 'b', advanceInfo: 'l',
   payment: { upiId: 's', accountName: 's', bank: 's', accountNo: 's', ifsc: 's', note: 'l' },
   announcement: { enabled: 'b', text: 's' },

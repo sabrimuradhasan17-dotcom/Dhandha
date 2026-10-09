@@ -2,24 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <!--META-->
-<meta name="theme-color" content="#8a2124">
+<meta name="theme-color" content="#0d0a09">
 <link rel="icon" href="/img/favicon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="/fonts/cormorant-garamond-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/inter-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/site.css">
+<script src="/js/boot.js"></script>
 </head>
 <body>
 <a class="skip" href="#app">Skip to content</a>
-<div id="banner"></div>
-<header class="nav" id="hdr"></header>
-<main id="app" tabindex="-1"><div class="wrap" style="padding:80px 20px">Loading…</div></main>
+<div class="pre" id="pre" aria-hidden="true"><div class="pre-in"><img src="/img/logo.png" alt=""><span>La Bhutanz</span><i></i></div></div>
+<div class="prog" id="prog"></div>
+<div class="nav" id="nav"><div id="banner"></div><div class="wrap"><div class="nav-in" id="hdr"></div></div></div>
+<main id="app" tabindex="-1"><div class="wrap" style="padding:160px var(--gut) 100px"><p class="lead">Loading…</p></div></main>
 <footer id="ftr"></footer>
 <div id="mbar"></div>
 <div id="fab"></div>
 <div id="modal"></div>
-<noscript><p style="padding:20px">Please enable JavaScript. You can also reach us on WhatsApp: +91 93244 55999.</p></noscript>
+<noscript><style>.pre{display:none}</style><p style="padding:20px;position:relative">Please enable JavaScript to browse our tours. You can also reach us on WhatsApp: +91 93244 55999.</p></noscript>
 <script src="/js/site.js"></script>
 </body>
 </html>

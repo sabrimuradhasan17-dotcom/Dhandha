@@ -226,7 +226,7 @@
   /* ---------- settings ---------- */
   async function set(m) {
     const s = await api('GET', '/settings'), g = (path) => path.split('.').reduce((o, k) => (o || {})[k], s);
-    const F = [['Brand & home page', [['brand', 'Brand name'], ['tagline', 'Tagline'], ['heroTitle', 'Home headline'], ['heroSub', 'Home sub-headline', 'textarea'], ['logo', 'Logo', 'image'], ['favicon', 'Favicon', 'image'], ['ogImage', 'Social share image', 'image'], ['siteUrl', 'Website address (https://…, for SEO)']]],
+    const F = [['Brand & home page', [['brand', 'Brand name'], ['tagline', 'Tagline'], ['heroTitle', 'Home headline'], ['heroSub', 'Home sub-headline', 'textarea'], ['logo', 'Logo', 'image'], ['heroImages', 'Home page slideshow photos (one address per line, 3–5 wide photos)', 'lines'], ['favicon', 'Favicon', 'image'], ['ogImage', 'Social share image', 'image'], ['siteUrl', 'Website address (https://…, for SEO)']]],
       ['Contact', [['whatsapp', 'WhatsApp number (digits, with country code)'], ['phone', 'Phone'], ['emails', 'Emails (one per line)', 'lines'], ['address', 'Office address', 'textarea'], ['hours', 'Office hours']]],
       ['Pricing & fees', [['sdfINR', 'SDF ₹ per person per night', 'number'], ['gstPct', 'GST %', 'number'], ['gstIncluded', 'Package prices already include GST', 'checkbox'], ['showPrices', 'Show prices publicly', 'checkbox'], ['advanceInfo', 'Booking advance message', 'textarea']]],
       ['Payment details (shown on How to book)', [['payment.upiId', 'UPI ID'], ['payment.accountName', 'Account name'], ['payment.bank', 'Bank & branch'], ['payment.accountNo', 'Account number'], ['payment.ifsc', 'IFSC'], ['payment.note', 'Note', 'textarea']]],

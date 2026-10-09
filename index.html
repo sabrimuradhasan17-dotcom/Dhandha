@@ -2,319 +2,792 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Arthvan Finserv — Loans & Credit Cards, Made Simple</title>
-<meta name="description" content="Arthvan Finserv helps you compare and apply for personal, home, business, vehicle and education loans and the right credit card — clearly, quickly and transparently.">
-<meta name="theme-color" content="#0b1b3a">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1b3a'/%3E%3Cpath d='M9 23 16 8l7 15h-4l-3-7-3 7z' fill='%23d4af6a'/%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Arthvan Finserv</title>
+<meta name="description" content="Plan a loan, compare credit cards and talk to an advisor. Arthvan Finserv shows you the numbers before you apply.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%23241040'/%3E%3Cpath d='M8 24 16 7l8 17h-4.5l-3.5-8-3.5 8z' fill='%23f3b73a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: a dark "planner" hero where one live console drives everything,
+   then light sections that open up (expanding loan panels, a tilting card wallet with a spend-based comparison). */
+:root{
+  --font-display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-data:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+
+  --bg:#f7f4fa; --surface:#ffffff; --surface-2:#efe9f6; --ink:#1d1030; --muted:#645a78;
+  --line:#e2d9ee; --accent:#f3b73a; --accent-ink:#8a5600; --on-accent:#1d1030;
+  --good:#1f8a5b; --warn:#b97a00; --bad:#c23a4b;
+
+  /* sections that stay dark in both themes */
+  --deep-bg:#150a26; --deep-bg-2:#22103d; --deep-surface:#20123a; --deep-ink:#f6f0ff;
+  --deep-muted:#b3a6cc; --deep-line:#3a2a5c; --deep-good:#4cd09a; --deep-warn:#f3b73a; --deep-bad:#ff7a8a;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#110a1d; --surface:#1a1030; --surface-2:#241741; --ink:#f3eefb; --muted:#a99dc0;
+    --line:#33264d; --accent-ink:#f3b73a; --good:#4cd09a; --warn:#f3b73a; --bad:#ff7a8a;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#110a1d; --surface:#1a1030; --surface-2:#241741; --ink:#f3eefb; --muted:#a99dc0;
+  --line:#33264d; --accent-ink:#f3b73a; --good:#4cd09a; --warn:#f3b73a; --bad:#ff7a8a;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.6 var(--font-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;line-height:1.05;letter-spacing:-.01em;text-wrap:balance}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none;padding:0}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{width:min(1200px,100%);margin-inline:auto;padding-inline:clamp(16px,4vw,32px)}
+.mono{font-family:var(--font-data);font-feature-settings:"tnum"}
+.eyebrow{font:500 .74rem/1 var(--font-data);letter-spacing:.18em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:1rem}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.85rem 1.4rem;border-radius:999px;border:1.5px solid transparent;font-weight:600;font-size:.95rem;transition:transform .2s,background .2s,box-shadow .2s}
+.btn--gold{background:var(--accent);color:var(--on-accent)}
+.btn--gold:hover{transform:translateY(-2px);box-shadow:0 10px 28px -10px var(--accent)}
+.btn--line{border-color:var(--line);background:transparent}
+.btn--line:hover{border-color:var(--accent-ink)}
+.btn--block{width:100%}
+.btn--sm{padding:.55rem 1.05rem;font-size:.88rem}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:60;background:color-mix(in srgb,var(--deep-bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--deep-line);color:var(--deep-ink)}
+.nav__in{display:flex;align-items:center;gap:1.2rem;height:64px}
+.logo{display:flex;align-items:center;gap:.6rem;font:400 1.55rem/1 var(--font-display)}
+.logo em{color:var(--accent)}
+.nav__links{display:flex;align-items:center;gap:1.6rem;margin-left:auto;font-size:.92rem;color:var(--deep-muted)}
+.nav__links a:hover{color:var(--deep-ink)}
+.iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--deep-line);background:none;color:var(--deep-ink);display:grid;place-items:center}
+.iconbtn:hover{border-color:var(--accent)}
+.burger{display:none}
+
+/* ---------- hero ---------- */
+.hero{background:radial-gradient(900px 520px at 88% 0%,rgba(243,183,58,.16),transparent 62%),radial-gradient(700px 500px at 0% 100%,rgba(120,70,210,.28),transparent 60%),linear-gradient(170deg,var(--deep-bg-2),var(--deep-bg));color:var(--deep-ink);padding-block:clamp(40px,7vw,88px)}
+.hero__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:clamp(28px,5vw,72px);align-items:center}
+.hero .eyebrow{color:var(--accent)}
+.hero h1{font-size:clamp(3rem,7.4vw,6rem);margin-bottom:1.3rem}
+.hero h1 em{color:var(--accent)}
+.hero__lead{color:var(--deep-muted);font-size:1.08rem;max-width:46ch}
+.hero__facts{display:flex;flex-wrap:wrap;gap:.6rem 1.8rem;margin-top:2rem;font:400 .8rem/1.4 var(--font-data);color:var(--deep-muted)}
+.hero__facts b{color:var(--deep-ink);font-weight:500}
+.hero__actions{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.8rem}
+.hero .btn--line{border-color:var(--deep-line);color:var(--deep-ink)}
+.hero .btn--line:hover{border-color:var(--accent)}
+
+/* planner console */
+.console{--state:var(--deep-good);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid var(--deep-line);border-radius:28px;padding:clamp(1.1rem,3vw,1.7rem);box-shadow:0 40px 90px -40px rgba(0,0,0,.7);backdrop-filter:blur(6px)}
+.console[data-state=warn]{--state:var(--deep-warn)}
+.console[data-state=bad]{--state:var(--deep-bad)}
+.console__top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;font:500 .72rem/1 var(--font-data);letter-spacing:.16em;color:var(--deep-muted)}
+.pill{display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .75rem;border-radius:999px;border:1px solid var(--state);color:var(--state);letter-spacing:.06em;font-size:.72rem}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--state)}
+.intents{border:0;padding:0;margin-bottom:1.2rem}
+.intents legend{font-size:.85rem;color:var(--deep-muted);margin-bottom:.55rem}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem}
+.chip{padding:.45rem .9rem;border-radius:999px;border:1px solid var(--deep-line);background:none;color:var(--deep-ink);font-size:.86rem;transition:.18s}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-checked=true]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.console__body{display:grid;grid-template-columns:150px minmax(0,1fr);gap:1.4rem;align-items:center}
+.gauge{position:relative;width:150px;aspect-ratio:1}
+.gauge svg{width:100%;height:100%;transform:rotate(-90deg)}
+.gauge circle{fill:none;stroke-width:9;stroke-linecap:round}
+.gauge .track{stroke:var(--deep-line)}
+.gauge .bar{stroke:var(--state);stroke-dasharray:326.7;stroke-dashoffset:326.7;transition:stroke-dashoffset .5s cubic-bezier(.2,.8,.2,1),stroke .3s}
+.gauge__txt{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:.1rem}
+.gauge__txt span{font:400 .66rem/1 var(--font-data);letter-spacing:.12em;color:var(--deep-muted);text-transform:uppercase}
+.gauge__txt strong{font:400 1.5rem/1.1 var(--font-display);font-feature-settings:"tnum"}
+.gauge__txt small{font:400 .68rem/1 var(--font-data);color:var(--state)}
+.ctrl{display:grid;gap:.15rem;margin-bottom:.7rem}
+.ctrl label,.ctrl .lab{display:flex;justify-content:space-between;font-size:.82rem;color:var(--deep-muted)}
+.ctrl output{font:500 .85rem var(--font-data);color:var(--deep-ink)}
+input[type=range]{width:100%;height:26px;accent-color:var(--accent);background:none}
+.income{display:flex;align-items:center;gap:.4rem;border:1px solid var(--deep-line);border-radius:12px;padding:.1rem .8rem;background:rgba(0,0,0,.18)}
+.income span{color:var(--deep-muted);font-family:var(--font-data)}
+.income input{width:100%;background:none;border:0;color:var(--deep-ink);font:500 .95rem var(--font-data);padding:.6rem 0;outline:none}
+.income:focus-within{border-color:var(--accent)}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin:1.2rem 0;padding-top:1.1rem;border-top:1px dashed var(--deep-line)}
+.facts dt{font:400 .66rem/1.3 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--deep-muted)}
+.facts dd{margin:0;font:500 .9rem var(--font-data);word-break:break-word}
+.console__note{font-size:.72rem;color:var(--deep-muted);margin-top:.8rem}
+
+/* ---------- sections ---------- */
+.sec{padding-block:clamp(60px,8vw,110px)}
+.head{max-width:680px;margin-bottom:clamp(1.8rem,4vw,3rem)}
+.head h2{font-size:clamp(2.2rem,5vw,3.8rem);margin-bottom:1rem}
+.head h2 em{color:var(--accent-ink)}
+.head p{color:var(--muted);font-size:1.05rem}
+.deep{background:linear-gradient(170deg,var(--deep-bg-2),var(--deep-bg));color:var(--deep-ink)}
+.deep .eyebrow{color:var(--accent)}
+.deep .head h2 em{color:var(--accent)}
+.deep .head p{color:var(--deep-muted)}
+
+/* loan panels */
+.panels{display:flex;gap:12px;min-height:470px}
+.panel{position:relative;flex:1 1 0;min-width:76px;background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:flex-grow .55s cubic-bezier(.2,.8,.2,1),border-color .3s,background .3s}
+.panel:hover{border-color:var(--accent-ink)}
+.panel.is-open{flex-grow:6;background:var(--surface-2)}
+.panel__head{all:unset;box-sizing:border-box;cursor:pointer;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1.3rem .4rem;gap:1rem}
+.panel__head:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+.panel__name{font:400 1.7rem/1 var(--font-display);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.panel__rate{font:500 .7rem/1 var(--font-data);color:var(--accent-ink);writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap}
+.panel__plus{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:1.1rem;color:var(--accent-ink)}
+.panel.is-open .panel__head{height:auto;flex-direction:row;align-items:baseline;justify-content:space-between;padding:1.6rem 1.8rem .4rem}
+.panel.is-open .panel__name{writing-mode:horizontal-tb;transform:none;font-size:clamp(2rem,3.4vw,2.8rem)}
+.panel.is-open .panel__rate{writing-mode:horizontal-tb;transform:none;font-size:.78rem}
+.panel.is-open .panel__plus{display:none}
+.panel__body{display:none;padding:.4rem 1.8rem 1.8rem;gap:1.2rem}
+.panel.is-open .panel__body{display:grid}
+.panel__body>p{color:var(--muted);max-width:52ch}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;padding-block:1rem;border-block:1px solid var(--line)}
+.stats dt{font:400 .68rem/1.2 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.stats dd{margin:.25rem 0 0;font:400 1.5rem/1.1 var(--font-display)}
+.docs{display:flex;flex-wrap:wrap;gap:.4rem}
+.docs li{font-size:.8rem;padding:.3rem .7rem;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.panel__cta{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center}
+.docs-label{font:400 .68rem/1 var(--font-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+
+/* card wallet */
+.wallet{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(28px,5vw,64px);align-items:start}
+.stage{perspective:1100px;display:grid;place-items:center;padding-block:1.5rem}
+.card3d{--rx:0deg;--ry:0deg;--gx:50%;--gy:30%;width:min(100%,420px);aspect-ratio:1.586;border-radius:22px;position:relative;transform:rotateX(var(--rx)) rotateY(var(--ry));transform-style:preserve-3d;transition:transform .15s ease-out,background .5s;box-shadow:0 50px 80px -30px rgba(0,0,0,.75);padding:1.4rem 1.5rem;display:flex;flex-direction:column;justify-content:space-between;color:#fff;overflow:hidden;background:linear-gradient(135deg,var(--c1),var(--c2))}
+.card3d::before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--gx) var(--gy),rgba(255,255,255,.28),transparent 55%);pointer-events:none}
+.card3d::after{content:"";position:absolute;right:-18%;top:-40%;width:75%;aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.18);box-shadow:0 0 0 38px rgba(255,255,255,.04),0 0 0 76px rgba(255,255,255,.03)}
+.card3d__top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+.card3d__name{font:400 1.7rem/1 var(--font-display)}
+.card3d__tier{font:500 .65rem/1 var(--font-data);letter-spacing:.18em;opacity:.85}
+.chipimg{width:46px;height:34px;border-radius:7px;background:linear-gradient(135deg,#f6e2ab,#b98d3f);position:relative;z-index:1}
+.card3d__num{font:500 1.05rem var(--font-data);letter-spacing:.14em;position:relative;z-index:1}
+.card3d__bot{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;font:400 .7rem var(--font-data);opacity:.9}
+.picker{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;margin-top:1.4rem}
+.mini{width:62px;aspect-ratio:1.586;border-radius:8px;border:2px solid transparent;background:linear-gradient(135deg,var(--c1),var(--c2));transition:.2s;padding:0;opacity:.7}
+.mini:hover{opacity:1}
+.mini[aria-pressed=true]{border-color:var(--accent);opacity:1;transform:translateY(-4px)}
+.detail h3{font-size:clamp(2rem,4vw,3rem);margin-bottom:.4rem}
+.detail .tag{color:var(--deep-muted);margin-bottom:1.2rem}
+.perks{display:grid;gap:.5rem;margin-bottom:1.6rem}
+.perks li{position:relative;padding-left:1.4rem;color:var(--deep-muted)}
+.perks li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.est{border:1px solid var(--deep-line);border-radius:20px;padding:1.3rem;background:rgba(255,255,255,.04)}
+.est__head{display:flex;justify-content:space-between;font-size:.88rem;color:var(--deep-muted)}
+.est__head output{font:500 .9rem var(--font-data);color:var(--deep-ink)}
+.bars{display:grid;gap:.5rem;margin-top:1rem}
+.bar{display:grid;grid-template-columns:7.5rem minmax(0,1fr) 5.2rem;gap:.7rem;align-items:center;background:none;border:0;padding:.15rem 0;text-align:left;color:var(--deep-muted);font-size:.82rem}
+.bar:hover{color:var(--deep-ink)}
+.bar__track{height:10px;border-radius:99px;background:var(--deep-line);overflow:hidden}
+.bar__fill{display:block;height:100%;width:0;border-radius:99px;background:var(--deep-muted);transition:width .4s cubic-bezier(.2,.8,.2,1)}
+.bar[aria-current=true]{color:var(--deep-ink)}
+.bar[aria-current=true] .bar__fill{background:var(--accent)}
+.bar__v{font:500 .8rem var(--font-data);text-align:right;color:var(--deep-ink)}
+.best{font-size:.85rem;margin-top:.9rem;color:var(--deep-muted)}
+.best b{color:var(--accent)}
+.note{margin-top:1.4rem;font-size:.78rem;color:var(--deep-muted)}
+
+/* timeline */
+.timeline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:11px;height:1px;background:var(--line)}
+.tl{position:relative;padding:2.2rem 1.4rem 0 0}
+.tl::before{content:"";position:absolute;top:5px;left:0;width:13px;height:13px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px var(--bg)}
+.tl time{display:block;font:500 .75rem var(--font-data);letter-spacing:.12em;color:var(--accent-ink);text-transform:uppercase;margin-bottom:.4rem}
+.tl h3{font-size:1.7rem;margin-bottom:.4rem}
+.tl p{color:var(--muted);font-size:.95rem}
+
+/* comparison */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:620px}
+th,td{padding:1.05rem 1.3rem;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+thead th{font:500 .72rem/1 var(--font-data);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+thead th:last-child{color:var(--accent-ink)}
+tbody th{font-weight:600;width:22%}
+td:nth-child(2){color:var(--muted)}
+td:last-child{background:color-mix(in srgb,var(--accent) 10%,transparent);font-weight:500}
+
+/* voices */
+.voices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}
+.voice{padding:0 clamp(1rem,2.5vw,2rem);border-left:1px solid var(--deep-line)}
+.voice:first-child{padding-left:0;border-left:0}
+.voice p{font:400 1.45rem/1.25 var(--font-display);margin-bottom:1.1rem}
+.voice footer{font:400 .78rem/1.5 var(--font-data);color:var(--deep-muted)}
+.voice b{color:var(--accent);font-weight:500}
+
+/* faq */
+.faq{max-width:820px}
+.faq details{border-bottom:1px solid var(--line);padding:1.2rem 0}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1rem;font:400 1.5rem/1.2 var(--font-display)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:300 1.8rem/1 var(--font-body);color:var(--accent-ink);transition:transform .25s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{color:var(--muted);margin-top:.8rem;max-width:62ch}
+
+/* apply */
+.apply{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:clamp(28px,5vw,72px);align-items:start}
+.apply h2{font-size:clamp(2.3rem,5vw,4rem);margin-bottom:1rem}
+.apply h2 em{color:var(--accent)}
+.apply__copy>p{color:var(--deep-muted);max-width:44ch}
+.plan{margin-top:1.8rem;border:1px solid var(--deep-line);border-radius:20px;padding:1.2rem 1.3rem;background:rgba(255,255,255,.04);display:grid;gap:.5rem}
+.plan__row{display:flex;justify-content:space-between;gap:1rem;font-size:.9rem;color:var(--deep-muted)}
+.plan__row b{font:500 .9rem var(--font-data);color:var(--deep-ink);text-align:right}
+.plan__title{font:500 .7rem/1 var(--font-data);letter-spacing:.16em;color:var(--accent);margin-bottom:.3rem}
+.contact{margin-top:1.6rem;display:grid;gap:.5rem;font:400 .9rem var(--font-data);color:var(--deep-muted)}
+.contact b{color:var(--deep-ink);font-weight:500;user-select:all}
+.form{background:var(--surface);color:var(--ink);border-radius:26px;padding:clamp(1.3rem,3vw,2.1rem);display:grid;gap:1rem}
+.form h3{font-size:2rem}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field label{display:block;font-size:.85rem;font-weight:500;margin-bottom:.35rem}
+.field label span{color:var(--muted);font-weight:400}
+.field input,.field select{width:100%;padding:.8rem 1rem;border:1.5px solid var(--line);border-radius:12px;font:inherit;background:var(--bg);color:var(--ink)}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent-ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}
+.field.bad input,.field.bad select{border-color:var(--bad)}
+.err{display:block;color:var(--bad);font-size:.8rem}
+.err:empty{display:none}
+.consent{display:flex;gap:.6rem;align-items:flex-start;font-size:.82rem;color:var(--muted)}
+.consent input{margin-top:.28rem;accent-color:var(--accent-ink)}
+.okmsg{padding:.9rem 1rem;border-radius:12px;background:color-mix(in srgb,var(--good) 14%,transparent);color:var(--good);font-size:.9rem}
+
+/* footer */
+.foot{background:var(--deep-bg);color:var(--deep-muted);padding-block:56px 32px;font-size:.88rem}
+.foot__in{display:grid;grid-template-columns:2fr 1fr 1fr;gap:32px;padding-bottom:30px;border-bottom:1px solid var(--deep-line)}
+.foot h4{color:var(--deep-ink);font-size:.9rem;margin-bottom:.7rem}
+.foot a{display:block;margin:.3rem 0}
+.foot a:hover{color:var(--accent)}
+.foot .logo{color:var(--deep-ink);margin-bottom:.7rem}
+.legal{padding-top:22px;font-size:.76rem;display:grid;gap:.6rem}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero__grid,.wallet,.apply{grid-template-columns:minmax(0,1fr)}
+  .timeline{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:2rem}
+  .timeline::before{display:none}
+  .voices{grid-template-columns:minmax(0,1fr);gap:1.8rem}
+  .voice,.voice:first-child{padding:0 0 1.8rem;border-left:0;border-bottom:1px solid var(--deep-line)}
+  .voice:last-child{border-bottom:0;padding-bottom:0}
+}
+@media (max-width:820px){
+  .nav__links{position:absolute;top:64px;left:0;right:0;background:var(--deep-bg);flex-direction:column;align-items:stretch;gap:0;padding:.4rem clamp(16px,4vw,32px) 1.1rem;display:none;border-bottom:1px solid var(--deep-line)}
+  .nav__links.open{display:flex}
+  .nav__links a{padding:.75rem 0}
+  .burger{display:grid;margin-left:auto}
+  .nav__links{margin-left:0}
+  .nav__in .themebtn{margin-left:0}
+  .panels{flex-direction:column;min-height:0}
+  .panel{flex:none;min-height:68px}
+  .panel__head{flex-direction:row;height:68px;padding:0 1.2rem;align-items:center}
+  .panel__name,.panel__rate{writing-mode:horizontal-tb;transform:none}
+  .panel__name{font-size:1.5rem}
+  .panel.is-open .panel__head{height:auto;padding:1.2rem 1.3rem .2rem}
+  .panel__body{padding:.4rem 1.3rem 1.4rem}
+}
+@media (max-width:560px){
+  .console__body{grid-template-columns:minmax(0,1fr);justify-items:center}
+  .console__body .controls{width:100%}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .row,.foot__in,.timeline{grid-template-columns:minmax(0,1fr)}
+  .bar{grid-template-columns:6rem minmax(0,1fr) 4.6rem}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
 </head>
 <body>
 
-<header class="nav" id="top">
+<header class="nav">
   <div class="wrap nav__in">
     <a href="#top" class="logo" aria-label="Arthvan Finserv home">
-      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#d4af6a"/><path d="M9 23 16 8l7 15h-4l-3-7-3 7z" fill="#0b1b3a"/></svg>
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#f3b73a"/><path d="M8 24 16 7l8 17h-4.5l-3.5-8-3.5 8z" fill="#241040"/></svg>
       <span>Arthvan <em>Finserv</em></span>
     </a>
     <nav class="nav__links" id="menu" aria-label="Primary">
       <a href="#loans">Loans</a>
-      <a href="#cards">Credit Cards</a>
-      <a href="#calculator">EMI Calculator</a>
-      <a href="#process">How it works</a>
+      <a href="#cards">Credit cards</a>
+      <a href="#process">Process</a>
       <a href="#faq">FAQ</a>
-      <a href="#apply" class="btn btn--gold btn--sm nav__cta">Apply now</a>
+      <a href="#apply" class="btn btn--gold btn--sm">Talk to an advisor</a>
     </nav>
-    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+    <button class="iconbtn themebtn" id="theme" type="button" aria-label="Toggle light and dark theme">◐</button>
+    <button class="iconbtn burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">☰</button>
   </div>
 </header>
 
-<main>
-<!-- HERO -->
+<main id="top">
+<!-- ============ HERO + PLANNER ============ -->
 <section class="hero">
-  <div class="wrap hero__in">
-    <div class="hero__copy">
-      <p class="eyebrow">Loans &amp; Credit Cards · One trusted desk</p>
-      <h1>Borrow smarter.<br><span class="gold">Spend wiser.</span></h1>
-      <p class="lead">We match you with the right loan or credit card from leading banks and NBFCs — with clear terms, no hidden charges and a real person guiding you at every step.</p>
-      <div class="hero__cta">
+  <div class="wrap hero__grid">
+    <div>
+      <p class="eyebrow">Loans and credit cards, explained first</p>
+      <h1>Money, minus the <em>maze.</em></h1>
+      <p class="hero__lead">See what a loan costs per month, and whether it fits your income, before you share a single document. Then we line up the lender.</p>
+      <div class="hero__actions">
         <a href="#apply" class="btn btn--gold">Check my eligibility</a>
-        <a href="#loans" class="btn btn--ghost">Explore products</a>
+        <a href="#cards" class="btn btn--line">Compare credit cards</a>
       </div>
-      <ul class="trust">
-        <li><strong>10,000+</strong><span>Customers helped</span></li>
-        <li><strong>25+</strong><span>Lending partners</span></li>
-        <li><strong>48 hrs</strong><span>Typical approval*</span></li>
-      </ul>
+      <div class="hero__facts">
+        <span><b>25+</b> lending partners*</span>
+        <span><b>1 form</b> for every lender</span>
+        <span><b>No fee</b> for our advice*</span>
+      </div>
     </div>
-    <aside class="hero__card" aria-label="Quick EMI estimate">
-      <h2>Quick EMI estimate</h2>
-      <label>Loan amount <output id="q-amt-o">₹5,00,000</output></label>
-      <input type="range" id="q-amt" min="50000" max="5000000" step="50000" value="500000">
-      <label>Tenure <output id="q-ten-o">36 months</output></label>
-      <input type="range" id="q-ten" min="6" max="84" step="6" value="36">
-      <div class="quick__res"><span>Estimated EMI*</span><strong id="q-emi">—</strong></div>
-      <a href="#calculator" class="link">Full calculator →</a>
-    </aside>
+
+    <section class="console" id="console" data-state="good" aria-label="Loan planner">
+      <div class="console__top"><span>LOAN PLANNER</span><span class="pill" id="state-pill">COMFORTABLE</span></div>
+      <fieldset class="intents">
+        <legend>I want to…</legend>
+        <div class="chips" role="radiogroup" aria-label="Loan purpose" id="intents"></div>
+      </fieldset>
+      <div class="console__body">
+        <div class="gauge" aria-live="polite">
+          <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="52"/><circle class="bar" id="gauge-bar" cx="60" cy="60" r="52"/></svg>
+          <div class="gauge__txt"><span>Monthly EMI</span><strong id="emi">—</strong><small id="burden">—</small></div>
+        </div>
+        <div class="controls">
+          <div class="ctrl"><label for="amt">Amount <output id="amt-o"></output></label><input type="range" id="amt"></div>
+          <div class="ctrl"><label for="ten">Tenure <output id="ten-o"></output></label><input type="range" id="ten"></div>
+          <div class="ctrl"><span class="lab"><label for="inc">Monthly take-home</label></span>
+            <div class="income"><span>₹</span><input id="inc" inputmode="numeric" value="1,00,000" autocomplete="off" aria-describedby="inc-hint"></div>
+            <span class="sr" id="inc-hint">Used only to show how heavy the EMI is. Nothing is saved.</span></div>
+        </div>
+      </div>
+      <dl class="facts">
+        <div><dt>Indicative rate</dt><dd id="f-rate">—</dd></div>
+        <div><dt>Total interest</dt><dd id="f-int">—</dd></div>
+        <div><dt>Total payable</dt><dd id="f-tot">—</dd></div>
+      </dl>
+      <button class="btn btn--gold btn--block" id="continue" type="button">Continue with this plan</button>
+      <p class="console__note">Estimates only. Final rate, fees and approval are set by the lender after a credit assessment.</p>
+    </section>
   </div>
 </section>
 
-<!-- LOANS -->
+<!-- ============ LOANS ============ -->
 <section class="sec" id="loans">
   <div class="wrap">
-    <header class="sec__head reveal">
+    <header class="head">
       <p class="eyebrow">Loans</p>
-      <h2>A loan for every goal</h2>
-      <p>Pick what you need — we'll show you what it costs, what you need to apply and how fast you can get it.</p>
+      <h2>Six ways to borrow, <em>one clear picture.</em></h2>
+      <p>Open a loan to see typical amounts, starting rates and the paperwork lenders ask for.</p>
     </header>
-    <div class="grid grid--3" id="loan-grid">
-      <article class="tile reveal">
-        <span class="ico">👤</span><h3>Personal Loan</h3>
-        <p>For weddings, travel, medical needs or anything in between. Minimal paperwork.</p>
-        <dl><div><dt>Amount</dt><dd>₹50K – ₹40L</dd></div><div><dt>Rate from*</dt><dd>10.5% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 7 yrs</dd></div></dl>
-        <a href="#apply" data-product="Personal Loan" class="link">Apply →</a>
-      </article>
-      <article class="tile reveal">
-        <span class="ico">🏠</span><h3>Home Loan</h3>
-        <p>Buy, build or renovate. Long tenures and balance-transfer options to cut your interest.</p>
-        <dl><div><dt>Amount</dt><dd>₹5L – ₹5Cr</dd></div><div><dt>Rate from*</dt><dd>8.5% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 30 yrs</dd></div></dl>
-        <a href="#apply" data-product="Home Loan" class="link">Apply →</a>
-      </article>
-      <article class="tile reveal">
-        <span class="ico">💼</span><h3>Business Loan</h3>
-        <p>Working capital and expansion funding for shops, startups and growing enterprises.</p>
-        <dl><div><dt>Amount</dt><dd>₹2L – ₹2Cr</dd></div><div><dt>Rate from*</dt><dd>12% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 5 yrs</dd></div></dl>
-        <a href="#apply" data-product="Business Loan" class="link">Apply →</a>
-      </article>
-      <article class="tile reveal">
-        <span class="ico">🚗</span><h3>Vehicle Loan</h3>
-        <p>New or used car, bike or commercial vehicle — up to 100% on-road funding on select models.</p>
-        <dl><div><dt>Amount</dt><dd>₹50K – ₹1.5Cr</dd></div><div><dt>Rate from*</dt><dd>8.9% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 7 yrs</dd></div></dl>
-        <a href="#apply" data-product="Vehicle Loan" class="link">Apply →</a>
-      </article>
-      <article class="tile reveal">
-        <span class="ico">🎓</span><h3>Education Loan</h3>
-        <p>Study in India or abroad, with moratorium during the course and flexible repayment.</p>
-        <dl><div><dt>Amount</dt><dd>₹1L – ₹1.5Cr</dd></div><div><dt>Rate from*</dt><dd>9.5% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 15 yrs</dd></div></dl>
-        <a href="#apply" data-product="Education Loan" class="link">Apply →</a>
-      </article>
-      <article class="tile reveal">
-        <span class="ico">🏢</span><h3>Loan Against Property</h3>
-        <p>Unlock the value of your property for large needs at lower rates than unsecured loans.</p>
-        <dl><div><dt>Amount</dt><dd>₹10L – ₹10Cr</dd></div><div><dt>Rate from*</dt><dd>9.2% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 15 yrs</dd></div></dl>
-        <a href="#apply" data-product="Loan Against Property" class="link">Apply →</a>
-      </article>
-    </div>
+    <div class="panels" id="panels"></div>
   </div>
 </section>
 
-<!-- CARDS -->
-<section class="sec sec--dark" id="cards">
+<!-- ============ CARDS ============ -->
+<section class="sec deep" id="cards">
   <div class="wrap">
-    <header class="sec__head reveal">
-      <p class="eyebrow">Credit Cards</p>
-      <h2>The right card for how you live</h2>
-      <p>Choose a category to see cards built for it.</p>
+    <header class="head">
+      <p class="eyebrow">Credit cards</p>
+      <h2>Pick the card by what you <em>actually spend.</em></h2>
+      <p>Set your monthly spend and see which card returns the most after its annual fee.</p>
     </header>
-    <div class="tabs reveal" role="tablist" aria-label="Card categories">
-      <button class="tab is-on" role="tab" aria-selected="true" data-cat="all">All</button>
-      <button class="tab" role="tab" aria-selected="false" data-cat="rewards">Rewards</button>
-      <button class="tab" role="tab" aria-selected="false" data-cat="travel">Travel</button>
-      <button class="tab" role="tab" aria-selected="false" data-cat="cashback">Cashback</button>
-      <button class="tab" role="tab" aria-selected="false" data-cat="starter">First card</button>
-    </div>
-    <div class="grid grid--3" id="card-grid">
-      <article class="cc" data-cat="rewards">
-        <div class="plastic plastic--gold"><span>Signature Rewards</span><i></i></div>
-        <h3>Signature Rewards</h3>
-        <ul><li>5X reward points on dining &amp; shopping</li><li>Complimentary airport lounge visits</li><li>Annual fee waiver on spends</li></ul>
-        <a href="#apply" data-product="Signature Rewards Card" class="link">Apply →</a>
-      </article>
-      <article class="cc" data-cat="travel">
-        <div class="plastic plastic--blue"><span>Globetrotter</span><i></i></div>
-        <h3>Globetrotter Travel</h3>
-        <ul><li>Air miles on flights &amp; hotels</li><li>Zero forex mark-up</li><li>Travel insurance cover</li></ul>
-        <a href="#apply" data-product="Globetrotter Travel Card" class="link">Apply →</a>
-      </article>
-      <article class="cc" data-cat="cashback">
-        <div class="plastic plastic--green"><span>Everyday Cashback</span><i></i></div>
-        <h3>Everyday Cashback</h3>
-        <ul><li>Flat cashback on every online spend</li><li>Fuel surcharge waiver</li><li>Auto-credited to statement</li></ul>
-        <a href="#apply" data-product="Everyday Cashback Card" class="link">Apply →</a>
-      </article>
-      <article class="cc" data-cat="starter">
-        <div class="plastic plastic--slate"><span>Starter</span><i></i></div>
-        <h3>Starter Card</h3>
-        <ul><li>Lifetime free — no annual fee</li><li>Ideal to build your credit score</li><li>Secured option available</li></ul>
-        <a href="#apply" data-product="Starter Credit Card" class="link">Apply →</a>
-      </article>
-      <article class="cc" data-cat="rewards cashback">
-        <div class="plastic plastic--rose"><span>Lifestyle Plus</span><i></i></div>
-        <h3>Lifestyle Plus</h3>
-        <ul><li>Movie, dining &amp; wellness offers</li><li>Milestone bonus points</li><li>EMI conversion on big purchases</li></ul>
-        <a href="#apply" data-product="Lifestyle Plus Card" class="link">Apply →</a>
-      </article>
-      <article class="cc" data-cat="travel rewards">
-        <div class="plastic plastic--black"><span>Infinite Elite</span><i></i></div>
-        <h3>Infinite Elite</h3>
-        <ul><li>Unlimited lounge access</li><li>Concierge &amp; golf privileges</li><li>Premium reward catalogue</li></ul>
-        <a href="#apply" data-product="Infinite Elite Card" class="link">Apply →</a>
-      </article>
-    </div>
-    <p class="note">Card names are illustrative placeholders; actual cards, benefits and fees depend on the issuing bank.</p>
-  </div>
-</section>
-
-<!-- CALCULATOR -->
-<section class="sec" id="calculator">
-  <div class="wrap calc">
-    <div class="calc__copy reveal">
-      <p class="eyebrow">EMI Calculator</p>
-      <h2>Know your numbers before you apply</h2>
-      <p>Move the sliders to see your monthly instalment, total interest and what you'll repay overall.</p>
-      <div class="calc__inputs">
-        <label>Loan amount <output id="c-amt-o"></output></label>
-        <input type="range" id="c-amt" min="50000" max="10000000" step="50000" value="1000000">
-        <label>Interest rate (p.a.) <output id="c-rate-o"></output></label>
-        <input type="range" id="c-rate" min="6" max="24" step="0.1" value="10.5">
-        <label>Tenure <output id="c-ten-o"></output></label>
-        <input type="range" id="c-ten" min="6" max="360" step="6" value="60">
+    <div class="wallet">
+      <div>
+        <div class="stage"><div class="card3d" id="card3d">
+          <div class="card3d__top"><span class="card3d__name" id="c-name"></span><span class="card3d__tier" id="c-tier"></span></div>
+          <div class="chipimg"></div>
+          <div>
+            <div class="card3d__num">5214 ···· ···· 4821</div>
+            <div class="card3d__bot"><span>YOUR NAME</span><span>VALID THRU 12/31</span></div>
+          </div>
+        </div></div>
+        <div class="picker" id="picker" role="group" aria-label="Choose a card"></div>
+      </div>
+      <div class="detail">
+        <h3 id="d-name"></h3>
+        <p class="tag" id="d-tag"></p>
+        <ul class="perks" id="d-perks"></ul>
+        <div class="est">
+          <div class="est__head"><label for="spend">Your monthly card spend</label><output id="spend-o"></output></div>
+          <input type="range" id="spend" min="5000" max="300000" step="5000" value="50000">
+          <div class="bars" id="bars"></div>
+          <p class="best" id="best"></p>
+        </div>
+        <button class="btn btn--gold" style="margin-top:1.4rem" type="button" id="card-apply">Apply for this card</button>
       </div>
     </div>
-    <div class="calc__out reveal">
-      <div class="donut" id="donut" role="img" aria-label="Principal versus interest split"><div class="donut__in"><span>Monthly EMI</span><strong id="c-emi">—</strong></div></div>
-      <ul class="legend">
-        <li><i class="dot dot--p"></i>Principal<strong id="c-prin">—</strong></li>
-        <li><i class="dot dot--i"></i>Total interest<strong id="c-int">—</strong></li>
-        <li class="tot">Total payable<strong id="c-tot">—</strong></li>
-      </ul>
-      <a href="#apply" class="btn btn--gold btn--block">Apply for this loan</a>
-    </div>
+    <p class="note">Card names, reward rates and fees here are illustrative placeholders. Actual terms come from the issuing bank. Net value = estimated rewards over a year minus the annual fee.</p>
   </div>
 </section>
 
-<!-- WHY US -->
-<section class="sec sec--tint" id="why">
-  <div class="wrap">
-    <header class="sec__head reveal">
-      <p class="eyebrow">Why Arthvan</p>
-      <h2>Finance without the fine-print fear</h2>
-    </header>
-    <div class="grid grid--4">
-      <div class="why reveal"><b>01</b><h3>Transparent pricing</h3><p>Rates, fees and charges explained upfront, in plain language.</p></div>
-      <div class="why reveal"><b>02</b><h3>Many lenders, one form</h3><p>Compare offers from multiple banks and NBFCs without repeating paperwork.</p></div>
-      <div class="why reveal"><b>03</b><h3>Fast, digital process</h3><p>Upload documents online and track your application end to end.</p></div>
-      <div class="why reveal"><b>04</b><h3>Human guidance</h3><p>A dedicated advisor who knows your case — not a chatbot loop.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- PROCESS -->
+<!-- ============ PROCESS ============ -->
 <section class="sec" id="process">
   <div class="wrap">
-    <header class="sec__head reveal">
-      <p class="eyebrow">How it works</p>
-      <h2>From enquiry to funds in four steps</h2>
+    <header class="head">
+      <p class="eyebrow">What happens next</p>
+      <h2>From first call to funds, <em>day by day.</em></h2>
     </header>
-    <ol class="steps">
-      <li class="reveal"><span>1</span><h3>Tell us what you need</h3><p>Share the product and amount. Takes about two minutes.</p></li>
-      <li class="reveal"><span>2</span><h3>Compare best-fit offers</h3><p>Your advisor shortlists options matched to your profile.</p></li>
-      <li class="reveal"><span>3</span><h3>Submit documents</h3><p>Simple KYC and income proofs, uploaded securely.</p></li>
-      <li class="reveal"><span>4</span><h3>Get approved &amp; funded</h3><p>Money in your account or card at your doorstep.</p></li>
+    <ol class="timeline">
+      <li class="tl"><time>Day 0</time><h3>You enquire</h3><p>Share the product and amount. The form takes about two minutes.</p></li>
+      <li class="tl"><time>Day 0 to 1</time><h3>We shortlist</h3><p>An advisor calls, confirms your needs and picks lenders that fit your profile.</p></li>
+      <li class="tl"><time>Day 1 to 2</time><h3>You upload once</h3><p>KYC and income proofs go in through one secure link, reused across lenders.</p></li>
+      <li class="tl"><time>Day 2 onward*</time><h3>Lender decides</h3><p>Approval and payout time depends on the product. Home and property loans take longer.</p></li>
     </ol>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section class="sec sec--dark">
+<section class="sec" style="padding-top:0" id="why">
   <div class="wrap">
-    <header class="sec__head reveal">
-      <p class="eyebrow">Customer stories</p>
-      <h2>People who got it done</h2>
+    <header class="head">
+      <p class="eyebrow">Why use an advisor</p>
+      <h2>Going alone vs. <em>going through Arthvan.</em></h2>
     </header>
-    <div class="grid grid--3">
-      <blockquote class="quote reveal"><p>“I was comparing five banks and getting nowhere. Arthvan got me a home loan at a better rate in under a week.”</p><footer>— Rohit S., Home Loan <small>(sample testimonial)</small></footer></blockquote>
-      <blockquote class="quote reveal"><p>“Working capital for my shop came through in two days. The advisor explained every charge before I signed.”</p><footer>— Meena K., Business Loan <small>(sample testimonial)</small></footer></blockquote>
-      <blockquote class="quote reveal"><p>“As a first-time card user I was nervous. They picked a starter card that actually fit my spending.”</p><footer>— Aman T., Credit Card <small>(sample testimonial)</small></footer></blockquote>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th></th><th>On your own</th><th>With Arthvan</th></tr></thead>
+        <tbody>
+          <tr><th>Comparing lenders</th><td>Visit or call each bank separately</td><td>One conversation, several offers side by side</td></tr>
+          <tr><th>Paperwork</th><td>Submit the same documents again and again</td><td>Upload once, shared with the lenders you choose</td></tr>
+          <tr><th>Credit checks</th><td>Often one hard enquiry per lender</td><td>Only when you decide to proceed with a lender</td></tr>
+          <tr><th>Charges</th><td>Found in the fine print, late</td><td>Fees, prepayment and foreclosure terms listed upfront</td></tr>
+          <tr><th>Support</th><td>Helpline queues</td><td>A named advisor who knows your case</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
 
-<!-- FAQ -->
+<!-- ============ VOICES ============ -->
+<section class="sec deep">
+  <div class="wrap">
+    <header class="head"><p class="eyebrow">Customer notes</p><h2>What people <em>tell us.</em></h2></header>
+    <div class="voices">
+      <blockquote class="voice"><p>“I had five bank tabs open and no idea which was cheaper. The comparison made the choice obvious.”</p><footer><b>Rohit S.</b> · Home loan · <span>sample</span></footer></blockquote>
+      <blockquote class="voice"><p>“Working capital for the shop came through fast, and every charge was explained before I signed.”</p><footer><b>Meena K.</b> · Business loan · <span>sample</span></footer></blockquote>
+      <blockquote class="voice"><p>“First card, and I was nervous. They matched one to how I really spend, with no annual fee.”</p><footer><b>Aman T.</b> · Starter card · <span>sample</span></footer></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
 <section class="sec" id="faq">
-  <div class="wrap wrap--narrow">
-    <header class="sec__head reveal">
-      <p class="eyebrow">FAQ</p>
-      <h2>Questions, answered</h2>
-    </header>
+  <div class="wrap">
+    <header class="head"><p class="eyebrow">Questions</p><h2>Before you <em>apply.</em></h2></header>
     <div class="faq">
-      <details><summary>What documents do I need?</summary><p>Typically identity proof (Aadhaar/PAN), address proof, recent bank statements and income proof such as salary slips or ITR. Your advisor will share an exact checklist for your product.</p></details>
-      <details><summary>Does checking eligibility affect my credit score?</summary><p>Submitting an enquiry with us does not trigger a hard credit check. A lender may run one only when you choose to proceed with a specific application.</p></details>
-      <details><summary>Do you charge a fee for your service?</summary><p>Our advisory is free for customers; we are compensated by lending partners. Any processing fees charged by the lender are disclosed to you upfront.</p></details>
-      <details><summary>How long does approval take?</summary><p>Many personal loans and cards are decided within 24–48 hours of complete documents. Home and property loans take longer because of valuation and legal checks.</p></details>
-      <details><summary>Can I prepay or foreclose my loan?</summary><p>Yes — terms vary by lender and loan type. We highlight prepayment and foreclosure charges before you accept an offer.</p></details>
+      <details><summary>What documents will I need?</summary><p>Usually identity proof (Aadhaar or PAN), address proof, recent bank statements and income proof such as salary slips or an ITR. Your advisor sends the exact checklist for your product.</p></details>
+      <details><summary>Does enquiring hurt my credit score?</summary><p>Sending us an enquiry does not trigger a hard credit check. A lender may run one only when you choose to proceed with that lender.</p></details>
+      <details><summary>Do I pay Arthvan anything?</summary><p>No. Our advice is free to you and we are paid by lending partners. Any processing fee a lender charges is shown to you before you accept.</p></details>
+      <details><summary>How fast can I get a decision?</summary><p>Many personal loans and cards are decided within 24 to 48 hours of complete documents. Home and property loans need valuation and legal checks, so they take longer.</p></details>
+      <details><summary>Can I repay early?</summary><p>Yes, though terms differ by lender and loan type. We list prepayment and foreclosure charges next to each offer.</p></details>
     </div>
   </div>
 </section>
 
-<!-- APPLY -->
-<section class="sec sec--navy" id="apply">
+<!-- ============ APPLY ============ -->
+<section class="sec deep" id="apply">
   <div class="wrap apply">
-    <div class="apply__copy reveal">
+    <div class="apply__copy">
       <p class="eyebrow">Get started</p>
-      <h2>Talk to an advisor today</h2>
-      <p>Fill in a few details and we'll call you back within one working day with options tailored to you.</p>
-      <ul class="contact">
-        <li>📞 <a href="tel:+910000000000">+91 00000 00000</a></li>
-        <li>✉️ <a href="mailto:hello@arthvanfinserv.example">hello@arthvanfinserv.example</a></li>
-        <li>📍 Your office address, City, State — PIN</li>
-        <li>🕘 Mon–Sat, 9:30 am – 6:30 pm</li>
-      </ul>
+      <h2>Tell us the plan. <em>We'll find the lender.</em></h2>
+      <p>An advisor calls you back within one working day with options that fit.</p>
+      <div class="plan" aria-live="polite">
+        <span class="plan__title">YOUR PLAN</span>
+        <div class="plan__row"><span>Product</span><b id="p-prod">—</b></div>
+        <div class="plan__row"><span>Amount</span><b id="p-amt">—</b></div>
+        <div class="plan__row"><span>Estimated EMI</span><b id="p-emi">—</b></div>
+      </div>
+      <div class="contact">
+        <span>Phone <b>+91 00000 00000</b></span>
+        <span>Email <b>hello@arthvanfinserv.example</b></span>
+        <span>Office <b>Your address, City, State, PIN</b></span>
+        <span>Hours <b>Mon to Sat, 9:30 am to 6:30 pm</b></span>
+      </div>
     </div>
-    <form class="form reveal" id="lead-form" novalidate>
-      <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required><small class="err"></small></div>
-      <div class="field"><label for="f-phone">Mobile number</label><input id="f-phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="10-digit number" required><small class="err"></small></div>
-      <div class="field"><label for="f-email">Email <span>(optional)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><small class="err"></small></div>
+    <form class="form" id="lead-form" novalidate>
+      <h3>Request a call back</h3>
+      <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name"><small class="err"></small></div>
+      <div class="row">
+        <div class="field"><label for="f-phone">Mobile number</label><input id="f-phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="10 digits"><small class="err"></small></div>
+        <div class="field"><label for="f-email">Email <span>(optional)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><small class="err"></small></div>
+      </div>
       <div class="row">
         <div class="field"><label for="f-product">I'm interested in</label>
-          <select id="f-product" name="product" required>
-            <option value="">Select…</option>
-            <optgroup label="Loans">
-              <option>Personal Loan</option><option>Home Loan</option><option>Business Loan</option><option>Vehicle Loan</option><option>Education Loan</option><option>Loan Against Property</option>
-            </optgroup>
-            <optgroup label="Credit Cards">
-              <option>Signature Rewards Card</option><option>Globetrotter Travel Card</option><option>Everyday Cashback Card</option><option>Starter Credit Card</option><option>Lifestyle Plus Card</option><option>Infinite Elite Card</option><option>Not sure — suggest a card</option>
-            </optgroup>
-          </select><small class="err"></small></div>
-        <div class="field"><label for="f-amt">Amount needed (₹)</label><input id="f-amt" name="amount" inputmode="numeric" placeholder="e.g. 500000"></div>
+          <select id="f-product" name="product"></select><small class="err"></small></div>
+        <div class="field"><label for="f-amt">Amount needed <span>(₹)</span></label><input id="f-amt" name="amount" inputmode="numeric" placeholder="e.g. 500000"></div>
       </div>
-      <label class="consent"><input type="checkbox" id="f-consent" required> I agree to be contacted by Arthvan Finserv and its partners regarding my enquiry.</label>
+      <label class="consent"><input type="checkbox" id="f-consent"> I agree to be contacted by Arthvan Finserv and its lending partners about my enquiry.</label>
       <small class="err" id="consent-err"></small>
       <button class="btn btn--gold btn--block" type="submit">Request a call back</button>
-      <p class="form__ok" id="form-ok" role="status" hidden></p>
+      <p class="okmsg" id="ok" role="status" hidden></p>
     </form>
   </div>
 </section>
 </main>
 
 <footer class="foot">
-  <div class="wrap foot__in">
-    <div>
-      <a href="#top" class="logo logo--foot"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#d4af6a"/><path d="M9 23 16 8l7 15h-4l-3-7-3 7z" fill="#0b1b3a"/></svg><span>Arthvan <em>Finserv</em></span></a>
-      <p>Simple, transparent loans and credit cards.</p>
+  <div class="wrap">
+    <div class="foot__in">
+      <div><a class="logo" href="#top"><span>Arthvan <em style="color:var(--accent)">Finserv</em></span></a><p>Loans and credit cards, with the numbers shown first.</p></div>
+      <div><h4>Products</h4><a href="#loans">Loans</a><a href="#cards">Credit cards</a></div>
+      <div><h4>Company</h4><a href="#process">Process</a><a href="#faq">FAQ</a><a href="#apply">Contact</a></div>
     </div>
-    <div><h4>Loans</h4><a href="#loans">Personal</a><a href="#loans">Home</a><a href="#loans">Business</a><a href="#loans">Vehicle</a></div>
-    <div><h4>Company</h4><a href="#why">Why us</a><a href="#process">How it works</a><a href="#faq">FAQ</a><a href="#apply">Contact</a></div>
-  </div>
-  <div class="wrap foot__legal">
-    <p>*Interest rates, amounts and approval times are indicative, vary by lender and borrower profile, and are subject to credit approval. EMI figures are estimates. Arthvan Finserv is a loan and credit-card distribution/advisory service and does not itself lend money. [Add your registration / partner disclosures, privacy policy and terms here before launch.]</p>
-    <p>© <span id="yr"></span> Arthvan Finserv. All rights reserved.</p>
+    <div class="legal">
+      <p>*Rates, amounts, tenures, partner counts and timelines are indicative placeholders and vary by lender and applicant, subject to credit approval. EMI figures are estimates. Arthvan Finserv is a loan and credit-card advisory and distribution service and does not itself lend. [Add registration details, partner disclosures, privacy policy and terms before launch.]</p>
+      <p>© <span id="yr"></span> Arthvan Finserv</p>
+    </div>
   </div>
 </footer>
 
-<script src="script.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var inr=new Intl.NumberFormat('en-IN',{maximumFractionDigits:0});
+function rs(n){return '₹'+inr.format(Math.round(n))}
+function short(n){
+  if(n>=1e7){return '₹'+(+(n/1e7).toFixed(2))+' Cr'}
+  if(n>=1e5){return '₹'+(+(n/1e5).toFixed(2))+' L'}
+  return rs(n);
+}
+function tenure(m){
+  if(m<24)return m+' months';
+  var y=Math.floor(m/12),r=m%12;
+  return y+' yr'+(y>1?'s':'')+(r?' '+r+' mo':'');
+}
+function emi(p,rate,m){var r=rate/1200;if(!r)return p/m;var f=Math.pow(1+r,m);return p*r*f/(f-1)}
+function store(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+
+/* ---------- data ---------- */
+var LOANS=[
+  {key:'home',name:'Home Loan',chip:'buy a home',rate:8.5,amt:[500000,50000000,100000],def:5000000,ten:[60,360,12],tdef:240,
+   best:'Buying, building or renovating a home, or moving an existing loan for a lower rate.',amtTxt:'₹5 L to ₹5 Cr',tenTxt:'Up to 30 yrs',
+   docs:['ID and address proof','Income proof, 6 months','Bank statements','Property papers']},
+  {key:'business',name:'Business Loan',chip:'grow my business',rate:12,amt:[200000,20000000,100000],def:2500000,ten:[12,60,6],tdef:36,
+   best:'Working capital, stock, equipment or expansion for shops, startups and established firms.',amtTxt:'₹2 L to ₹2 Cr',tenTxt:'Up to 5 yrs',
+   docs:['KYC of owners','GST returns','ITR, 2 years','Bank statements, 12 months']},
+  {key:'vehicle',name:'Vehicle Loan',chip:'buy a vehicle',rate:8.9,amt:[50000,15000000,50000],def:800000,ten:[12,84,6],tdef:60,
+   best:'New or used cars, bikes and commercial vehicles, with high funding on select models.',amtTxt:'₹50 K to ₹1.5 Cr',tenTxt:'Up to 7 yrs',
+   docs:['ID and address proof','Income proof','Bank statements','Vehicle quotation']},
+  {key:'education',name:'Education Loan',chip:'fund studies',rate:9.5,amt:[100000,15000000,100000],def:2000000,ten:[12,180,12],tdef:84,
+   best:'Courses in India or abroad, with repayment that can start after the course ends.',amtTxt:'₹1 L to ₹1.5 Cr',tenTxt:'Up to 15 yrs',
+   docs:['Admission letter','Fee structure','Co-applicant KYC','Co-applicant income proof']},
+  {key:'personal',name:'Personal Loan',chip:'cover a big expense',rate:10.5,amt:[50000,4000000,50000],def:500000,ten:[12,84,6],tdef:48,
+   best:'Weddings, travel, medical costs or consolidating debt, with minimal paperwork.',amtTxt:'₹50 K to ₹40 L',tenTxt:'Up to 7 yrs',
+   docs:['ID and address proof','Salary slips, 3 months','Bank statements','Employment proof']},
+  {key:'lap',name:'Loan Against Property',chip:'unlock property value',rate:9.2,amt:[1000000,100000000,500000],def:10000000,ten:[36,180,12],tdef:120,
+   best:'Large needs where you can pledge property, at lower rates than unsecured loans.',amtTxt:'₹10 L to ₹10 Cr',tenTxt:'Up to 15 yrs',
+   docs:['KYC','Property title papers','Income proof','Bank statements']}
+];
+var CARDS=[
+  {key:'rewards',name:'Signature Rewards',tier:'SIGNATURE',c:['#7a5a1e','#e6b94f'],pct:2.0,fee:2999,
+   tag:'Points on dining, shopping and travel that you can turn into vouchers or statement credit.',
+   perks:['Accelerated points on dining and shopping','Complimentary airport lounge visits each quarter','Annual fee waiver on high yearly spend']},
+  {key:'travel',name:'Globetrotter',tier:'TRAVEL',c:['#173a8a','#4f86e0'],pct:2.4,fee:4999,
+   tag:'Built for people who fly. Miles on flights and hotels, and no mark-up abroad.',
+   perks:['Air miles on flights and hotel bookings','Zero forex mark-up on international spends','Travel insurance cover included']},
+  {key:'cashback',name:'Everyday Cashback',tier:'CASHBACK',c:['#0b5a49','#33b58f'],pct:1.5,fee:499,
+   tag:'Flat cashback on online and offline spends, credited straight to your statement.',
+   perks:['Flat cashback on every online spend','Fuel surcharge waiver','Cashback auto-credited each cycle']},
+  {key:'starter',name:'Starter',tier:'FIRST CARD',c:['#38425a','#8695b3'],pct:0.5,fee:0,
+   tag:'A free first card to build a credit history, with a secured option if you have none.',
+   perks:['Lifetime free, no annual fee','Reports to credit bureaus every month','Secured option against a fixed deposit']},
+  {key:'lifestyle',name:'Lifestyle Plus',tier:'LIFESTYLE',c:['#8a2552','#e46f93'],pct:1.8,fee:1499,
+   tag:'Everyday perks on movies, dining and wellness, with milestone bonuses.',
+   perks:['Buy-one-get-one on movies and select dining','Milestone bonus points each year','Convert large purchases to EMI']},
+  {key:'elite',name:'Infinite Elite',tier:'INFINITE',c:['#07090f','#363e5e'],pct:3.5,fee:9999,
+   tag:'For high spenders. Unlimited lounges, concierge and the richest reward catalogue.',
+   perks:['Unlimited domestic and international lounge access','Concierge and golf privileges','Premium reward catalogue']}
+];
+
+/* ---------- planner ---------- */
+var cur=LOANS[0], intentsEl=$('#intents'), amt=$('#amt'), ten=$('#ten'), inc=$('#inc'), consoleEl=$('#console');
+LOANS.forEach(function(l){
+  var b=document.createElement('button');
+  b.type='button';b.className='chip';b.setAttribute('role','radio');b.dataset.key=l.key;b.textContent=l.chip;
+  b.addEventListener('click',function(){pickLoan(l.key,true)});
+  intentsEl.appendChild(b);
+});
+function setRange(el,min,max,step,val){el.min=min;el.max=max;el.step=step;el.value=val}
+function pickLoan(key,reset){
+  cur=LOANS.filter(function(l){return l.key===key})[0];
+  $$('.chip',intentsEl).forEach(function(c){c.setAttribute('aria-checked',c.dataset.key===key)});
+  if(reset){
+    setRange(amt,cur.amt[0],cur.amt[1],cur.amt[2],cur.def);
+    setRange(ten,cur.ten[0],cur.ten[1],cur.ten[2],cur.tdef);
+  }
+  plan();
+  syncPanels(key);
+}
+function incomeVal(){return +(inc.value.replace(/[^\d]/g,''))||0}
+function plan(){
+  var p=+amt.value,m=+ten.value,e=emi(p,cur.rate,m),tot=e*m,i=incomeVal();
+  $('#amt-o').textContent=short(p);
+  $('#ten-o').textContent=tenure(m);
+  $('#emi').textContent=rs(e);
+  $('#f-rate').textContent='from '+cur.rate+'% p.a.';
+  $('#f-int').textContent=short(tot-p);
+  $('#f-tot').textContent=short(tot);
+  var burden=i?e/i:0,state='good',label='COMFORTABLE';
+  if(!i){label='ADD INCOME';state='warn'}
+  else if(burden>.45){state='bad';label='STRETCH'}
+  else if(burden>.3){state='warn';label='MANAGEABLE'}
+  consoleEl.dataset.state=state;
+  $('#state-pill').textContent=label;
+  $('#burden').textContent=i?Math.round(burden*100)+'% of income':'no income set';
+  $('#gauge-bar').style.strokeDashoffset=326.7*(1-Math.min(burden/.6,1));
+  $('#p-prod').textContent=cur.name;
+  $('#p-amt').textContent=short(p);
+  $('#p-emi').textContent=rs(e)+' / mo';
+}
+amt.addEventListener('input',plan);
+ten.addEventListener('input',plan);
+inc.addEventListener('input',function(){
+  var d=inc.value.replace(/[^\d]/g,'');
+  inc.value=d?inr.format(+d):'';plan();
+});
+
+/* ---------- loan panels ---------- */
+var panels=$('#panels');
+LOANS.forEach(function(l,idx){
+  var a=document.createElement('article');
+  a.className='panel';a.dataset.key=l.key;
+  a.innerHTML=
+   '<button class="panel__head" type="button" aria-expanded="false" aria-controls="pb-'+l.key+'">'+
+     '<span class="panel__name">'+l.name+'</span><span class="panel__rate">from '+l.rate+'% p.a.*</span><span class="panel__plus" aria-hidden="true">+</span></button>'+
+   '<div class="panel__body" id="pb-'+l.key+'">'+
+     '<p>'+l.best+'</p>'+
+     '<dl class="stats"><div><dt>Amount</dt><dd>'+l.amtTxt+'</dd></div><div><dt>Rate from*</dt><dd>'+l.rate+'%</dd></div><div><dt>Tenure</dt><dd>'+l.tenTxt+'</dd></div></dl>'+
+     '<div><p class="docs-label">Typical documents</p><ul class="docs">'+l.docs.map(function(d){return '<li>'+d+'</li>'}).join('')+'</ul></div>'+
+     '<div class="panel__cta"><button class="btn btn--gold btn--sm" type="button" data-act="apply">Apply for this loan</button><button class="btn btn--line btn--sm" type="button" data-act="plan">Plan the EMI</button></div>'+
+   '</div>';
+  panels.appendChild(a);
+  $('.panel__head',a).addEventListener('click',function(){openPanel(l.key)});
+  $('[data-act=apply]',a).addEventListener('click',function(){pickLoan(l.key,true);toForm(l.name)});
+  $('[data-act=plan]',a).addEventListener('click',function(){pickLoan(l.key,true);location.hash='#top';window.scrollTo({top:0,behavior:'smooth'})});
+});
+function openPanel(key){
+  $$('.panel').forEach(function(p){
+    var on=p.dataset.key===key;
+    p.classList.toggle('is-open',on);
+    $('.panel__head',p).setAttribute('aria-expanded',on);
+  });
+}
+function syncPanels(key){openPanel(key)}
+
+/* ---------- form selector ---------- */
+var sel=$('#f-product');
+sel.innerHTML='<option value="">Select…</option><optgroup label="Loans">'+LOANS.map(function(l){return '<option>'+l.name+'</option>'}).join('')+'</optgroup><optgroup label="Credit cards">'+CARDS.map(function(c){return '<option>'+c.name+' Card</option>'}).join('')+'<option>Not sure, suggest a card</option></optgroup>';
+function toForm(name,amount){
+  sel.value=name;
+  if(amount)$('#f-amt').value=amount;
+  $('#apply').scrollIntoView({behavior:'smooth'});
+}
+$('#continue').addEventListener('click',function(){toForm(cur.name,Math.round(+amt.value))});
+
+/* ---------- card wallet ---------- */
+var card=$('#card3d'),picker=$('#picker'),spend=$('#spend'),curCard=CARDS[0];
+CARDS.forEach(function(c){
+  var b=document.createElement('button');
+  b.type='button';b.className='mini';b.dataset.key=c.key;b.setAttribute('aria-label',c.name);b.setAttribute('aria-pressed','false');
+  b.style.setProperty('--c1',c.c[0]);b.style.setProperty('--c2',c.c[1]);
+  b.addEventListener('click',function(){pickCard(c.key)});
+  picker.appendChild(b);
+});
+function pickCard(key){
+  curCard=CARDS.filter(function(c){return c.key===key})[0];
+  card.style.setProperty('--c1',curCard.c[0]);card.style.setProperty('--c2',curCard.c[1]);
+  $('#c-name').textContent=curCard.name;$('#c-tier').textContent=curCard.tier;
+  $('#d-name').textContent=curCard.name;$('#d-tag').textContent=curCard.tag;
+  $('#d-perks').innerHTML=curCard.perks.map(function(p){return '<li>'+p+'</li>'}).join('');
+  $$('.mini').forEach(function(m){m.setAttribute('aria-pressed',m.dataset.key===key)});
+  bars();
+}
+function net(c,s){return s*12*c.pct/100-c.fee}
+function bars(){
+  var s=+spend.value;
+  $('#spend-o').textContent=rs(s)+' / month';
+  var vals=CARDS.map(function(c){return net(c,s)});
+  var maxV=Math.max.apply(null,vals.concat([1]));
+  var el=$('#bars');
+  if(!el.children.length){
+    CARDS.forEach(function(c){
+      var b=document.createElement('button');b.type='button';b.className='bar';b.dataset.key=c.key;
+      b.innerHTML='<span>'+c.name+'</span><span class="bar__track"><span class="bar__fill"></span></span><span class="bar__v"></span>';
+      b.addEventListener('click',function(){pickCard(c.key)});
+      el.appendChild(b);
+    });
+  }
+  var bestI=0;
+  vals.forEach(function(v,i){if(v>vals[bestI])bestI=i});
+  $$('.bar',el).forEach(function(b,i){
+    b.setAttribute('aria-current',b.dataset.key===curCard.key);
+    $('.bar__fill',b).style.width=Math.max(v2w(vals[i]),0)+'%';
+    $('.bar__v',b).textContent=(vals[i]<0?'-':'')+rs(Math.abs(vals[i]));
+  });
+  function v2w(v){return v<=0?0:Math.max(v/maxV*100,3)}
+  var c=CARDS[bestI];
+  $('#best').innerHTML='At '+rs(s)+' a month, <b>'+c.name+'</b> returns the most: about '+rs(vals[bestI])+' a year after its '+(c.fee?rs(c.fee)+' fee':'zero fee')+'.';
+}
+spend.addEventListener('input',bars);
+$('#card-apply').addEventListener('click',function(){toForm(curCard.name+' Card')});
+
+/* 3D tilt */
+var stage=$('.stage'),reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+if(!reduce){
+  stage.addEventListener('pointermove',function(e){
+    var r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    card.style.setProperty('--ry',((x-.5)*22).toFixed(1)+'deg');
+    card.style.setProperty('--rx',((.5-y)*18).toFixed(1)+'deg');
+    card.style.setProperty('--gx',(x*100)+'%');card.style.setProperty('--gy',(y*100)+'%');
+  });
+  stage.addEventListener('pointerleave',function(){
+    card.style.setProperty('--ry','-8deg');card.style.setProperty('--rx','4deg');
+    card.style.setProperty('--gx','50%');card.style.setProperty('--gy','30%');
+  });
+}
+card.style.setProperty('--ry','-8deg');card.style.setProperty('--rx','4deg');
+
+/* ---------- lead form ---------- */
+var form=$('#lead-form');
+function setErr(input,msg){
+  var f=input.closest('.field');
+  f.classList.toggle('bad',!!msg);
+  $('.err',f).textContent=msg||'';
+  return !msg;
+}
+form.addEventListener('submit',function(e){
+  e.preventDefault();
+  var n=$('#f-name'),p=$('#f-phone'),em=$('#f-email'),pr=$('#f-product'),c=$('#f-consent');
+  var ok=true;
+  ok=setErr(n,n.value.trim().length<2?'Enter your full name.':'')&&ok;
+  ok=setErr(p,/^[6-9]\d{9}$/.test(p.value.replace(/[\s-]/g,''))?'':'Enter a 10-digit mobile number.')&&ok;
+  ok=setErr(em,em.value&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em.value)?'Enter a valid email address.':'')&&ok;
+  ok=setErr(pr,pr.value?'':'Choose a product.')&&ok;
+  $('#consent-err').textContent=c.checked?'':'Tick the box to continue.';
+  if(!ok||!c.checked)return;
+  /* No backend yet: send FormData to your CRM or form service here. */
+  var m=$('#ok');
+  m.textContent='Thanks, '+n.value.trim().split(' ')[0]+'. This preview form is not connected to a backend yet, so nothing was sent.';
+  m.hidden=false;
+  form.reset();
+});
+
+/* ---------- nav, theme ---------- */
+var burger=$('#burger'),menu=$('#menu');
+burger.addEventListener('click',function(){
+  var o=menu.classList.toggle('open');burger.setAttribute('aria-expanded',o);
+});
+$$('#menu a').forEach(function(a){a.addEventListener('click',function(){menu.classList.remove('open');burger.setAttribute('aria-expanded','false')})});
+var root=document.documentElement;
+var saved=store('arthvan-theme');if(saved==='dark'||saved==='light')root.setAttribute('data-theme',saved);
+$('#theme').addEventListener('click',function(){
+  var dark=root.getAttribute('data-theme')==='dark'||(!root.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  var next=dark?'light':'dark';root.setAttribute('data-theme',next);store('arthvan-theme',next);
+});
+
+/* ---------- init ---------- */
+pickLoan('home',true);
+pickCard('rewards');
+$('#yr').textContent=new Date().getFullYear();
+})();
+</script>
 </body>
 </html>

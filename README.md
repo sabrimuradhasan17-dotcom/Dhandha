@@ -2,7 +2,7 @@
 
 Premium single-page website for a loans & credit-card business. "Arthvan Finserv" is a placeholder brand name.
 
-Plain HTML/CSS/JS — no build step. Open `index.html` in a browser, or serve the folder:
+Single-file HTML (inline CSS and JS), no build step. Open `index.html` in a browser, or serve the folder:
 
 ```
 python3 -m http.server 8000
@@ -13,4 +13,4 @@ python3 -m http.server 8000
 - Replace phone, email, address and hours in the `#apply` section.
 - Confirm rates, amounts and card details with your lending partners; replace sample testimonials and the stats in the hero.
 - Add legal disclosures (registration, privacy policy, terms) in the footer.
-- Connect the lead form in `script.js` (look for "No backend yet") to your CRM or a form service.
+- Connect the lead form in `index.html` (look for "No backend yet") to your CRM or a form service.

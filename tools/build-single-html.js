@@ -2,12 +2,12 @@
 // Builds two stand-alone HTML files (photos + fonts embedded, no server, no internet) that can be sent by WhatsApp/email
 // and opened by double-click:
 //   node tools/build-single-html.js <out-dir>
-//   la-bhutanz-website-preview.html   la-bhutanz-admin-demo.html   (keep them in the same folder so their links work)
+//   la-bhutanz-premium-website.html   la-bhutanz-premium-admin.html   (keep them in the same folder so their links work)
 // The website file embeds web-sized copies of the photos (the full-quality set ships in the zip / hosted version).
 // A text snapshot is baked in so viewers that block scripts still show the content; with scripts on, the full motion site runs.
 const fs = require('fs'), path = require('path'), cp = require('child_process'), os = require('os');
 const out = process.argv[2]; if (!out) { console.error('usage: build-single-html.js <out-dir>'); process.exit(1); }
-const SITE = 'la-bhutanz-website-preview.html', ADMIN = 'la-bhutanz-admin-demo.html';
+const SITE = 'la-bhutanz-premium-website.html', ADMIN = 'la-bhutanz-premium-admin.html';
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bzsingle-'));
 const run = (script, dir, link) => cp.execFileSync('node', [path.join(__dirname, script), path.join(tmp, dir), link], { stdio: 'pipe' });
 run('build-preview.js', 'site', ADMIN);

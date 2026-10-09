@@ -1,6 +1,7 @@
 import { db, tx } from './db.js';
 import { config } from './config.js';
 import { notifyNewRequest } from './sms.js';
+import { pushTo } from './push.js';
 
 export function haversineKm(lat1, lng1, lat2, lng2) {
   const r = (d) => (d * Math.PI) / 180;
@@ -51,7 +52,15 @@ export function dispatchBooking(bookingId) {
     for (const c of candidates) ins.run(b.id, c.user_id);
     return candidates.map((c) => c.user_id);
   });
-  if (ids.length) notifyNewRequest(bookingId, ids); // after commit; never blocks or throws
+  if (ids.length) {
+    // after commit; neither call blocks or throws
+    notifyNewRequest(bookingId, ids);
+    pushTo(ids, 'New job request', 'Open Dhandha to view and accept it.', { type: 'offer', bookingId });
+  } else {
+    const b = db.prepare('SELECT customer_id, status FROM bookings WHERE id = ?').get(bookingId);
+    if (b?.status === 'unassigned')
+      pushTo([b.customer_id], 'No professional available yet', 'We could not find a professional for your booking. Our team will assign one soon.', { type: 'booking', bookingId });
+  }
   return ids;
 }
 

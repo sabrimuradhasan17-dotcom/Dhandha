@@ -74,6 +74,28 @@ CREATE TABLE IF NOT EXISTS payments (
   status TEXT NOT NULL DEFAULT 'created' CHECK (status IN ('created','paid','failed')),
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+CREATE TABLE IF NOT EXISTS push_tokens (
+  token TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id),
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS otp_codes (
+  phone TEXT PRIMARY KEY,
+  code_hash TEXT NOT NULL,
+  expires_at INTEGER NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL
+);
+-- Signed ledger of money moved between platform and worker, in whole rupees.
+-- payout: platform paid the worker (amount > 0). remittance: worker paid the platform (amount > 0).
+CREATE TABLE IF NOT EXISTS settlements (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  worker_id INTEGER NOT NULL REFERENCES users(id),
+  kind TEXT NOT NULL CHECK (kind IN ('payout','remittance')),
+  amount INTEGER NOT NULL CHECK (amount > 0),
+  reference TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
 CREATE TABLE IF NOT EXISTS ratings (
   booking_id INTEGER PRIMARY KEY REFERENCES bookings(id),
   rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),

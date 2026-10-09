@@ -16,6 +16,7 @@ seedAdmin();
 
 export const app = express();
 app.use(cors());
+app.set('trust proxy', 1);
 app.use(express.json({ verify: (req, _res, buf) => (req.rawBody = buf.toString('utf8')) }));
 
 app.get('/health', (_req, res) => res.json({ ok: true }));

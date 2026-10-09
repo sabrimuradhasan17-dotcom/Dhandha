@@ -40,6 +40,19 @@ Mock payments work in Expo Go. Real Razorpay checkout needs a dev build (`npx ex
 - **Chat**: per-booking in-app chat between the customer and their assigned (or directly requested) professional, plus a Call button. Closes when the booking is completed or cancelled. Uses 3-second polling.
 - **Timeouts**: an offer unanswered for `OFFER_TTL_MIN` (default 10) minutes expires and the job moves to the next nearest worker, or becomes *unassigned* (always, for a directly requested professional).
 
+## Login, push, payouts
+- **OTP login**: customers and professionals sign in/up with a phone number + SMS code (admins keep password login). Without Twilio keys the code is returned to the app in dev mode only (never in production).
+- **Push notifications** (Expo, no extra keys): workers on new requests; customers when assigned, on the way, started, completed, or nobody found; both sides on new chat messages. Needs a dev/production build, not Expo Go.
+- **Settlements**: for each worker the dashboard shows *online share − cash commission − paid out + remitted*. Positive → you owe them: pay via UPI/bank, then click **Record payout**. Negative → they owe you commission on cash jobs: click **Record remittance** once received. Payouts are recorded manually; automatic bank transfers (RazorpayX) need business KYC and can be added later.
+
+## Deploy
+1. Push this repo to GitHub, then on [Render](https://render.com) choose **New → Blueprint** (uses `render.yaml`; Docker, 1 GB persistent disk for SQLite, run a single instance). Set `ADMIN_PHONE`, `ADMIN_PASSWORD`, Twilio and Razorpay vars. Add the Razorpay webhook `https://<your-api>/payments/webhook` (event `payment.captured`).
+2. Admin dashboard is then at `https://<your-api>/`.
+3. Apps: put your API URL in `app/eas.json`, then `cd app && npx eas build --profile preview --platform android` (and `ios`) and `eas submit` for the stores. Needs an Expo account; Apple ($99/yr) and Google Play ($25 once) developer accounts for store release.
+4. Back up the disk (Render snapshots) — it holds all bookings and payments.
+
+CI (`.github/workflows/ci.yml`) runs the backend tests on every push.
+
 ## Not built yet (suggested next steps)
-Push notifications and OTP login, live map tracking, worker payout (Razorpay Route/X),
-coupons/wallet, websocket chat (currently polling), SMS to customers, and moving SQLite → Postgres for multi-server deployment.
+Live map tracking, automatic worker bank payouts (RazorpayX),
+coupons/wallet, refunds/disputes UI,  websocket chat (currently polling), SMS to customers, and moving SQLite → Postgres for multi-server deployment.

@@ -4,7 +4,7 @@
     "slug": "dhandha",
     "version": "0.1.0",
     "orientation": "portrait",
-    "plugins": [["expo-location", { "locationWhenInUsePermission": "Used to find workers near you and your service address." }], "expo-secure-store"],
+    "plugins": [["expo-location", { "locationWhenInUsePermission": "Used to find workers near you and your service address." }], "expo-secure-store", "expo-notifications"],
     "ios": { "bundleIdentifier": "com.dhandha.app" },
     "android": { "package": "com.dhandha.app" }
   }

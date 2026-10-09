@@ -4,6 +4,7 @@ import * as Location from 'expo-location';
 import { api, setToken, loadToken } from './api';
 import { Btn, Input, Card, H, Muted, colors, STATUS_LABEL } from './ui';
 import { payForBooking } from './pay';
+import { registerForPush } from './push';
 
 const fail = (e) => Alert.alert('Oops', e.message);
 const when = (iso) => new Date(iso).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
@@ -68,41 +69,63 @@ function Chat({ booking, meId, onClose }) {
 
 /* ---------------------------------- Auth --------------------------------- */
 function Auth({ onAuthed }) {
-  const [mode, setMode] = useState('login');
+  const [step, setStep] = useState('phone'); // phone → code → profile (new users)
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [name, setName] = useState('');
   const [role, setRole] = useState('customer');
-  const [f, setF] = useState({ name: '', phone: '', password: '' });
   const [cats, setCats] = useState([]);
   const [categoryId, setCategoryId] = useState(null);
+  const [busy, setBusy] = useState(false);
   useEffect(() => { api('GET', '/categories').then(setCats).catch(() => {}); }, []);
-  const submit = async () => {
-    try {
-      const body = mode === 'login' ? f : { ...f, role, categoryId };
-      const r = await api('POST', `/auth/${mode === 'login' ? 'login' : 'register'}`, body);
-      await setToken(r.token);
-      if (r.pendingApproval) Alert.alert('Registered', 'An admin must approve your account before you can take jobs.');
-      onAuthed(r.user);
-    } catch (e) { fail(e); }
-  };
+  const run = (fn) => async () => { setBusy(true); try { await fn(); } catch (e) { fail(e); } setBusy(false); };
+
+  const requestCode = run(async () => {
+    const r = await api('POST', '/auth/otp/request', { phone });
+    if (r.devOtp) Alert.alert('Dev mode', `Your code is ${r.devOtp}`); // only when the server has no SMS provider
+    setStep('code');
+  });
+  const verify = run(async () => {
+    const r = await api('POST', '/auth/otp/verify', { phone, otp, ...(step === 'profile' && { name, role, categoryId }) });
+    if (r.needsProfile) return setStep('profile');
+    await setToken(r.token);
+    if (r.pendingApproval) Alert.alert('Registered', 'An admin must approve your account before you can take jobs.');
+    onAuthed(r.user);
+  });
+
   return (
     <ScrollView contentContainerStyle={{ padding: 20 }}>
       <H>Dhandha</H>
       <Muted>Trusted professionals at your doorstep</Muted>
-      {mode === 'register' && (
+      {step === 'phone' && (
         <>
-          <Input placeholder="Full name" value={f.name} onChangeText={(name) => setF({ ...f, name })} />
+          <Input placeholder="10-digit mobile number" keyboardType="number-pad" maxLength={10} value={phone} onChangeText={setPhone} />
+          <Btn title="Send code" disabled={busy || phone.length !== 10} onPress={requestCode} />
+        </>
+      )}
+      {step !== 'phone' && (
+        <>
+          <Muted>Enter the 6-digit code sent to {phone}</Muted>
+          <Input placeholder="Code" keyboardType="number-pad" maxLength={6} value={otp} onChangeText={setOtp} />
+        </>
+      )}
+      {step === 'profile' && (
+        <>
+          <Muted>Welcome! Tell us a bit about you.</Muted>
+          <Input placeholder="Full name" value={name} onChangeText={setName} />
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <View style={{ flex: 1 }}><Btn title="I need services" kind={role === 'customer' ? 'primary' : 'ghost'} onPress={() => setRole('customer')} /></View>
             <View style={{ flex: 1 }}><Btn title="I'm a professional" kind={role === 'worker' ? 'primary' : 'ghost'} onPress={() => setRole('worker')} /></View>
           </View>
-          {role === 'worker' && cats.map((c) => (
-            <Btn key={c.id} title={c.name} kind={categoryId === c.id ? 'primary' : 'ghost'} onPress={() => setCategoryId(c.id)} />
-          ))}
+          {role === 'worker' && cats.map((c) => <Btn key={c.id} title={c.name} kind={categoryId === c.id ? 'primary' : 'ghost'} onPress={() => setCategoryId(c.id)} />)}
         </>
       )}
-      <Input placeholder="10-digit phone" keyboardType="number-pad" maxLength={10} value={f.phone} onChangeText={(phone) => setF({ ...f, phone })} />
-      <Input placeholder="Password" secureTextEntry value={f.password} onChangeText={(password) => setF({ ...f, password })} />
-      <Btn title={mode === 'login' ? 'Log in' : 'Create account'} onPress={submit} />
-      <Btn title={mode === 'login' ? 'New here? Sign up' : 'Have an account? Log in'} kind="ghost" onPress={() => setMode(mode === 'login' ? 'register' : 'login')} />
+      {step !== 'phone' && (
+        <>
+          <Btn title={step === 'profile' ? 'Create account' : 'Verify'} disabled={busy || otp.length !== 6 || (step === 'profile' && (!name.trim() || (role === 'worker' && !categoryId)))} onPress={verify} />
+          <Btn title="Change number" kind="ghost" onPress={() => { setStep('phone'); setOtp(''); }} />
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -289,7 +312,8 @@ function WorkerHome({ meId }) {
   const [offers, reloadOffers] = usePoll(() => api('GET', '/worker/offers'), 5000);
   const [jobs, reloadJobs] = usePoll(() => api('GET', '/worker/jobs'));
   const [earn, reloadEarn] = usePoll(() => api('GET', '/worker/earnings'), 30000);
-  const reload = () => { reloadMe(); reloadOffers(); reloadJobs(); reloadEarn(); };
+  const [bal, reloadBal] = usePoll(() => api('GET', '/worker/balance'), 30000);
+  const reload = () => { reloadMe(); reloadOffers(); reloadJobs(); reloadEarn(); reloadBal(); };
   const act = (fn) => async () => { try { await fn(); reload(); } catch (e) { fail(e); } };
   const toggle = async (v) => {
     try {
@@ -311,6 +335,13 @@ function WorkerHome({ meId }) {
         </View>
         {earn && <Muted>{earn.jobs} jobs · earned ₹{earn.earned} · cash commission to remit ₹{earn.commission_owed_on_cash}</Muted>}
       </Card>
+      {bal && (
+        <Card>
+          <Text style={{ fontWeight: '700' }}>{bal.balance >= 0 ? `We owe you ₹${bal.balance}` : `You owe Dhandha ₹${-bal.balance}`}</Text>
+          <Muted>Online job earnings ₹{bal.online_share} − cash commission ₹{bal.cash_commission} − paid out ₹{bal.paid_out} + remitted ₹{bal.remitted}</Muted>
+          {bal.history.slice(0, 5).map((h) => <Muted key={h.id}>{h.created_at.slice(0, 10)} · {h.kind === 'payout' ? 'Paid to you' : 'You paid'} ₹{h.amount} {h.reference}</Muted>)}
+        </Card>
+      )}
       <Profile worker={me.worker} onSaved={reloadMe} />
       <H>New job requests</H>
       {offers?.length === 0 && <Muted>None right now. Stay online to receive jobs.</Muted>}
@@ -358,6 +389,7 @@ export default function App() {
       try { setUser(await api('GET', '/auth/me')); } catch { await setToken(null); setUser(null); }
     })();
   }, []);
+  useEffect(() => { if (user && user.role !== 'admin') registerForPush(); }, [user?.id]);
   const logout = async () => { await setToken(null); setUser(null); };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, paddingTop: StatusBar.currentHeight }}>

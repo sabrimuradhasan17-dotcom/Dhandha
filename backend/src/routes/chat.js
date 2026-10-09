@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db.js';
 import { requireAuth } from '../auth.js';
+import { pushTo } from '../push.js';
 
 const r = Router();
 
@@ -43,6 +44,9 @@ r.post('/:id/messages', requireAuth('customer', 'worker'), participant, (req, re
   if (['cancelled', 'completed'].includes(req.booking.status))
     return res.status(409).json({ error: 'This booking is closed for chat' });
   const x = db.prepare('INSERT INTO messages (booking_id, sender_id, body) VALUES (?,?,?)').run(req.booking.id, req.user.id, body);
+  const to = [req.booking.customer_id, req.booking.worker_id ?? req.booking.requested_worker_id].filter((id) => id && id !== req.user.id);
+  const who = db.prepare('SELECT name FROM users WHERE id = ?').get(req.user.id).name;
+  pushTo(to, `New message from ${who}`, body.slice(0, 100), { type: 'chat', bookingId: req.booking.id });
   res.status(201).json(db.prepare('SELECT id, sender_id, body, created_at FROM messages WHERE id = ?').get(Number(x.lastInsertRowid)));
 });
 

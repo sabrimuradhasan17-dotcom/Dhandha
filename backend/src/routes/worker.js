@@ -3,6 +3,8 @@ import { db } from '../db.js';
 import { requireAuth } from '../auth.js';
 import { acceptOffer, declineOffer, haversineKm } from '../dispatch.js';
 import { getBooking } from './bookings.js';
+import { pushTo } from '../push.js';
+import { workerBalance, settlementHistory } from '../settlements.js';
 
 const r = Router();
 r.use(requireAuth('worker'));
@@ -63,7 +65,9 @@ r.get('/offers', (req, res) => {
 r.post('/offers/:id/accept', (req, res) => {
   if (!acceptOffer(Number(req.params.id), req.user.id))
     return res.status(409).json({ error: 'This job is no longer available' });
-  res.json(getBooking(Number(req.params.id)));
+  const b = getBooking(Number(req.params.id));
+  pushTo([b.customer_id], 'Professional assigned', `${b.worker_name} accepted your ${b.service_name} booking.`, { type: 'booking', bookingId: b.id });
+  res.json(b);
 });
 
 r.post('/offers/:id/decline', (req, res) => {
@@ -90,7 +94,14 @@ r.post('/jobs/:id/advance', (req, res) => {
   if (next === 'completed' && b.payment_method === 'online' && b.payment_status !== 'paid')
     return res.status(409).json({ error: 'Customer has not completed the online payment yet' });
   db.prepare(`UPDATE bookings SET status = ?${settle} WHERE id = ?`).run(next, b.id);
-  res.json(getBooking(b.id));
+  const nb = getBooking(b.id);
+  const MSG = { on_the_way: 'is on the way', in_progress: 'has started the service', completed: 'has completed the service' };
+  pushTo([b.customer_id], 'Booking update', `${nb.worker_name} ${MSG[next]}.`, { type: 'booking', bookingId: b.id });
+  res.json(nb);
+});
+
+r.get('/balance', (req, res) => {
+  res.json({ ...workerBalance(req.user.id), history: settlementHistory(req.user.id) });
 });
 
 r.get('/earnings', (req, res) => {

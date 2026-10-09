@@ -3,6 +3,7 @@ import { db } from '../db.js';
 import { requireAuth } from '../auth.js';
 import { manualAssign, dispatchBooking } from '../dispatch.js';
 import { getBooking } from './bookings.js';
+import { workerBalance, recordSettlement } from '../settlements.js';
 
 const r = Router();
 r.use(requireAuth('admin'));
@@ -69,6 +70,19 @@ r.put('/workers/:id/approval', (req, res) => {
     .run(ok, ok, Number(req.params.id));
   if (!r2.changes) return res.status(404).json({ error: 'Worker not found' });
   res.json({ ok: true });
+});
+
+// Money owed between platform and each worker (positive = platform owes worker).
+r.get('/settlements', (_req, res) => {
+  const ws = db.prepare(`SELECT u.id, u.name, u.phone FROM workers w JOIN users u ON u.id = w.user_id ORDER BY u.id`).all();
+  res.json(ws.map((w) => ({ ...w, ...workerBalance(w.id) })));
+});
+
+r.post('/workers/:id/settlements', (req, res) => {
+  const { kind, amount, reference = '' } = req.body || {};
+  const out = recordSettlement(Number(req.params.id), kind, amount, String(reference).slice(0, 100));
+  if (out.error) return res.status(out.status).json({ error: out.error });
+  res.status(201).json(out);
 });
 
 r.post('/categories', (req, res) => {

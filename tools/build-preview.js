@@ -33,6 +33,7 @@ js = js.split('location.pathname').join('__P()').split('location.search').join('
 const shim = `
 let __route = '/'; const __P = () => __route.split('?')[0]; const __Q = () => { const i = __route.indexOf('?'); return i < 0 ? '' : __route.slice(i); };
 (function () {
+  const m = document.getElementById('nojsmsg'); if (m) m.remove();
   const PV = ${data};
   const json = (o, st = 200) => Promise.resolve(new Response(JSON.stringify(o), { status: st, headers: { 'content-type': 'application/json' } }));
   window.fetch = (u, o) => {
@@ -52,7 +53,7 @@ const html = `<title>La Bhutanz Tours</title>
 <script>document.documentElement.className='js'</script>
 <div class="pre" id="pre" aria-hidden="true"><div class="pre-in"><img src="img/logo.png" alt=""><span>La Bhutanz</span><i></i></div></div>
 <div class="prog" id="prog"></div>
-<div class="nav" id="nav"><div class="pv">Preview of the new La Bhutanz Tours website. Enquiries are not saved in this preview.${adminUrl ? ` <a href="${adminUrl}" target="_blank">Try the admin panel demo ↗</a>` : ' The admin panel runs on the live server.'}</div><div id="banner"></div><div class="wrap"><div class="nav-in" id="hdr"></div></div></div>
+<div class="nav" id="nav"><div class="pv">Preview of the new La Bhutanz Tours website. Enquiries are not saved in this preview. <b style="color:#e5bd4a">${'v5 · ' + new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC'}</b>${adminUrl ? ` <a href="${adminUrl}" target="_blank">Try the admin panel demo ↗</a>` : ' The admin panel runs on the live server.'}</div><div id="nojsmsg" style="background:#fff3cd;color:#5c4300;font:500 13px/1.5 Inter,system-ui,sans-serif;padding:10px 16px;text-align:center">You are viewing a static snapshot — your viewer is blocking scripts, so animations and the admin demo are off. Open this file in Chrome, Safari or Edge (not inside a chat or file-preview app) to see the full motion site.</div><div id="banner"></div><div class="wrap"><div class="nav-in" id="hdr"></div></div></div>
 <main id="app" tabindex="-1"><div class="wrap" style="padding:160px var(--gut) 100px"><p class="lead">Loading…</p></div></main>
 <footer id="ftr"></footer>
 <div id="mbar"></div>

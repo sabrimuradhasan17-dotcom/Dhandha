@@ -8,22 +8,13 @@ const CONFIG = {
 };
 
 /* ============ PRODUCTS (placeholder names & prices) ============ */
-const gold = "#c9a96a", dark = "#3a2e1f";
-const art = {
-  frame: `<svg viewBox="0 0 200 200"><rect x="40" y="30" width="120" height="140" fill="${dark}" stroke="${gold}" stroke-width="2"/><rect x="54" y="44" width="92" height="112" fill="#0d0b09" stroke="${gold}" stroke-opacity=".5"/><circle cx="100" cy="88" r="14" fill="#6a5532"/><path d="M62 150c0-26 17-40 38-40s38 14 38 40z" fill="#6a5532"/></svg>`,
-  gallery: `<svg viewBox="0 0 200 200"><rect x="20" y="30" width="70" height="90" fill="${dark}" stroke="${gold}" stroke-width="2"/><rect x="100" y="30" width="80" height="50" fill="${dark}" stroke="${gold}" stroke-width="2"/><rect x="100" y="90" width="50" height="50" fill="${dark}" stroke="${gold}" stroke-width="2"/><rect x="30" y="130" width="60" height="40" fill="${dark}" stroke="${gold}" stroke-width="2"/><rect x="160" y="90" width="20" height="80" fill="${dark}" stroke="${gold}" stroke-width="2"/><g fill="#6a5532" opacity=".7"><rect x="28" y="38" width="54" height="74"/><rect x="108" y="38" width="64" height="34"/><rect x="108" y="98" width="34" height="34"/><rect x="38" y="138" width="44" height="24"/></g></svg>`,
-  table: `<svg viewBox="0 0 200 200"><ellipse cx="100" cy="90" rx="78" ry="22" fill="${dark}" stroke="${gold}" stroke-width="2"/><ellipse cx="100" cy="86" rx="78" ry="22" fill="#52402a" stroke="${gold}" stroke-width="1.5"/><path d="M45 100l-8 62M155 100l8 62M80 108l-4 56M120 108l4 56" stroke="${gold}" stroke-width="5" stroke-linecap="round"/></svg>`,
-  marble: `<svg viewBox="0 0 200 200"><ellipse cx="100" cy="82" rx="74" ry="20" fill="#d9d3c7" stroke="${gold}" stroke-width="2"/><path d="M60 80l30-6M110 90l24-10M80 88l10 4" stroke="#8d867a" stroke-width="1"/><path d="M70 98v58l-18 10h96l-18-10V98" fill="none" stroke="${gold}" stroke-width="4"/><rect x="62" y="162" width="76" height="6" fill="${gold}"/></svg>`,
-  mirror: `<svg viewBox="0 0 200 200"><ellipse cx="100" cy="100" rx="58" ry="74" fill="${dark}" stroke="${gold}" stroke-width="3"/><ellipse cx="100" cy="100" rx="48" ry="64" fill="#1b1a19" stroke="${gold}" stroke-opacity=".5"/><path d="M70 60c20-10 40-6 56 6" stroke="#fff" stroke-opacity=".25" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`,
-  side: `<svg viewBox="0 0 200 200"><rect x="50" y="60" width="100" height="14" fill="#52402a" stroke="${gold}" stroke-width="2"/><rect x="58" y="74" width="84" height="40" fill="#241d14" stroke="${gold}"/><circle cx="100" cy="94" r="4" fill="${gold}"/><path d="M60 114l-6 56M140 114l6 56" stroke="${gold}" stroke-width="5" stroke-linecap="round"/><rect x="56" y="128" width="88" height="5" fill="${gold}" opacity=".7"/></svg>`
-};
 const PRODUCTS = [
-  { id:"frame-classic", cat:"Photo Frames", name:"Heritage Wooden Frame", desc:"Solid wood, hand-polished edges with a gilded inner lip.", price:1499, art:"frame" },
-  { id:"frame-gallery", cat:"Photo Frames", name:"Gallery Wall Set", desc:"A curated set of five frames in mixed sizes for a statement wall.", price:4999, art:"gallery" },
-  { id:"table-walnut", cat:"Coffee Tables", name:"Walnut Round Coffee Table", desc:"Warm walnut top on tapered brass-tipped legs.", price:18999, art:"table" },
-  { id:"table-marble", cat:"Coffee Tables", name:"Marble Statement Table", desc:"Natural marble top with a slim gold-finish frame.", price:24999, art:"marble" },
-  { id:"decor-mirror", cat:"Wall Décor", name:"Arc Accent Mirror", desc:"Oval mirror in a sculpted wood and brass frame.", price:6999, art:"mirror" },
-  { id:"decor-side", cat:"Side Furniture", name:"Brass-Line Side Table", desc:"Compact side table with a hidden drawer — the perfect companion piece.", price:8999, art:"side" }
+  { id:"frame-classic", cat:"Photo Frames", name:"Heritage Gilded Frame", desc:"Hand-finished gilt moulding with a deep mount for prints and certificates.", price:1499, img:"frame" },
+  { id:"frame-gallery", cat:"Photo Frames", name:"Gallery Wall Set", desc:"A curated set of frames in mixed sizes for a statement wall.", price:4999, img:"gallery" },
+  { id:"table-walnut", cat:"Coffee Tables", name:"Solid Wood Coffee Table", desc:"A chunky, sculptural top in natural grain. Made to anchor the room.", price:18999, img:"table" },
+  { id:"table-marble", cat:"Coffee Tables", name:"Marble Statement Table", desc:"Natural marble top on a carved hardwood base.", price:24999, img:"marble" },
+  { id:"decor-mirror", cat:"Wall Décor", name:"Gilded Accent Mirror", desc:"Ornate carved frame that adds depth and light to any wall.", price:6999, img:"mirror" },
+  { id:"decor-side", cat:"Side Furniture", name:"Teak Side Table", desc:"Slim, elegant side table, the perfect companion to a coffee table.", price:8999, img:"side" }
 ];
 const money = n => CONFIG.currency + n.toLocaleString(CONFIG.locale);
 const $ = s => document.querySelector(s);
@@ -31,7 +22,7 @@ const $ = s => document.querySelector(s);
 /* ============ Render products ============ */
 $("#products").innerHTML = PRODUCTS.map((p,i)=>`
   <article class="card reveal" style="transition-delay:${(i%3)*120}ms" data-tilt>
-    <div class="card-art">${art[p.art]}</div>
+    <div class="card-art"><img src="img/${p.img}.jpg" alt="${p.name}"></div>
     <div class="card-body">
       <span class="cat">${p.cat}</span>
       <h3>${p.name}</h3>
@@ -55,7 +46,7 @@ function renderCart(){
   const ids = Object.keys(cart).filter(id=>find(id));
   $("#cartItems").innerHTML = ids.length ? ids.map(id=>{const p=find(id);return `
     <div class="line">
-      <div class="thumb">${art[p.art]}</div>
+      <div class="thumb"><img src="img/${p.img}.jpg" alt="${p.name}"></div>
       <div><h4>${p.name}</h4><small>${money(p.price)}</small>
         <div class="qty"><button data-dec="${id}">−</button><span>${cart[id]}</span><button data-inc="${id}">+</button></div></div>
       <div><strong>${money(p.price*cart[id])}</strong><button class="rm" data-rm="${id}">Remove</button></div>
@@ -144,6 +135,7 @@ addEventListener("scroll", ()=>{
   const y=scrollY; nav.classList.toggle("scrolled", y>40);
   prog.style.width = (y/(document.body.scrollHeight-innerHeight)*100)+"%";
   hf.forEach((el,i)=>{ el.style.transform=`translateY(${y*(.06+i*.04)}px) rotate(${(i-1)*2+y*.004}deg)`; });
+  document.querySelectorAll('[data-par]').forEach(im=>{const r=im.parentElement.getBoundingClientRect();im.style.transform=`translateY(${(r.top+r.height/2-innerHeight/2)*-.12}px)`;});
 },{passive:true});
 
 // mobile menu

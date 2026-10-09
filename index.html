@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arthvan Finserv — Loans & Credit Cards, Made Simple</title>
+<meta name="description" content="Arthvan Finserv helps you compare and apply for personal, home, business, vehicle and education loans and the right credit card — clearly, quickly and transparently.">
+<meta name="theme-color" content="#0b1b3a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1b3a'/%3E%3Cpath d='M9 23 16 8l7 15h-4l-3-7-3 7z' fill='%23d4af6a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav" id="top">
+  <div class="wrap nav__in">
+    <a href="#top" class="logo" aria-label="Arthvan Finserv home">
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#d4af6a"/><path d="M9 23 16 8l7 15h-4l-3-7-3 7z" fill="#0b1b3a"/></svg>
+      <span>Arthvan <em>Finserv</em></span>
+    </a>
+    <nav class="nav__links" id="menu" aria-label="Primary">
+      <a href="#loans">Loans</a>
+      <a href="#cards">Credit Cards</a>
+      <a href="#calculator">EMI Calculator</a>
+      <a href="#process">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a href="#apply" class="btn btn--gold btn--sm nav__cta">Apply now</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero__in">
+    <div class="hero__copy">
+      <p class="eyebrow">Loans &amp; Credit Cards · One trusted desk</p>
+      <h1>Borrow smarter.<br><span class="gold">Spend wiser.</span></h1>
+      <p class="lead">We match you with the right loan or credit card from leading banks and NBFCs — with clear terms, no hidden charges and a real person guiding you at every step.</p>
+      <div class="hero__cta">
+        <a href="#apply" class="btn btn--gold">Check my eligibility</a>
+        <a href="#loans" class="btn btn--ghost">Explore products</a>
+      </div>
+      <ul class="trust">
+        <li><strong>10,000+</strong><span>Customers helped</span></li>
+        <li><strong>25+</strong><span>Lending partners</span></li>
+        <li><strong>48 hrs</strong><span>Typical approval*</span></li>
+      </ul>
+    </div>
+    <aside class="hero__card" aria-label="Quick EMI estimate">
+      <h2>Quick EMI estimate</h2>
+      <label>Loan amount <output id="q-amt-o">₹5,00,000</output></label>
+      <input type="range" id="q-amt" min="50000" max="5000000" step="50000" value="500000">
+      <label>Tenure <output id="q-ten-o">36 months</output></label>
+      <input type="range" id="q-ten" min="6" max="84" step="6" value="36">
+      <div class="quick__res"><span>Estimated EMI*</span><strong id="q-emi">—</strong></div>
+      <a href="#calculator" class="link">Full calculator →</a>
+    </aside>
+  </div>
+</section>
+
+<!-- LOANS -->
+<section class="sec" id="loans">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Loans</p>
+      <h2>A loan for every goal</h2>
+      <p>Pick what you need — we'll show you what it costs, what you need to apply and how fast you can get it.</p>
+    </header>
+    <div class="grid grid--3" id="loan-grid">
+      <article class="tile reveal">
+        <span class="ico">👤</span><h3>Personal Loan</h3>
+        <p>For weddings, travel, medical needs or anything in between. Minimal paperwork.</p>
+        <dl><div><dt>Amount</dt><dd>₹50K – ₹40L</dd></div><div><dt>Rate from*</dt><dd>10.5% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 7 yrs</dd></div></dl>
+        <a href="#apply" data-product="Personal Loan" class="link">Apply →</a>
+      </article>
+      <article class="tile reveal">
+        <span class="ico">🏠</span><h3>Home Loan</h3>
+        <p>Buy, build or renovate. Long tenures and balance-transfer options to cut your interest.</p>
+        <dl><div><dt>Amount</dt><dd>₹5L – ₹5Cr</dd></div><div><dt>Rate from*</dt><dd>8.5% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 30 yrs</dd></div></dl>
+        <a href="#apply" data-product="Home Loan" class="link">Apply →</a>
+      </article>
+      <article class="tile reveal">
+        <span class="ico">💼</span><h3>Business Loan</h3>
+        <p>Working capital and expansion funding for shops, startups and growing enterprises.</p>
+        <dl><div><dt>Amount</dt><dd>₹2L – ₹2Cr</dd></div><div><dt>Rate from*</dt><dd>12% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 5 yrs</dd></div></dl>
+        <a href="#apply" data-product="Business Loan" class="link">Apply →</a>
+      </article>
+      <article class="tile reveal">
+        <span class="ico">🚗</span><h3>Vehicle Loan</h3>
+        <p>New or used car, bike or commercial vehicle — up to 100% on-road funding on select models.</p>
+        <dl><div><dt>Amount</dt><dd>₹50K – ₹1.5Cr</dd></div><div><dt>Rate from*</dt><dd>8.9% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 7 yrs</dd></div></dl>
+        <a href="#apply" data-product="Vehicle Loan" class="link">Apply →</a>
+      </article>
+      <article class="tile reveal">
+        <span class="ico">🎓</span><h3>Education Loan</h3>
+        <p>Study in India or abroad, with moratorium during the course and flexible repayment.</p>
+        <dl><div><dt>Amount</dt><dd>₹1L – ₹1.5Cr</dd></div><div><dt>Rate from*</dt><dd>9.5% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 15 yrs</dd></div></dl>
+        <a href="#apply" data-product="Education Loan" class="link">Apply →</a>
+      </article>
+      <article class="tile reveal">
+        <span class="ico">🏢</span><h3>Loan Against Property</h3>
+        <p>Unlock the value of your property for large needs at lower rates than unsecured loans.</p>
+        <dl><div><dt>Amount</dt><dd>₹10L – ₹10Cr</dd></div><div><dt>Rate from*</dt><dd>9.2% p.a.</dd></div><div><dt>Tenure</dt><dd>Up to 15 yrs</dd></div></dl>
+        <a href="#apply" data-product="Loan Against Property" class="link">Apply →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section class="sec sec--dark" id="cards">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Credit Cards</p>
+      <h2>The right card for how you live</h2>
+      <p>Choose a category to see cards built for it.</p>
+    </header>
+    <div class="tabs reveal" role="tablist" aria-label="Card categories">
+      <button class="tab is-on" role="tab" aria-selected="true" data-cat="all">All</button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="rewards">Rewards</button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="travel">Travel</button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="cashback">Cashback</button>
+      <button class="tab" role="tab" aria-selected="false" data-cat="starter">First card</button>
+    </div>
+    <div class="grid grid--3" id="card-grid">
+      <article class="cc" data-cat="rewards">
+        <div class="plastic plastic--gold"><span>Signature Rewards</span><i></i></div>
+        <h3>Signature Rewards</h3>
+        <ul><li>5X reward points on dining &amp; shopping</li><li>Complimentary airport lounge visits</li><li>Annual fee waiver on spends</li></ul>
+        <a href="#apply" data-product="Signature Rewards Card" class="link">Apply →</a>
+      </article>
+      <article class="cc" data-cat="travel">
+        <div class="plastic plastic--blue"><span>Globetrotter</span><i></i></div>
+        <h3>Globetrotter Travel</h3>
+        <ul><li>Air miles on flights &amp; hotels</li><li>Zero forex mark-up</li><li>Travel insurance cover</li></ul>
+        <a href="#apply" data-product="Globetrotter Travel Card" class="link">Apply →</a>
+      </article>
+      <article class="cc" data-cat="cashback">
+        <div class="plastic plastic--green"><span>Everyday Cashback</span><i></i></div>
+        <h3>Everyday Cashback</h3>
+        <ul><li>Flat cashback on every online spend</li><li>Fuel surcharge waiver</li><li>Auto-credited to statement</li></ul>
+        <a href="#apply" data-product="Everyday Cashback Card" class="link">Apply →</a>
+      </article>
+      <article class="cc" data-cat="starter">
+        <div class="plastic plastic--slate"><span>Starter</span><i></i></div>
+        <h3>Starter Card</h3>
+        <ul><li>Lifetime free — no annual fee</li><li>Ideal to build your credit score</li><li>Secured option available</li></ul>
+        <a href="#apply" data-product="Starter Credit Card" class="link">Apply →</a>
+      </article>
+      <article class="cc" data-cat="rewards cashback">
+        <div class="plastic plastic--rose"><span>Lifestyle Plus</span><i></i></div>
+        <h3>Lifestyle Plus</h3>
+        <ul><li>Movie, dining &amp; wellness offers</li><li>Milestone bonus points</li><li>EMI conversion on big purchases</li></ul>
+        <a href="#apply" data-product="Lifestyle Plus Card" class="link">Apply →</a>
+      </article>
+      <article class="cc" data-cat="travel rewards">
+        <div class="plastic plastic--black"><span>Infinite Elite</span><i></i></div>
+        <h3>Infinite Elite</h3>
+        <ul><li>Unlimited lounge access</li><li>Concierge &amp; golf privileges</li><li>Premium reward catalogue</li></ul>
+        <a href="#apply" data-product="Infinite Elite Card" class="link">Apply →</a>
+      </article>
+    </div>
+    <p class="note">Card names are illustrative placeholders; actual cards, benefits and fees depend on the issuing bank.</p>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section class="sec" id="calculator">
+  <div class="wrap calc">
+    <div class="calc__copy reveal">
+      <p class="eyebrow">EMI Calculator</p>
+      <h2>Know your numbers before you apply</h2>
+      <p>Move the sliders to see your monthly instalment, total interest and what you'll repay overall.</p>
+      <div class="calc__inputs">
+        <label>Loan amount <output id="c-amt-o"></output></label>
+        <input type="range" id="c-amt" min="50000" max="10000000" step="50000" value="1000000">
+        <label>Interest rate (p.a.) <output id="c-rate-o"></output></label>
+        <input type="range" id="c-rate" min="6" max="24" step="0.1" value="10.5">
+        <label>Tenure <output id="c-ten-o"></output></label>
+        <input type="range" id="c-ten" min="6" max="360" step="6" value="60">
+      </div>
+    </div>
+    <div class="calc__out reveal">
+      <div class="donut" id="donut" role="img" aria-label="Principal versus interest split"><div class="donut__in"><span>Monthly EMI</span><strong id="c-emi">—</strong></div></div>
+      <ul class="legend">
+        <li><i class="dot dot--p"></i>Principal<strong id="c-prin">—</strong></li>
+        <li><i class="dot dot--i"></i>Total interest<strong id="c-int">—</strong></li>
+        <li class="tot">Total payable<strong id="c-tot">—</strong></li>
+      </ul>
+      <a href="#apply" class="btn btn--gold btn--block">Apply for this loan</a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="sec sec--tint" id="why">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Why Arthvan</p>
+      <h2>Finance without the fine-print fear</h2>
+    </header>
+    <div class="grid grid--4">
+      <div class="why reveal"><b>01</b><h3>Transparent pricing</h3><p>Rates, fees and charges explained upfront, in plain language.</p></div>
+      <div class="why reveal"><b>02</b><h3>Many lenders, one form</h3><p>Compare offers from multiple banks and NBFCs without repeating paperwork.</p></div>
+      <div class="why reveal"><b>03</b><h3>Fast, digital process</h3><p>Upload documents online and track your application end to end.</p></div>
+      <div class="why reveal"><b>04</b><h3>Human guidance</h3><p>A dedicated advisor who knows your case — not a chatbot loop.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="sec" id="process">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">How it works</p>
+      <h2>From enquiry to funds in four steps</h2>
+    </header>
+    <ol class="steps">
+      <li class="reveal"><span>1</span><h3>Tell us what you need</h3><p>Share the product and amount. Takes about two minutes.</p></li>
+      <li class="reveal"><span>2</span><h3>Compare best-fit offers</h3><p>Your advisor shortlists options matched to your profile.</p></li>
+      <li class="reveal"><span>3</span><h3>Submit documents</h3><p>Simple KYC and income proofs, uploaded securely.</p></li>
+      <li class="reveal"><span>4</span><h3>Get approved &amp; funded</h3><p>Money in your account or card at your doorstep.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec sec--dark">
+  <div class="wrap">
+    <header class="sec__head reveal">
+      <p class="eyebrow">Customer stories</p>
+      <h2>People who got it done</h2>
+    </header>
+    <div class="grid grid--3">
+      <blockquote class="quote reveal"><p>“I was comparing five banks and getting nowhere. Arthvan got me a home loan at a better rate in under a week.”</p><footer>— Rohit S., Home Loan <small>(sample testimonial)</small></footer></blockquote>
+      <blockquote class="quote reveal"><p>“Working capital for my shop came through in two days. The advisor explained every charge before I signed.”</p><footer>— Meena K., Business Loan <small>(sample testimonial)</small></footer></blockquote>
+      <blockquote class="quote reveal"><p>“As a first-time card user I was nervous. They picked a starter card that actually fit my spending.”</p><footer>— Aman T., Credit Card <small>(sample testimonial)</small></footer></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq">
+  <div class="wrap wrap--narrow">
+    <header class="sec__head reveal">
+      <p class="eyebrow">FAQ</p>
+      <h2>Questions, answered</h2>
+    </header>
+    <div class="faq">
+      <details><summary>What documents do I need?</summary><p>Typically identity proof (Aadhaar/PAN), address proof, recent bank statements and income proof such as salary slips or ITR. Your advisor will share an exact checklist for your product.</p></details>
+      <details><summary>Does checking eligibility affect my credit score?</summary><p>Submitting an enquiry with us does not trigger a hard credit check. A lender may run one only when you choose to proceed with a specific application.</p></details>
+      <details><summary>Do you charge a fee for your service?</summary><p>Our advisory is free for customers; we are compensated by lending partners. Any processing fees charged by the lender are disclosed to you upfront.</p></details>
+      <details><summary>How long does approval take?</summary><p>Many personal loans and cards are decided within 24–48 hours of complete documents. Home and property loans take longer because of valuation and legal checks.</p></details>
+      <details><summary>Can I prepay or foreclose my loan?</summary><p>Yes — terms vary by lender and loan type. We highlight prepayment and foreclosure charges before you accept an offer.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- APPLY -->
+<section class="sec sec--navy" id="apply">
+  <div class="wrap apply">
+    <div class="apply__copy reveal">
+      <p class="eyebrow">Get started</p>
+      <h2>Talk to an advisor today</h2>
+      <p>Fill in a few details and we'll call you back within one working day with options tailored to you.</p>
+      <ul class="contact">
+        <li>📞 <a href="tel:+910000000000">+91 00000 00000</a></li>
+        <li>✉️ <a href="mailto:hello@arthvanfinserv.example">hello@arthvanfinserv.example</a></li>
+        <li>📍 Your office address, City, State — PIN</li>
+        <li>🕘 Mon–Sat, 9:30 am – 6:30 pm</li>
+      </ul>
+    </div>
+    <form class="form reveal" id="lead-form" novalidate>
+      <div class="field"><label for="f-name">Full name</label><input id="f-name" name="name" autocomplete="name" required><small class="err"></small></div>
+      <div class="field"><label for="f-phone">Mobile number</label><input id="f-phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="10-digit number" required><small class="err"></small></div>
+      <div class="field"><label for="f-email">Email <span>(optional)</span></label><input id="f-email" name="email" type="email" autocomplete="email"><small class="err"></small></div>
+      <div class="row">
+        <div class="field"><label for="f-product">I'm interested in</label>
+          <select id="f-product" name="product" required>
+            <option value="">Select…</option>
+            <optgroup label="Loans">
+              <option>Personal Loan</option><option>Home Loan</option><option>Business Loan</option><option>Vehicle Loan</option><option>Education Loan</option><option>Loan Against Property</option>
+            </optgroup>
+            <optgroup label="Credit Cards">
+              <option>Signature Rewards Card</option><option>Globetrotter Travel Card</option><option>Everyday Cashback Card</option><option>Starter Credit Card</option><option>Lifestyle Plus Card</option><option>Infinite Elite Card</option><option>Not sure — suggest a card</option>
+            </optgroup>
+          </select><small class="err"></small></div>
+        <div class="field"><label for="f-amt">Amount needed (₹)</label><input id="f-amt" name="amount" inputmode="numeric" placeholder="e.g. 500000"></div>
+      </div>
+      <label class="consent"><input type="checkbox" id="f-consent" required> I agree to be contacted by Arthvan Finserv and its partners regarding my enquiry.</label>
+      <small class="err" id="consent-err"></small>
+      <button class="btn btn--gold btn--block" type="submit">Request a call back</button>
+      <p class="form__ok" id="form-ok" role="status" hidden></p>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div>
+      <a href="#top" class="logo logo--foot"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#d4af6a"/><path d="M9 23 16 8l7 15h-4l-3-7-3 7z" fill="#0b1b3a"/></svg><span>Arthvan <em>Finserv</em></span></a>
+      <p>Simple, transparent loans and credit cards.</p>
+    </div>
+    <div><h4>Loans</h4><a href="#loans">Personal</a><a href="#loans">Home</a><a href="#loans">Business</a><a href="#loans">Vehicle</a></div>
+    <div><h4>Company</h4><a href="#why">Why us</a><a href="#process">How it works</a><a href="#faq">FAQ</a><a href="#apply">Contact</a></div>
+  </div>
+  <div class="wrap foot__legal">
+    <p>*Interest rates, amounts and approval times are indicative, vary by lender and borrower profile, and are subject to credit approval. EMI figures are estimates. Arthvan Finserv is a loan and credit-card distribution/advisory service and does not itself lend money. [Add your registration / partner disclosures, privacy policy and terms here before launch.]</p>
+    <p>© <span id="yr"></span> Arthvan Finserv. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

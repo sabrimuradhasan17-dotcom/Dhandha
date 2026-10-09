@@ -26,6 +26,46 @@ function usePoll(fn, ms = 8000) {
   return [data, load];
 }
 
+/* ---------------------------------- Chat --------------------------------- */
+function Chat({ booking, meId, onClose }) {
+  const [msgs, setMsgs] = useState([]);
+  const [text, setText] = useState('');
+  const scroller = React.useRef(null);
+  const load = () =>
+    api('GET', `/bookings/${booking.id}/messages`).then((m) => {
+      setMsgs((prev) => (m.length === prev.length ? prev : m));
+    }).catch(() => {});
+  useEffect(() => { load(); const t = setInterval(load, 3000); return () => clearInterval(t); }, []);
+  const send = async () => {
+    const body = text.trim();
+    if (!body) return;
+    setText('');
+    try { await api('POST', `/bookings/${booking.id}/messages`, { body }); load(); } catch (e) { setText(body); fail(e); }
+  };
+  const phone = booking.worker_phone; // present for customers once a worker is assigned
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 12, backgroundColor: '#fff' }}>
+        <Text onPress={onClose} style={{ color: colors.primary, fontWeight: '600' }}>← Back</Text>
+        <Text style={{ fontWeight: '700' }}>{booking.service_name}</Text>
+        {phone ? <Text onPress={() => Linking.openURL(`tel:${phone}`)} style={{ color: colors.primary, fontWeight: '600' }}>Call</Text> : <View style={{ width: 30 }} />}
+      </View>
+      <ScrollView ref={scroller} onContentSizeChange={() => scroller.current?.scrollToEnd({ animated: true })} contentContainerStyle={{ padding: 12 }}>
+        {msgs.length === 0 && <Muted>No messages yet. Say hello 👋</Muted>}
+        {msgs.map((m) => (
+          <View key={m.id} style={{ alignSelf: m.sender_id === meId ? 'flex-end' : 'flex-start', backgroundColor: m.sender_id === meId ? colors.primary : '#fff', borderRadius: 12, padding: 10, marginVertical: 3, maxWidth: '80%' }}>
+            <Text style={{ color: m.sender_id === meId ? '#fff' : '#111' }}>{m.body}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      <View style={{ flexDirection: 'row', padding: 8, backgroundColor: '#fff', gap: 8, alignItems: 'center' }}>
+        <Input style={{ flex: 1, marginVertical: 0 }} placeholder="Type a message" value={text} onChangeText={setText} onSubmitEditing={send} />
+        <Btn title="Send" onPress={send} />
+      </View>
+    </View>
+  );
+}
+
 /* ---------------------------------- Auth --------------------------------- */
 function Auth({ onAuthed }) {
   const [mode, setMode] = useState('login');
@@ -166,7 +206,7 @@ function BookForm({ service, user, onDone, onCancel }) {
   );
 }
 
-function BookingCard({ b, user, reload }) {
+function BookingCard({ b, user, reload, onChat }) {
   const [stars, setStars] = useState(5);
   const act = (fn) => async () => { try { await fn(); reload(); } catch (e) { fail(e); } };
   return (
@@ -175,6 +215,7 @@ function BookingCard({ b, user, reload }) {
       <Muted>{when(b.scheduled_at)}</Muted>
       <Text style={{ color: colors.primary, marginVertical: 4 }}>{STATUS_LABEL[b.status]}</Text>
       {b.worker_name && <Muted>Professional: {b.worker_name} · {b.worker_phone}</Muted>}
+      {(b.worker_id || b.requested_worker_id) && !['cancelled', 'completed'].includes(b.status) && <Btn title="Chat with professional" onPress={() => onChat(b)} />}
       {b.worker_phone && <Btn title="Call professional" kind="ghost" onPress={() => Linking.openURL(`tel:${b.worker_phone}`)} />}
       <Muted>{b.payment_method === 'cash' ? 'Cash' : 'Online'} · payment {b.payment_status}</Muted>
       {b.payment_method === 'online' && b.payment_status === 'pending' && b.status !== 'cancelled' && (
@@ -196,14 +237,14 @@ function BookingCard({ b, user, reload }) {
   );
 }
 
-function Bookings({ user }) {
+function Bookings({ user, onChat }) {
   const [list, reload] = usePoll(() => api('GET', '/bookings'));
   if (!list) return <ActivityIndicator />;
   return (
     <>
       <H>My bookings</H>
       {list.length === 0 && <Muted>No bookings yet.</Muted>}
-      {list.map((b) => <BookingCard key={b.id} b={b} user={user} reload={reload} />)}
+      {list.map((b) => <BookingCard key={b.id} b={b} user={user} reload={reload} onChat={onChat} />)}
     </>
   );
 }
@@ -211,12 +252,14 @@ function Bookings({ user }) {
 function Customer({ user }) {
   const [tab, setTab] = useState('browse');
   const [svc, setSvc] = useState(null);
+  const [chat, setChat] = useState(null);
+  if (chat) return <Chat booking={chat} meId={user.id} onClose={() => setChat(null)} />;
   return (
     <>
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         {tab === 'browse' && !svc && <Browse onBook={setSvc} />}
         {tab === 'browse' && svc && <BookForm service={svc} user={user} onCancel={() => setSvc(null)} onDone={() => { setSvc(null); setTab('bookings'); }} />}
-        {tab === 'bookings' && <Bookings user={user} />}
+        {tab === 'bookings' && <Bookings user={user} onChat={setChat} />}
       </ScrollView>
       <Tabs tab={tab} setTab={setTab} items={[['browse', 'Services'], ['bookings', 'My bookings']]} />
     </>
@@ -240,7 +283,8 @@ function Profile({ worker, onSaved }) {
   );
 }
 
-function WorkerHome() {
+function WorkerHome({ meId }) {
+  const [chat, setChat] = useState(null);
   const [me, reloadMe] = usePoll(() => api('GET', '/auth/me'), 30000);
   const [offers, reloadOffers] = usePoll(() => api('GET', '/worker/offers'), 5000);
   const [jobs, reloadJobs] = usePoll(() => api('GET', '/worker/jobs'));
@@ -254,6 +298,7 @@ function WorkerHome() {
       reload();
     } catch (e) { fail(e); }
   };
+  if (chat) return <Chat booking={chat} meId={meId} onClose={() => setChat(null)} />;
   if (!me) return <ActivityIndicator />;
   const NEXT = { assigned: 'Start travel', on_the_way: 'Start service', in_progress: 'Complete job' };
   return (
@@ -274,6 +319,7 @@ function WorkerHome() {
           <Text style={{ fontWeight: '700' }}>{o.service_name} · you earn ₹{o.earning}</Text>
           <Muted>{when(o.scheduled_at)} · {o.distance_km ?? '?'} km away</Muted>
           <Muted>{o.address} · {o.payment_method === 'cash' ? 'collect cash' : 'paid online'}</Muted>
+          {o.direct ? <Btn title="Chat with customer" kind="ghost" onPress={() => setChat({ id: o.id, service_name: o.service_name })} /> : null}
           <Btn title="Accept" onPress={act(() => api('POST', `/worker/offers/${o.id}/accept`))} />
           <Btn title="Decline" kind="ghost" onPress={act(() => api('POST', `/worker/offers/${o.id}/decline`))} />
         </Card>
@@ -285,6 +331,7 @@ function WorkerHome() {
           <Muted>{when(b.scheduled_at)} · {b.customer_name}</Muted>
           <Muted>{b.address}</Muted>
           <Text style={{ color: colors.primary, marginVertical: 4 }}>{STATUS_LABEL[b.status]}</Text>
+          {!['cancelled', 'completed'].includes(b.status) && <Btn title="Chat with customer" kind="ghost" onPress={() => setChat(b)} />}
           {NEXT[b.status] && <Btn title={NEXT[b.status]} onPress={act(() => api('POST', `/worker/jobs/${b.id}/advance`))} />}
         </Card>
       ))}
@@ -324,7 +371,7 @@ export default function App() {
             <Text style={{ color: '#fff', fontWeight: '700' }}>Hi, {user.name}</Text>
             <Text style={{ color: '#fff' }} onPress={logout}>Log out</Text>
           </View>
-          {user.role === 'worker' ? <ScrollView contentContainerStyle={{ padding: 16 }}><WorkerHome /></ScrollView> : <Customer user={user} />}
+          {user.role === 'worker' ? <ScrollView contentContainerStyle={{ padding: 16 }}><WorkerHome meId={user.id} /></ScrollView> : <Customer user={user} />}
         </>
       )}
     </SafeAreaView>

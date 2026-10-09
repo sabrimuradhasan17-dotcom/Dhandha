@@ -1,5 +1,6 @@
 import { db, tx } from './db.js';
 import { config } from './config.js';
+import { notifyNewRequest } from './sms.js';
 
 export function haversineKm(lat1, lng1, lat2, lng2) {
   const r = (d) => (d * Math.PI) / 180;
@@ -15,7 +16,7 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
  * have not been offered it yet. Marks the booking `unassigned` when nobody is left.
  */
 export function dispatchBooking(bookingId) {
-  return tx(() => {
+  const ids = tx(() => {
     const b = db
       .prepare(
         `SELECT b.*, s.category_id FROM bookings b JOIN services s ON s.id = b.service_id WHERE b.id = ?`,
@@ -50,6 +51,8 @@ export function dispatchBooking(bookingId) {
     for (const c of candidates) ins.run(b.id, c.user_id);
     return candidates.map((c) => c.user_id);
   });
+  if (ids.length) notifyNewRequest(bookingId, ids); // after commit; never blocks or throws
+  return ids;
 }
 
 export function acceptOffer(bookingId, workerId) {
@@ -100,4 +103,27 @@ export function manualAssign(bookingId, workerId) {
     }
     return res.changes > 0;
   });
+}
+
+/**
+ * Expire job offers nobody answered within the TTL and move each affected
+ * booking on to the next worker (or to `unassigned`). Returns bookings touched.
+ */
+export function sweepExpiredOffers(ttlMin = config.offerTtlMin) {
+  const age = `${-ttlMin} minutes`;
+  const stale = db
+    .prepare(
+      `SELECT DISTINCT o.booking_id FROM offers o
+       WHERE o.status = 'pending' AND o.created_at <= datetime('now', ?)`,
+    )
+    .all(age)
+    .map((x) => x.booking_id);
+  for (const id of stale) {
+    db.prepare(
+      `UPDATE offers SET status = 'expired' WHERE booking_id = ? AND status = 'pending' AND created_at <= datetime('now', ?)`,
+    ).run(id, age);
+    const pending = db.prepare(`SELECT COUNT(*) c FROM offers WHERE booking_id = ? AND status = 'pending'`).get(id).c;
+    if (pending === 0) dispatchBooking(id);
+  }
+  return stale;
 }

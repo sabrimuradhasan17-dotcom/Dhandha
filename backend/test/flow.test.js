@@ -139,3 +139,50 @@ test('customer can browse, contact and book a specific worker; others are not of
   const bad = await call('POST', '/bookings', { serviceId: svc.id, workerId: 1, address: 'X', lat: 5, lng: 5, scheduledAt: future(), paymentMethod: 'cash' }, cust);
   assert.equal(bad.status, 400);
 });
+
+test('SMS on new request, booking chat, and offer timeout', async () => {
+  const { outbox } = await import('../src/sms.js');
+  const { sweepExpiredOffers } = await import('../src/dispatch.js');
+  const cats = (await call('GET', '/categories')).body;
+  const cl = cats.find((c) => c.name === 'Home Cleaning');
+  const svc = (await call('GET', `/services?categoryId=${cl.id}`)).body[0];
+  const admin = (await call('POST', '/auth/login', { phone: '9999999999', password: 'admin123' })).body.token;
+  const cust = (await reg({ name: 'C6', phone: '9000000041', password: 'secret1' })).body;
+  const stranger = (await reg({ name: 'C7', phone: '9000000042', password: 'secret1' })).body.token;
+  const mk = async (n, phone, lat) => {
+    const w = await reg({ name: n, phone, password: 'secret1', role: 'worker', categoryId: cl.id });
+    await call('PUT', `/admin/workers/${w.body.user.id}/approval`, { approved: true }, admin);
+    await call('PUT', '/worker/availability', { available: true, lat, lng: 50 }, w.body.token);
+    return w.body;
+  };
+  const w1 = await mk('N1', '9000000043', 50), w2 = await mk('N2', '9000000044', 50.5);
+  const book = (extra) => call('POST', '/bookings', { serviceId: svc.id, address: 'MG Road', lat: 50, lng: 50, scheduledAt: future(), paymentMethod: 'cash', ...extra }, cust.token);
+
+  // SMS goes to every offered worker
+  outbox.length = 0;
+  const b = (await book({})).body;
+  await new Promise((r) => setTimeout(r, 20));
+  assert.deepEqual(outbox.map((m) => m.to).sort(), ['9000000043', '9000000044']);
+  assert.match(outbox[0].body, /new .* request/);
+
+  // chat: customer and requested/assigned worker only
+  assert.equal((await call('GET', `/bookings/${b.id}/messages`, null, stranger)).status, 404);
+  assert.equal((await call('POST', `/bookings/${b.id}/messages`, { body: '  ' }, cust.token)).status, 400);
+  await call('POST', `/worker/offers/${b.id}/accept`, null, w1.token);
+  assert.equal((await call('POST', `/bookings/${b.id}/messages`, { body: 'Please bring a ladder' }, w1.token)).status, 201);
+  assert.equal((await call('POST', `/bookings/${b.id}/messages`, { body: 'Sure' }, cust.token)).status, 201);
+  assert.equal((await call('GET', `/bookings/${b.id}/messages`, null, w2.token)).status, 404);
+  const msgs = (await call('GET', `/bookings/${b.id}/messages`, null, cust.token)).body;
+  assert.deepEqual(msgs.map((m) => m.body), ['Please bring a ladder', 'Sure']);
+  assert.equal((await call('GET', `/bookings/${b.id}/messages?after=${msgs[0].id}`, null, cust.token)).body.length, 1);
+
+  // direct request to w2 pre-acceptance: w2 can already chat
+  const d = (await book({ workerId: w2.user.id })).body;
+  assert.equal((await call('POST', `/bookings/${d.id}/messages`, { body: 'Hi, are you free?' }, w2.token)).status, 201);
+  assert.equal((await call('GET', '/worker/offers', null, w2.token)).body[0].direct, 1);
+
+  // timeout: unanswered offer expires, direct request becomes unassigned, open one widens
+  assert.deepEqual(sweepExpiredOffers(), [], 'fresh offers survive');
+  assert.ok(sweepExpiredOffers(-1).includes(d.id));
+  assert.equal((await call('GET', `/bookings/${d.id}`, null, cust.token)).body.status, 'unassigned');
+});

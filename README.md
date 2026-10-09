@@ -35,6 +35,11 @@ Mock payments work in Expo Go. Real Razorpay checkout needs a dev build (`npx ex
 4. A commission (`COMMISSION_PERCENT`, default 20%) is recorded per booking; worker earnings and cash commission owed are shown in the worker app.
 5. Customers rate completed jobs. Admins approve workers, manage the catalog and watch bookings/revenue.
 
+## Notifications, chat and timeouts
+- **SMS**: workers get a text when a job request is offered to them. Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM` (and `DEFAULT_COUNTRY_CODE`); without them SMS is only logged to the console.
+- **Chat**: per-booking in-app chat between the customer and their assigned (or directly requested) professional, plus a Call button. Closes when the booking is completed or cancelled. Uses 3-second polling.
+- **Timeouts**: an offer unanswered for `OFFER_TTL_MIN` (default 10) minutes expires and the job moves to the next nearest worker, or becomes *unassigned* (always, for a directly requested professional).
+
 ## Not built yet (suggested next steps)
-Push/SMS notifications and OTP login, live map tracking, worker payout (Razorpay Route/X), offer expiry timers,
-coupons/wallet, in-app chat, and moving SQLite → Postgres for multi-server deployment.
+Push notifications and OTP login, live map tracking, worker payout (Razorpay Route/X),
+coupons/wallet, websocket chat (currently polling), SMS to customers, and moving SQLite → Postgres for multi-server deployment.

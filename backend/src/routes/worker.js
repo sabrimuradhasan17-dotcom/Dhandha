@@ -47,7 +47,7 @@ r.get('/offers', (req, res) => {
   const rows = db
     .prepare(
       `SELECT b.id, s.name AS service_name, b.address, b.lat, b.lng, b.scheduled_at, b.notes, b.amount,
-              b.commission, b.payment_method
+              b.commission, b.payment_method, (b.requested_worker_id = o.worker_id) AS direct
        FROM offers o JOIN bookings b ON b.id = o.booking_id JOIN services s ON s.id = b.service_id
        WHERE o.worker_id = ? AND o.status = 'pending' AND b.status = 'searching' ORDER BY b.scheduled_at`,
     )

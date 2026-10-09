@@ -7,6 +7,7 @@ import catalogRoutes from './routes/catalog.js';
 import bookingRoutes from './routes/bookings.js';
 import paymentRoutes from './routes/payments.js';
 import workerRoutes from './routes/worker.js';
+import chatRoutes from './routes/chat.js';
 import adminRoutes from './routes/admin.js';
 import { seedCatalog, seedAdmin } from './seed.js';
 
@@ -22,6 +23,7 @@ app.use('/auth', authRoutes);
 app.use('/', catalogRoutes);
 app.use('/bookings', bookingRoutes);
 app.use('/payments', paymentRoutes);
+app.use('/bookings', chatRoutes);
 app.use('/worker', workerRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '../public')));

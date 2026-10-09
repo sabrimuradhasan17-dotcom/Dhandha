@@ -32,7 +32,7 @@ Home · Packages (filters/search) · Package detail (itinerary, inclusions, depa
 SEO: per-page titles/descriptions, canonical URLs, Open Graph, JSON-LD (TravelAgency / TouristTrip), `sitemap.xml`, `robots.txt`.
 
 **Premium design (v2)**: "Himalayan dusk" theme with a cinematic photo slideshow (owner-editable in Settings → *Home page slideshow photos*), animated preloader, scroll-progress bar, split-text headlines, scroll-lit statement, count-up stats, drag-to-scroll journey rail, sticky storytelling, parallax bands, animated how-it-works timeline, smooth accordions and page transitions, and a full-screen mobile menu. Vanilla JS/CSS (no libraries), self-hosted fonts (`public/fonts`), free Unsplash photos (`public/img/photos`, credits at `/page/photo-credits`). Honours `prefers-reduced-motion`; content is visible even if scripts fail to load. The admin panel keeps its own stylesheet (`public/admin/base.css`).
-Previews for clients: `node tools/build-static-preview.js docs && node tools/prerender.js docs/index.html` (host-anywhere folder) and `node tools/build-single-html.js dist` (two stand-alone HTML files).
+Previews for clients: `node tools/build-static-preview.js docs && node tools/prerender.js docs/index.html` (host-anywhere folder) and `node tools/build-single-html.js dist` (one stand-alone HTML file with the admin demo built in, plus an admin-only copy).
 
 ## Admin panel (`/admin`)
 - **Dashboard** — new enquiries, upcoming departures, launch checklist.

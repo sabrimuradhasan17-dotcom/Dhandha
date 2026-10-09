@@ -2,16 +2,18 @@
 // Builds two stand-alone HTML files (photos + fonts embedded, no server, no internet) that can be sent by WhatsApp/email
 // and opened by double-click:
 //   node tools/build-single-html.js <out-dir>
-//   la-bhutanz-premium-website.html   la-bhutanz-premium-admin.html   (keep them in the same folder so their links work)
+//   la-bhutanz-premium-preview.html       website with the admin demo built in (one file, nothing to keep together)
+//   la-bhutanz-premium-admin-only.html    admin demo on its own
 // The website file embeds web-sized copies of the photos (the full-quality set ships in the zip / hosted version).
 // A text snapshot is baked in so viewers that block scripts still show the content; with scripts on, the full motion site runs.
 const fs = require('fs'), path = require('path'), cp = require('child_process'), os = require('os');
 const out = process.argv[2]; if (!out) { console.error('usage: build-single-html.js <out-dir>'); process.exit(1); }
-const SITE = 'la-bhutanz-premium-website.html', ADMIN = 'la-bhutanz-premium-admin.html';
+const COMBINED = 'la-bhutanz-premium-preview.html', ADMIN = 'la-bhutanz-premium-admin-only.html';
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bzsingle-'));
 const run = (script, dir, link) => cp.execFileSync('node', [path.join(__dirname, script), path.join(tmp, dir), link], { stdio: 'pipe' });
-run('build-preview.js', 'site', ADMIN);
-run('build-admin-demo.js', 'admin', SITE);
+run('build-preview.js', 'site', '#admin-demo');   // website + admin demo live in ONE file, so there are no file-to-file links to break
+run('build-admin-demo.js', 'admin', '#site-preview');
+run('build-admin-demo.js', 'admin-solo', '');
 
 // web-sized photos: hero 1280px, others 720px (PIL), logo 220px
 cp.execFileSync('python3', ['-I', '-c', `
@@ -36,24 +38,29 @@ const faviconInline = (html, dir) => { const f = path.join(dir, 'img/favicon.png
 const wrap = f => { const i = f.indexOf('</style>') + 8;
   return `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#fbf7f0">\n${f.slice(0, i)}\n</head><body>\n${f.slice(i)}\n</body></html>\n`; };
 
-// website
+// admin demo (standalone copy, no link to the website)
+const adminPage = d => { const dir = path.join(tmp, d); return wrap(faviconInline(logoInline(fontsInline(fs.readFileSync(path.join(dir, 'index.html'), 'utf8'), dir), dir), dir)); };
+fs.mkdirSync(out, { recursive: true });
+{ const h = adminPage('admin-solo'); fs.writeFileSync(path.join(out, ADMIN), h); console.log(ADMIN, (h.length / 1048576).toFixed(1) + ' MB'); }
+
+// website + embedded admin demo
 {
   const dir = path.join(tmp, 'site'); let html = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
   const map = {};
   for (const f of fs.readdirSync(path.join(dir, 'img/photos'))) map['img/photos/' + f] = 'data:image/jpeg;base64,' + b64(path.join(dir, 'img/photos', f));
   map['img/logo.png'] = 'data:image/png;base64,' + b64(path.join(dir, 'img/logo.png'));
   const hook = `<script>window.__IMG=${JSON.stringify(map)};(function(){var M=window.__IMG,re=/img\\/(photos\\/[\\w-]+\\.jpg|logo\\.png)/g,d=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');Object.defineProperty(Element.prototype,'innerHTML',{configurable:true,get:d.get,set:function(v){d.set.call(this,typeof v==='string'?v.replace(re,function(m){return M[m]||m}):v)}})})();</script>\n`;
+  // the admin demo travels inside this file; "Try the admin panel demo" swaps the page for it, "View website" swaps back
+  let adm = adminPage('admin').replace('</body>', `<script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href="#site-preview"]');if(a){e.preventDefault();try{sessionStorage.removeItem('bz_open_admin')}catch(x){}location.reload()}},true)</script></body>`);
+  const swap = `<script id="adm" type="text/plain">${JSON.stringify(adm).replace(/</g, '\\u003c')}</script>\n<script>(function(){function open(){var h=JSON.parse(document.getElementById('adm').textContent);try{sessionStorage.setItem('bz_open_admin','1')}catch(x){}document.open();document.write(h);document.close()}try{if(sessionStorage.getItem('bz_open_admin')==='1'){window.__skipSite=true;document.addEventListener('DOMContentLoaded',open);return}}catch(x){}document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href="#admin-demo"]');if(a){e.preventDefault();e.stopPropagation();open()}},true)})();</script>\n`;
   const at = html.indexOf('<script>\nlet __route'); if (at < 0) throw new Error('shim not found');
   // the baked snapshot's <img> tags would request files that do not exist in a single file; the live render swaps in embedded copies
   html = html.slice(0, at).split('src="img/photos/').join('data-src="img/photos/') + hook + html.slice(at);
-  html = faviconInline(logoInline(fontsInline(html, dir), dir), dir);
-  html = wrap(html);
-  fs.mkdirSync(out, { recursive: true }); fs.writeFileSync(path.join(out, SITE), html); console.log(SITE, (html.length / 1048576).toFixed(1) + ' MB');
-}
-// admin demo
-{
-  const dir = path.join(tmp, 'admin'); let html = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
+  // the swap script must run before the site script so a reload straight into the admin never flashes the website
+  const sj = html.indexOf('<script>\nlet __route'); html = html.slice(0, sj) + swap + html.slice(sj);
+  const initAt = '(async function init() {\n    const t0 = performance.now();'; if (!html.includes(initAt)) throw new Error('init not found');
+  html = html.replace(initAt, '(async function init() {\n    if (window.__skipSite) return;   // reloaded straight into the admin demo: the website stays asleep\n    const t0 = performance.now();');
   html = wrap(faviconInline(logoInline(fontsInline(html, dir), dir), dir));
-  fs.writeFileSync(path.join(out, ADMIN), html); console.log(ADMIN, (html.length / 1048576).toFixed(1) + ' MB');
+  fs.writeFileSync(path.join(out, COMBINED), html); console.log(COMBINED, (html.length / 1048576).toFixed(1) + ' MB');
 }
 fs.rmSync(tmp, { recursive: true, force: true });
